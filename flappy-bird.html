@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>פלאפי בירד</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #70c5ce;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    user-select: none;
+  }
+
+  /* AUTH SCREENS */
+  #authScreen {
+    background: #fff;
+    border-radius: 16px;
+    padding: 36px 32px;
+    width: 360px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    text-align: center;
+  }
+  #authScreen h1 {
+    font-size: 2rem;
+    margin-bottom: 8px;
+    color: #e8671a;
+    text-shadow: 2px 2px 0 #f9c74f;
+  }
+  #authScreen p.subtitle {
+    color: #888;
+    margin-bottom: 24px;
+    font-size: 0.9rem;
+  }
+  .tabs {
+    display: flex;
+    border-bottom: 2px solid #eee;
+    margin-bottom: 24px;
+  }
+  .tab-btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: none;
+    font-size: 1rem;
+    cursor: pointer;
+    color: #aaa;
+    font-weight: 600;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.2s;
+  }
+  .tab-btn.active {
+    color: #e8671a;
+    border-bottom-color: #e8671a;
+  }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+  .form-group {
+    margin-bottom: 16px;
+    text-align: right;
+  }
+  .form-group label {
+    display: block;
+    font-size: 0.85rem;
+    color: #555;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .form-group input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+    direction: ltr;
+    text-align: left;
+  }
+  .form-group input:focus {
+    outline: none;
+    border-color: #e8671a;
+  }
+  .auth-btn {
+    width: 100%;
+    padding: 12px;
+    background: #e8671a;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 4px;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .auth-btn:hover { background: #c9550f; }
+  .auth-btn:active { transform: scale(0.98); }
+  .error-msg {
+    color: #e74c3c;
+    font-size: 0.85rem;
+    margin-top: 10px;
+    min-height: 20px;
+    font-weight: 600;
+  }
+
+  /* GAME WRAPPER */
+  #gameScreen { display: none; flex-direction: column; align-items: center; }
+  #hud {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 480px;
+    padding: 8px 12px;
+    background: rgba(0,0,0,0.25);
+    border-radius: 12px 12px 0 0;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+  #hud span { display: flex; align-items: center; gap: 6px; }
+  #logoutBtn {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 700;
+    transition: background 0.2s;
+  }
+  #logoutBtn:hover { background: rgba(255,255,255,0.35); }
+  canvas {
+    display: block;
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  }
+
+  /* OVERLAYS */
+  .overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0,0,0,0.45);
+    border-radius: 0 0 12px 12px;
+    color: #fff;
+    gap: 12px;
+  }
+  .overlay h2 {
+    font-size: 2.2rem;
+    text-shadow: 2px 2px 6px rgba(0,0,0,0.5);
+  }
+  .overlay .score-display {
+    font-size: 1.1rem;
+    background: rgba(255,255,255,0.15);
+    padding: 10px 28px;
+    border-radius: 10px;
+    text-align: center;
+    line-height: 2;
+  }
+  .overlay .score-display b { font-size: 1.5rem; color: #f9c74f; }
+  .overlay-btn {
+    padding: 12px 32px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.1s, background 0.2s;
+  }
+  .overlay-btn:active { transform: scale(0.97); }
+  .btn-play { background: #2ecc71; color: #fff; }
+  .btn-play:hover { background: #27ae60; }
+  .btn-logout-small { background: rgba(255,255,255,0.2); color: #fff; font-size: 0.9rem; padding: 8px 20px; }
+  .btn-logout-small:hover { background: rgba(255,255,255,0.35); }
+  .hint { font-size: 0.85rem; opacity: 0.75; margin-top: -4px; }
+  #canvasWrap { position: relative; }
+</style>
+</head>
+<body>
+
+<!-- AUTH SCREEN -->
+<div id="authScreen">
+  <h1>🐦 פלאפי בירד</h1>
+  <p class="subtitle">היכנס כדי לשחק ולשמור את השיא שלך</p>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('login')">כניסה</button>
+    <button class="tab-btn" onclick="switchTab('register')">הרשמה</button>
+  </div>
+
+  <!-- LOGIN -->
+  <div class="tab-panel active" id="loginPanel">
+    <div class="form-group">
+      <label>שם משתמש</label>
+      <input type="text" id="loginUser" placeholder="הכנס שם משתמש" autocomplete="username">
+    </div>
+    <div class="form-group">
+      <label>סיסמה</label>
+      <input type="password" id="loginPass" placeholder="הכנס סיסמה" autocomplete="current-password">
+    </div>
+    <button class="auth-btn" onclick="login()">כניסה</button>
+    <div class="error-msg" id="loginError"></div>
+  </div>
+
+  <!-- REGISTER -->
+  <div class="tab-panel" id="registerPanel">
+    <div class="form-group">
+      <label>שם משתמש</label>
+      <input type="text" id="regUser" placeholder="בחר שם משתמש" autocomplete="username">
+    </div>
+    <div class="form-group">
+      <label>סיסמה</label>
+      <input type="password" id="regPass" placeholder="בחר סיסמה (מינ' 4 תווים)" autocomplete="new-password">
+    </div>
+    <div class="form-group">
+      <label>אימות סיסמה</label>
+      <input type="password" id="regPass2" placeholder="הכנס סיסמה שוב" autocomplete="new-password">
+    </div>
+    <button class="auth-btn" onclick="register()">הרשמה</button>
+    <div class="error-msg" id="regError"></div>
+  </div>
+</div>
+
+<!-- GAME SCREEN -->
+<div id="gameScreen">
+  <div id="hud">
+    <span>👤 <span id="hudUser"></span></span>
+    <span>🏆 שיא: <span id="hudBest">0</span></span>
+    <button id="logoutBtn" onclick="logout()">התנתק</button>
+  </div>
+  <div id="canvasWrap">
+    <canvas id="gameCanvas" width="480" height="560"></canvas>
+    <!-- START OVERLAY -->
+    <div class="overlay" id="startOverlay">
+      <h2>🐦 פלאפי בירד</h2>
+      <p class="hint">לחץ רווח / הקש על המסך להתחיל</p>
+    </div>
+    <!-- GAMEOVER OVERLAY -->
+    <div class="overlay" id="gameOverOverlay" style="display:none">
+      <h2>💀 נגמר!</h2>
+      <div class="score-display">
+        ניקוד: <b id="finalScore">0</b><br>
+        שיא אישי: <b id="finalBest">0</b>
+      </div>
+      <button class="overlay-btn btn-play" onclick="restartGame()">שחק שוב ▶</button>
+      <button class="overlay-btn btn-logout-small" onclick="logout()">התנתק</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── HASH ────────────────────────────────────────────────────────────────────
+function hashStr(s) {
+  let h = 5381;
+  for (let i = 0; i < s.length; i++) h = ((h << 5) + h) ^ s.charCodeAt(i);
+  return (h >>> 0).toString(36);
+}
+
+// ─── STORAGE ─────────────────────────────────────────────────────────────────
+function getUsers() {
+  return JSON.parse(localStorage.getItem('fb_users') || '{}');
+}
+function saveUsers(u) {
+  localStorage.setItem('fb_users', JSON.stringify(u));
+}
+
+// ─── TABS ─────────────────────────────────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach((b, i) =>
+    b.classList.toggle('active', (i === 0) === (tab === 'login')));
+  document.getElementById('loginPanel').classList.toggle('active', tab === 'login');
+  document.getElementById('registerPanel').classList.toggle('active', tab === 'register');
+  document.getElementById('loginError').textContent = '';
+  document.getElementById('regError').textContent = '';
+}
+
+// ─── AUTH ─────────────────────────────────────────────────────────────────────
+let currentUser = null;
+
+function login() {
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value;
+  const err = document.getElementById('loginError');
+  if (!u || !p) { err.textContent = 'נא למלא את כל השדות'; return; }
+  const users = getUsers();
+  if (!users[u]) { err.textContent = 'שם משתמש לא קיים'; return; }
+  if (users[u].hash !== hashStr(p)) { err.textContent = 'סיסמה שגויה'; return; }
+  err.textContent = '';
+  startSession(u);
+}
+
+function register() {
+  const u = document.getElementById('regUser').value.trim();
+  const p = document.getElementById('regPass').value;
+  const p2 = document.getElementById('regPass2').value;
+  const err = document.getElementById('regError');
+  if (!u || !p || !p2) { err.textContent = 'נא למלא את כל השדות'; return; }
+  if (u.length < 2) { err.textContent = 'שם משתמש חייב להכיל לפחות 2 תווים'; return; }
+  if (p.length < 4) { err.textContent = 'הסיסמה חייבת להכיל לפחות 4 תווים'; return; }
+  if (p !== p2) { err.textContent = 'הסיסמאות אינן תואמות'; return; }
+  const users = getUsers();
+  if (users[u]) { err.textContent = 'שם המשתמש כבר תפוס'; return; }
+  users[u] = { hash: hashStr(p), highScore: 0 };
+  saveUsers(users);
+  err.textContent = '';
+  startSession(u);
+}
+
+function startSession(username) {
+  currentUser = username;
+  document.getElementById('authScreen').style.display = 'none';
+  document.getElementById('gameScreen').style.display = 'flex';
+  document.getElementById('hudUser').textContent = username;
+  updateHudBest();
+  initGame();
+}
+
+function logout() {
+  currentUser = null;
+  stopGame();
+  document.getElementById('gameScreen').style.display = 'none';
+  document.getElementById('authScreen').style.display = 'block';
+  document.getElementById('loginUser').value = '';
+  document.getElementById('loginPass').value = '';
+  document.getElementById('loginError').textContent = '';
+}
+
+function updateHudBest() {
+  const best = getUsers()[currentUser]?.highScore || 0;
+  document.getElementById('hudBest').textContent = best;
+}
+
+function saveScore(score) {
+  const users = getUsers();
+  if (score > (users[currentUser]?.highScore || 0)) {
+    users[currentUser].highScore = score;
+    saveUsers(users);
+    updateHudBest();
+  }
+}
+
+// ─── GAME ─────────────────────────────────────────────────────────────────────
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+
+const GRAVITY = 0.45;
+const FLAP = -9;
+const PIPE_W = 64;
+const PIPE_GAP = 160;
+const PIPE_SPEED = 2.8;
+const PIPE_INTERVAL = 90; // frames
+const GROUND_H = 60;
+const BIRD_R = 18;
+
+let bird, pipes, score, frame, gameState, animId;
+// gameState: 'idle' | 'running' | 'dead'
+
+function initGame() {
+  bird = { x: 100, y: H / 2, vy: 0 };
+  pipes = [];
+  score = 0;
+  frame = 0;
+  gameState = 'idle';
+  document.getElementById('startOverlay').style.display = 'flex';
+  document.getElementById('gameOverOverlay').style.display = 'none';
+  cancelAnimationFrame(animId);
+  loop();
+}
+
+function stopGame() { cancelAnimationFrame(animId); }
+
+function flap() {
+  if (gameState === 'idle') {
+    gameState = 'running';
+    document.getElementById('startOverlay').style.display = 'none';
+  }
+  if (gameState === 'running') bird.vy = FLAP;
+}
+
+function spawnPipe() {
+  const minTop = 60;
+  const maxTop = H - GROUND_H - PIPE_GAP - 60;
+  const topH = Math.random() * (maxTop - minTop) + minTop;
+  pipes.push({ x: W, topH, passed: false });
+}
+
+function loop() {
+  update();
+  draw();
+  animId = requestAnimationFrame(loop);
+}
+
+function update() {
+  if (gameState !== 'running') return;
+  frame++;
+
+  // bird physics
+  bird.vy += GRAVITY;
+  bird.y += bird.vy;
+
+  // spawn pipes
+  if (frame % PIPE_INTERVAL === 0) spawnPipe();
+
+  // move pipes
+  for (const p of pipes) {
+    p.x -= PIPE_SPEED;
+    if (!p.passed && p.x + PIPE_W < bird.x - BIRD_R) {
+      p.passed = true;
+      score++;
+    }
+  }
+  pipes = pipes.filter(p => p.x + PIPE_W > 0);
+
+  // collision: ground / ceiling
+  if (bird.y + BIRD_R >= H - GROUND_H || bird.y - BIRD_R <= 0) {
+    die();
+    return;
+  }
+
+  // collision: pipes
+  for (const p of pipes) {
+    const inX = bird.x + BIRD_R > p.x && bird.x - BIRD_R < p.x + PIPE_W;
+    if (inX && (bird.y - BIRD_R < p.topH || bird.y + BIRD_R > p.topH + PIPE_GAP)) {
+      die();
+      return;
+    }
+  }
+}
+
+function die() {
+  gameState = 'dead';
+  saveScore(score);
+  const best = getUsers()[currentUser]?.highScore || 0;
+  document.getElementById('finalScore').textContent = score;
+  document.getElementById('finalBest').textContent = best;
+  document.getElementById('gameOverOverlay').style.display = 'flex';
+}
+
+function restartGame() { initGame(); }
+
+// ─── DRAW ─────────────────────────────────────────────────────────────────────
+
+// Sky gradient cache
+const skyGrad = ctx.createLinearGradient(0, 0, 0, H - GROUND_H);
+skyGrad.addColorStop(0, '#70c5ce');
+skyGrad.addColorStop(1, '#b8e8f0');
+
+// Clouds (static decorative)
+const clouds = [
+  { x: 60, y: 60, r: 26 },
+  { x: 180, y: 40, r: 20 },
+  { x: 320, y: 70, r: 30 },
+  { x: 420, y: 45, r: 22 },
+];
+
+function drawCloud(x, y, r) {
+  ctx.fillStyle = 'rgba(255,255,255,0.85)';
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.arc(x + r * 0.8, y - r * 0.2, r * 0.7, 0, Math.PI * 2);
+  ctx.arc(x - r * 0.7, y - r * 0.1, r * 0.6, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function drawBird(x, y, vy) {
+  const tilt = Math.min(Math.max(vy * 3, -30), 70) * Math.PI / 180;
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(tilt);
+
+  // body
+  ctx.fillStyle = '#f9c74f';
+  ctx.beginPath();
+  ctx.ellipse(0, 0, BIRD_R, BIRD_R * 0.85, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // wing
+  ctx.fillStyle = '#f3a800';
+  ctx.beginPath();
+  ctx.ellipse(-4, 4, 10, 6, -0.4, 0, Math.PI * 2);
+  ctx.fill();
+
+  // eye
+  ctx.fillStyle = '#fff';
+  ctx.beginPath();
+  ctx.arc(7, -5, 6, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#222';
+  ctx.beginPath();
+  ctx.arc(9, -5, 3, 0, Math.PI * 2);
+  ctx.fill();
+
+  // beak
+  ctx.fillStyle = '#e8671a';
+  ctx.beginPath();
+  ctx.moveTo(13, -1);
+  ctx.lineTo(22, 2);
+  ctx.lineTo(13, 5);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.restore();
+}
+
+function drawPipe(x, topH) {
+  const capH = 20, capW = PIPE_W + 8;
+
+  // top pipe
+  ctx.fillStyle = '#3dba4e';
+  ctx.fillRect(x, 0, PIPE_W, topH - capH);
+  ctx.fillStyle = '#2ea03d';
+  ctx.fillRect(x - 4, topH - capH, capW, capH);
+
+  // bottom pipe
+  const botY = topH + PIPE_GAP;
+  ctx.fillStyle = '#3dba4e';
+  ctx.fillRect(x, botY + capH, PIPE_W, H - botY - capH);
+  ctx.fillStyle = '#2ea03d';
+  ctx.fillRect(x - 4, botY, capW, capH);
+
+  // shine
+  ctx.fillStyle = 'rgba(255,255,255,0.15)';
+  ctx.fillRect(x + 6, 0, 8, topH - capH);
+  ctx.fillRect(x + 6, botY + capH, 8, H - botY - capH);
+}
+
+function drawGround() {
+  ctx.fillStyle = '#ded895';
+  ctx.fillRect(0, H - GROUND_H, W, GROUND_H);
+  ctx.fillStyle = '#5da13a';
+  ctx.fillRect(0, H - GROUND_H, W, 12);
+  // grass tufts
+  ctx.fillStyle = '#4a8c2e';
+  for (let gx = 10; gx < W; gx += 30) {
+    ctx.beginPath();
+    ctx.arc(gx, H - GROUND_H + 4, 5, Math.PI, 0);
+    ctx.fill();
+  }
+}
+
+function drawScore() {
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 36px Arial';
+  ctx.textAlign = 'center';
+  ctx.shadowColor = 'rgba(0,0,0,0.4)';
+  ctx.shadowBlur = 4;
+  ctx.fillText(score, W / 2, 50);
+  ctx.shadowBlur = 0;
+}
+
+function draw() {
+  // sky
+  ctx.fillStyle = skyGrad;
+  ctx.fillRect(0, 0, W, H);
+
+  // clouds
+  clouds.forEach(c => drawCloud(c.x, c.y, c.r));
+
+  // pipes
+  pipes.forEach(p => drawPipe(p.x, p.topH));
+
+  // ground
+  drawGround();
+
+  // bird
+  drawBird(bird.x, bird.y, bird.vy);
+
+  // score (only while running)
+  if (gameState === 'running') drawScore();
+}
+
+// ─── INPUT ────────────────────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.code === 'Space' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    if (gameState !== 'dead') flap();
+  }
+});
+canvas.addEventListener('click', () => { if (gameState !== 'dead') flap(); });
+canvas.addEventListener('touchstart', e => {
+  e.preventDefault();
+  if (gameState !== 'dead') flap();
+}, { passive: false });
+
+// Enter key submits login/register
+document.getElementById('loginPass').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+document.getElementById('loginUser').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+document.getElementById('regPass2').addEventListener('keydown', e => { if (e.key === 'Enter') register(); });
+</script>
+</body>
+</html>

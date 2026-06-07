@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>איקס עיגול</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      text-shadow: 0 0 20px rgba(100, 200, 255, 0.7);
+      letter-spacing: 2px;
+    }
+
+    .scoreboard {
+      display: flex;
+      gap: 40px;
+      margin-bottom: 20px;
+      font-size: 1.1rem;
+    }
+
+    .score-box {
+      background: rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 10px 24px;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .score-box .label { font-size: 0.85rem; opacity: 0.7; }
+    .score-box .value { font-size: 1.8rem; font-weight: bold; }
+    .score-box.x .value { color: #e94560; }
+    .score-box.o .value { color: #0f9bcc; }
+    .score-box.draw .value { color: #f5a623; }
+
+    .status {
+      font-size: 1.3rem;
+      margin-bottom: 20px;
+      min-height: 2rem;
+      text-align: center;
+      transition: all 0.3s;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 110px);
+      grid-template-rows: repeat(3, 110px);
+      gap: 8px;
+    }
+
+    .cell {
+      background: rgba(255,255,255,0.07);
+      border-radius: 16px;
+      border: 2px solid rgba(255,255,255,0.15);
+      font-size: 3.5rem;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, transform 0.1s, border-color 0.2s;
+      user-select: none;
+    }
+
+    .cell:hover:not(.taken) {
+      background: rgba(255,255,255,0.15);
+      border-color: rgba(255,255,255,0.4);
+      transform: scale(1.05);
+    }
+
+    .cell.x { color: #e94560; }
+    .cell.o { color: #0f9bcc; }
+    .cell.taken { cursor: default; }
+
+    .cell.win {
+      background: rgba(255,255,255,0.25);
+      border-color: #ffd700;
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+      animation: pulse 0.8s ease-in-out infinite alternate;
+    }
+
+    @keyframes pulse {
+      from { transform: scale(1); }
+      to   { transform: scale(1.06); }
+    }
+
+    .btn {
+      margin-top: 28px;
+      padding: 12px 36px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      background: linear-gradient(135deg, #e94560, #0f9bcc);
+      color: #fff;
+      font-weight: bold;
+      letter-spacing: 1px;
+      transition: opacity 0.2s, transform 0.1s;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+
+    .btn:hover { opacity: 0.85; transform: translateY(-2px); }
+    .btn:active { transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+<h1>❌ איקס עיגול ⭕</h1>
+
+<div class="scoreboard">
+  <div class="score-box x">
+    <div class="label">❌ שחקן X</div>
+    <div class="value" id="score-x">0</div>
+  </div>
+  <div class="score-box draw">
+    <div class="label">🤝 תיקו</div>
+    <div class="value" id="score-draw">0</div>
+  </div>
+  <div class="score-box o">
+    <div class="label">⭕ שחקן O</div>
+    <div class="value" id="score-o">0</div>
+  </div>
+</div>
+
+<div class="status" id="status">תור שחקן ❌</div>
+
+<div class="board" id="board">
+  <div class="cell" data-i="0"></div>
+  <div class="cell" data-i="1"></div>
+  <div class="cell" data-i="2"></div>
+  <div class="cell" data-i="3"></div>
+  <div class="cell" data-i="4"></div>
+  <div class="cell" data-i="5"></div>
+  <div class="cell" data-i="6"></div>
+  <div class="cell" data-i="7"></div>
+  <div class="cell" data-i="8"></div>
+</div>
+
+<button class="btn" id="restart">משחק חדש</button>
+
+<script>
+  const WINS = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+  let board, current, gameOver, scores = {X:0, O:0, D:0};
+
+  const cells   = document.querySelectorAll('.cell');
+  const status  = document.getElementById('status');
+  const scoreX  = document.getElementById('score-x');
+  const scoreO  = document.getElementById('score-o');
+  const scoreDr = document.getElementById('score-draw');
+
+  function init() {
+    board = Array(9).fill('');
+    current = 'X';
+    gameOver = false;
+    cells.forEach(c => {
+      c.textContent = '';
+      c.className = 'cell';
+    });
+    status.textContent = 'תור שחקן ❌';
+  }
+
+  function checkWinner() {
+    for (const [a,b,c] of WINS) {
+      if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+        return { winner: board[a], line: [a,b,c] };
+      }
+    }
+    if (board.every(v => v)) return { winner: 'draw' };
+    return null;
+  }
+
+  cells.forEach(cell => {
+    cell.addEventListener('click', () => {
+      const i = +cell.dataset.i;
+      if (gameOver || board[i]) return;
+
+      board[i] = current;
+      cell.textContent = current === 'X' ? '❌' : '⭕';
+      cell.classList.add('taken', current.toLowerCase());
+
+      const result = checkWinner();
+      if (result) {
+        gameOver = true;
+        if (result.winner === 'draw') {
+          status.textContent = '🤝 תיקו!';
+          scores.D++;
+          scoreDr.textContent = scores.D;
+        } else {
+          const sym = result.winner === 'X' ? '❌' : '⭕';
+          status.textContent = `🎉 שחקן ${sym} ניצח!`;
+          result.line.forEach(idx => cells[idx].classList.add('win'));
+          scores[result.winner]++;
+          scoreX.textContent = scores.X;
+          scoreO.textContent = scores.O;
+        }
+      } else {
+        current = current === 'X' ? 'O' : 'X';
+        status.textContent = `תור שחקן ${current === 'X' ? '❌' : '⭕'}`;
+      }
+    });
+  });
+
+  document.getElementById('restart').addEventListener('click', init);
+
+  init();
+</script>
+</body>
+</html>
