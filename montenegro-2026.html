@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>משפחת חזי – מונטנגרו 2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f0f2f5;
+    --surface: #ffffff;
+    --surface2: #f8f9fb;
+    --border: #e2e5ea;
+    --text-primary: #111827;
+    --text-secondary: #6b7280;
+    --text-muted: #9ca3af;
+    --accent: #1d4ed8;
+    --accent-light: #3b82f6;
+    --accent-bg: #eff6ff;
+    --accent-text: #1e40af;
+    --success-bg: #f0fdf4;
+    --success-border: #86efac;
+    --success-text: #166534;
+    --warn-bg: #fffbeb;
+    --warn-border: #fcd34d;
+    --warn-text: #92400e;
+    --danger-bg: #fef2f2;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    --shadow: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+    --shadow-lg: 0 10px 25px -5px rgba(0,0,0,0.1), 0 4px 10px -5px rgba(0,0,0,0.06);
+  }
+
+  body {
+    font-family: 'Heebo', sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+    padding: 0;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* ─── HERO BANNER ─── */
+  .hero {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 40%, #0ea5e9 100%);
+    padding: 2rem 1.5rem 5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .hero-inner { max-width: 680px; margin: 0 auto; position: relative; }
+  .hero-flag { font-size: 40px; margin-bottom: .5rem; }
+  .hero h1 {
+    font-size: 26px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: .35rem;
+  }
+  .hero-sub { font-size: 14px; color: rgba(255,255,255,0.75); margin-bottom: 1.5rem; }
+
+  .meta-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+  .meta-pill {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 30px;
+  }
+
+  /* ─── MAIN CONTENT ─── */
+  .main {
+    max-width: 680px;
+    margin: -3rem auto 0;
+    padding: 0 1rem 2rem;
+    position: relative;
+  }
+
+  /* ─── TABS ─── */
+  .tabs {
+    display: flex;
+    gap: 0;
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 5px;
+    box-shadow: var(--shadow);
+    margin-bottom: 1.25rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .tab {
+    flex: 1;
+    min-width: 0;
+    text-align: center;
+    padding: 9px 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-radius: 10px;
+    transition: all .2s;
+    border: none;
+    background: none;
+    font-family: inherit;
+    white-space: nowrap;
+  }
+  .tab:hover { background: var(--bg); color: var(--text-primary); }
+  .tab.active { background: var(--accent); color: #fff; box-shadow: 0 2px 8px rgba(29,78,216,.35); }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ─── CARDS ─── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.2rem 1.35rem;
+    margin-bottom: .85rem;
+    box-shadow: var(--shadow-sm);
+  }
+  .card-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: .65rem;
+  }
+
+  .hr { border: none; border-top: 1px solid var(--border); margin: .75rem 0; }
+
+  /* ─── FLIGHT CARD ─── */
+  .flight-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: .85rem; }
+  .flight-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: .07em; }
+  .flight-num { font-size: 11px; color: var(--text-muted); background: var(--bg); padding: 3px 8px; border-radius: 6px; }
+  .flight-route { display: flex; align-items: center; gap: 14px; margin-bottom: .65rem; }
+  .airport { text-align: center; min-width: 80px; }
+  .airport-time { font-size: 28px; font-weight: 800; color: var(--text-primary); letter-spacing: -1px; }
+  .airport-code { font-size: 13px; font-weight: 700; color: var(--accent-light); margin-top: 2px; }
+  .airport-name { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+  .arrow-line { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .arrow-track { width: 100%; display: flex; align-items: center; gap: 4px; }
+  .arrow-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent-light); flex-shrink: 0; }
+  .arrow-bar { flex: 1; height: 2px; background: linear-gradient(90deg, var(--accent-light), #93c5fd); border-radius: 2px; }
+  .arrow-plane { font-size: 14px; flex-shrink: 0; }
+  .arrow-dur { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+
+  .seats-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
+  .seats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 6px; }
+  .seat-chip {
+    background: var(--accent-bg);
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    padding: 7px 8px;
+    font-size: 12px;
+  }
+  .seat-name { font-weight: 700; color: var(--accent-text); display: block; font-size: 11px; }
+  .seat-num { color: var(--text-secondary); font-size: 13px; font-weight: 600; }
+
+  /* ─── DATE BADGE ─── */
+  .date-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 1.25rem 0 .6rem;
+  }
+  .date-badge-text {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent-text);
+    background: var(--accent-bg);
+    border: 1px solid #bfdbfe;
+    padding: 5px 14px;
+    border-radius: 30px;
+  }
+  .date-badge-line { flex: 1; height: 1px; background: var(--border); }
+
+  /* ─── TIMELINE ─── */
+  .stop-row { display: flex; gap: 12px; align-items: flex-start; padding: 2px 0; }
+  .stop-time {
+    min-width: 86px;
+    font-size: 12px;
+    color: var(--text-muted);
+    padding-top: 3px;
+    direction: ltr;
+    text-align: left;
+    flex-shrink: 0;
+    font-weight: 600;
+  }
+  .stop-body { flex: 1; }
+  .stop-title { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+  .stop-desc { font-size: 12px; color: var(--text-secondary); margin-top: 3px; line-height: 1.55; }
+  .tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+  .tag { font-size: 11px; padding: 2px 9px; border-radius: 20px; font-weight: 600; }
+  .tag-info { background: var(--accent-bg); color: var(--accent-text); border: 1px solid #bfdbfe; }
+  .tag-warn { background: var(--warn-bg); color: var(--warn-text); border: 1px solid var(--warn-border); }
+  .tag-ok { background: var(--success-bg); color: var(--success-text); border: 1px solid var(--success-border); }
+
+  /* ─── ALERTS ─── */
+  .alert {
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.1rem;
+    margin-bottom: .85rem;
+  }
+  .alert-warn { background: var(--warn-bg); border: 1px solid var(--warn-border); }
+  .alert-ok { background: var(--success-bg); border: 1px solid var(--success-border); }
+  .alert-title { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+  .alert-body { font-size: 13px; line-height: 1.75; }
+  .alert-warn .alert-title, .alert-warn .alert-body { color: var(--warn-text); }
+  .alert-ok .alert-title, .alert-ok .alert-body { color: var(--success-text); }
+
+  /* ─── HOTEL ─── */
+  .hotel-header {
+    background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.1rem;
+    margin-bottom: .85rem;
+    border: 1px solid var(--success-border);
+  }
+  .hotel-name { font-size: 17px; font-weight: 800; margin-bottom: 3px; }
+  .hotel-addr { font-size: 12px; color: var(--text-secondary); }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: .75rem; }
+  .info-cell { background: var(--surface); border-radius: var(--radius-sm); padding: 10px 13px; border: 1px solid var(--border); }
+  .info-lbl { font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 2px; }
+  .info-val { font-size: 14px; font-weight: 700; }
+  .map-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    text-decoration: none;
+    margin-top: .75rem;
+    padding: 7px 14px;
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    background: var(--accent-bg);
+    transition: background .15s;
+  }
+  .map-link:hover { background: #dbeafe; }
+
+  /* ─── BOOKING LINKS ─── */
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .07em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin: 1.25rem 0 .6rem;
+  }
+  .link-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem;
+    margin-bottom: .6rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    text-decoration: none;
+    box-shadow: var(--shadow-sm);
+    transition: all .2s;
+  }
+  .link-card:hover { border-color: var(--accent-light); box-shadow: 0 0 0 3px rgba(59,130,246,.12); transform: translateY(-1px); }
+  .link-card.feat { border: 2px solid var(--accent); background: var(--accent-bg); }
+  .link-card.feat:hover { box-shadow: 0 0 0 4px rgba(29,78,216,.15); }
+  .link-name { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+  .link-desc { font-size: 12px; color: var(--text-secondary); margin-top: 3px; line-height: 1.45; }
+  .lbadge { display: inline-block; font-size: 11px; padding: 2px 9px; border-radius: 20px; margin-top: 6px; font-weight: 600; }
+  .arrow-ext { font-size: 20px; color: var(--text-muted); flex-shrink: 0; }
+  .link-card.feat .arrow-ext { color: var(--accent); }
+
+  .phone-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem;
+    margin-bottom: .6rem;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .phone-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--accent);
+    text-decoration: none;
+    padding: 8px 16px;
+    border: 2px solid var(--accent);
+    border-radius: 10px;
+    background: var(--accent-bg);
+    white-space: nowrap;
+    transition: background .15s;
+  }
+  .phone-link:hover { background: #dbeafe; }
+
+  /* ─── CHECKLIST ─── */
+  .checklist { list-style: none; }
+  .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--success-border);
+    font-size: 13px;
+    color: var(--success-text);
+    line-height: 1.5;
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .check-box {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--success-border);
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    cursor: pointer;
+    transition: all .15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: transparent;
+    background: var(--surface);
+  }
+  .check-box.done { background: var(--success-text); border-color: var(--success-text); color: #fff; }
+
+  @media (max-width: 480px) {
+    .hero h1 { font-size: 21px; }
+    .seats-grid { grid-template-columns: 1fr 1fr; }
+    .tab { font-size: 12px; padding: 8px 4px; }
+    .airport-time { font-size: 22px; }
+    .meta-pills { gap: 6px; }
+    .meta-pill { font-size: 12px; padding: 5px 11px; }
+    .info-grid { grid-template-columns: 1fr 1fr; }
+    .phone-card { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-flag">🇲🇪</div>
+    <h1>משפחת חזי – מונטנגרו 2026</h1>
+    <div class="hero-sub">ישראייר · Docket 4447100 · Economy</div>
+    <div class="meta-pills">
+      <div class="meta-pill">📅 14–19 יולי 2026</div>
+      <div class="meta-pill">🛏️ 5 לילות</div>
+      <div class="meta-pill">👨‍👩‍👧‍👦 8 נוסעים</div>
+      <div class="meta-pill">🏖️ בודווה</div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('flights',this)">✈️ טיסות</button>
+    <button class="tab" onclick="showTab('hotel',this)">🏨 מלון</button>
+    <button class="tab" onclick="showTab('trip',this)">📅 יומן</button>
+    <button class="tab" onclick="showTab('book',this)">🔗 הזמנות</button>
+  </div>
+
+  <!-- ════ FLIGHTS ════ -->
+  <div id="flights" class="panel active">
+
+    <div class="date-badge">
+      <div class="date-badge-text">📅 14.7.2026 – טיסת הלוך</div>
+      <div class="date-badge-line"></div>
+    </div>
+    <div class="card">
+      <div class="flight-meta">
+        <div class="flight-label">ישראייר 6H 177 · Economy</div>
+        <div class="flight-num">Docket 4447100</div>
+      </div>
+      <div class="flight-route">
+        <div class="airport">
+          <div class="airport-time">08:20</div>
+          <div class="airport-code">TLV</div>
+          <div class="airport-name">תל אביב T3</div>
+        </div>
+        <div class="arrow-line">
+          <div class="arrow-track">
+            <div class="arrow-dot"></div>
+            <div class="arrow-bar"></div>
+            <div class="arrow-plane">✈️</div>
+          </div>
+          <div class="arrow-dur">~2:00 שעות</div>
+        </div>
+        <div class="airport">
+          <div class="airport-time">10:20</div>
+          <div class="airport-code">TIV</div>
+          <div class="airport-name">טיבאט, מונטנגרו</div>
+        </div>
+      </div>
+      <div class="hr"></div>
+      <div class="seats-label">מושבים</div>
+      <div class="seats-grid">
+        <div class="seat-chip"><span class="seat-name">שרי</span><span class="seat-num">8F</span></div>
+        <div class="seat-chip"><span class="seat-name">עידן</span><span class="seat-num">8E</span></div>
+        <div class="seat-chip"><span class="seat-name">שרונה</span><span class="seat-num">8D</span></div>
+        <div class="seat-chip"><span class="seat-name">אוריין</span><span class="seat-num">8C</span></div>
+        <div class="seat-chip"><span class="seat-name">אריאל</span><span class="seat-num">8B</span></div>
+        <div class="seat-chip"><span class="seat-name">בת שבע</span><span class="seat-num">8A</span></div>
+        <div class="seat-chip"><span class="seat-name">אביתר</span><span class="seat-num">7F</span></div>
+        <div class="seat-chip"><span class="seat-name">גאיה</span><span class="seat-num">7E</span></div>
+      </div>
+    </div>
+
+    <div class="date-badge">
+      <div class="date-badge-text">📅 19.7.2026 – טיסת חזור</div>
+      <div class="date-badge-line"></div>
+    </div>
+    <div class="card">
+      <div class="flight-meta">
+        <div class="flight-label">ישראייר 6H 178 · Economy</div>
+        <div class="flight-num">Docket 4447100</div>
+      </div>
+      <div class="flight-route">
+        <div class="airport">
+          <div class="airport-time">11:00</div>
+          <div class="airport-code">TIV</div>
+          <div class="airport-name">טיבאט, מונטנגרו</div>
+        </div>
+        <div class="arrow-line">
+          <div class="arrow-track">
+            <div class="arrow-dot"></div>
+            <div class="arrow-bar"></div>
+            <div class="arrow-plane">✈️</div>
+          </div>
+          <div class="arrow-dur">~2:45 שעות</div>
+        </div>
+        <div class="airport">
+          <div class="airport-time">14:45</div>
+          <div class="airport-code">TLV</div>
+          <div class="airport-name">תל אביב</div>
+        </div>
+      </div>
+      <div class="hr"></div>
+      <div class="seats-label">מושבים</div>
+      <div class="seats-grid">
+        <div class="seat-chip"><span class="seat-name">שרי</span><span class="seat-num">7F</span></div>
+        <div class="seat-chip"><span class="seat-name">עידן</span><span class="seat-num">7E</span></div>
+        <div class="seat-chip"><span class="seat-name">שרונה</span><span class="seat-num">8F</span></div>
+        <div class="seat-chip"><span class="seat-name">אוריין</span><span class="seat-num">8E</span></div>
+        <div class="seat-chip"><span class="seat-name">אריאל</span><span class="seat-num">8D</span></div>
+        <div class="seat-chip"><span class="seat-name">בת שבע</span><span class="seat-num">8C</span></div>
+        <div class="seat-chip"><span class="seat-name">אביתר</span><span class="seat-num">8B</span></div>
+        <div class="seat-chip"><span class="seat-name">גאיה</span><span class="seat-num">8A</span></div>
+      </div>
+    </div>
+
+    <div class="alert alert-warn">
+      <div class="alert-title">⚠️ חשוב לטיסה</div>
+      <div class="alert-body">
+        · להגיע לשדה התעופה בן גוריון לפחות 3 שעות לפני – כלומר עד <strong>05:20</strong> ביום 14.7<br>
+        · ילדים מתחת לגיל 18 חייבים ליווי הורה<br>
+        · טרולי (מזוודה) עד 10 ק"ג כלול בכרטיס
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ HOTEL ════ -->
+  <div id="hotel" class="panel">
+    <div class="card">
+      <div class="hotel-header">
+        <div class="hotel-name">🏨 מלון בבודווה</div>
+        <div class="hotel-addr">📍 Ulica Alekse Santica 4, 85310 Budva, Montenegro</div>
+      </div>
+      <div class="info-grid">
+        <div class="info-cell"><div class="info-lbl">צ'ק-אין</div><div class="info-val">14.7.2026</div></div>
+        <div class="info-cell"><div class="info-lbl">צ'ק-אאוט</div><div class="info-val">19.7.2026</div></div>
+        <div class="info-cell"><div class="info-lbl">לילות</div><div class="info-val">5 לילות</div></div>
+        <div class="info-cell"><div class="info-lbl">נוסעים</div><div class="info-val">8 אנשים</div></div>
+      </div>
+      <a class="map-link" href="https://maps.google.com/?q=Ulica+Alekse+Santica+4+Budva+Montenegro" target="_blank">📍 פתח ב-Google Maps ↗</a>
+    </div>
+    <div class="alert alert-warn">
+      <div class="alert-title">🕐 תזמון הגעה למלון</div>
+      <div class="alert-body">הטיסה נוחתת ב-10:20 בטיבאט. לאחר ביקורת דרכונים ואיסוף מזוודות, ההגעה למלון בבודווה צפויה בסביבות <strong>12:00–13:00</strong> (נסיעה של כ-40 דקות משדה התעופה טיבאט).</div>
+    </div>
+  </div>
+
+  <!-- ════ TRIP DIARY ════ -->
+  <div id="trip" class="panel">
+
+    <div class="date-badge"><div class="date-badge-text">📅 14.7 – שלישי · הגעה</div><div class="date-badge-line"></div></div>
+    <div class="card">
+      <div class="stop-row"><div class="stop-time">08:20</div><div class="stop-body"><div class="stop-title">✈️ המראה מתל אביב</div><div class="stop-desc">ישראייר 6H177 · טרמינל 3</div></div></div>
+      <div class="hr"></div>
+      <div class="stop-row"><div class="stop-time">10:20</div><div class="stop-body"><div class="stop-title">🛬 נחיתה בטיבאט</div><div class="stop-desc">Terra Taxi ממתין בשדה · נסיעה לבודווה ~40 דקות</div></div></div>
+      <div class="hr"></div>
+      <div class="stop-row"><div class="stop-time">~14:00</div><div class="stop-body"><div class="stop-title">🏨 צ'ק-אין למלון</div><div class="stop-desc">Ulica Alekse Santica 4 · מנוחה והתארגנות</div></div></div>
+      <div class="hr"></div>
+      <div class="stop-row"><div class="stop-time">אחה"צ</div><div class="stop-body"><div class="stop-title">🥦 שוק האיכרים – בודווה</div><div class="stop-desc">Zelena Pljaca Green Market, Mediteranska · פירות, ירקות, מוצרים מקומיים ומזכרות</div><div class="tags"><span class="tag tag-ok">כניסה חינם</span><span class="tag tag-info">ליד מרכז העיר</span></div></div></div>
+      <div class="hr"></div>
+      <div class="stop-row"><div class="stop-time">אחה"צ</div><div class="stop-body"><div class="stop-title">🏰 מצודת העיר – Citadela</div><div class="stop-desc">אתר היסטורי עם נוף מרהיב על הים, מוזיאון קטן וספרייה עתיקה</div><div class="tags"><span class="tag tag-info">אופציונלי</span></div></div></div>
+    </div>
+
+    <div class="date-badge"><div class="date-badge-text">📅 15.7 – רביעי · קוטור ולובצ'ן</div><div class="date-badge-line"></div></div>
+    <div class="card">
+      <div class="stop-row"><div class="stop-time">09:00</div><div class="stop-body"><div class="stop-title">🚗 יציאה לקוטור</div><div class="stop-desc">מיניוואן ל-8 אנשים · ~45 דקות נסיעה לאורך החוף</div></div></div>
+      <div class="hr"></div>
+      <div class="stop-row"><div class="stop-time">10:00–12:00</div><div class="stop-body"><div class="stop-title">🚶 עיר העתיקה – קוטור</div><div class="stop-desc">רחובות ימי ביניים, כיכרות ובתי קפה. ביקור בסיטאדל – מוזיאון, ספרייה עתיקה, נוף על המפרץ</div><div class="tags"><span class="tag tag-ok">כניסה חינם לעיר</span><span class="tag tag-warn">להיכנס מוקדם לפני הקהל</span></div></div></div>
+      <div class="hr"></div>
+      <div class="stop-row"><div class="stop-time">12:20</div><div class="stop-body"><div class="stop-title">🚡 רכבל קוטור–לובצ'ן</div><div class="stop-desc">~10 דקות · נוף פנורמי מרהיב על מפרץ קוטור</div><div class="tags"><span class="tag tag-info">€20 לאדם · ~€160 לקבוצה</span><span class="tag tag-warn">לקנות מראש אונליין!</span></div></div></div>
+      <div class="hr"></div>
+      <div class="stop-row"><div class="stop-time">12:30–14:00</div><div class="stop-body"><div class="stop-title">🏔️ פסגת לובצ'ן</div><div class="stop-desc">ארוחת צהריים, Zip Line, Alpine Coaster, נוף עוצר נשימה</div><div class="tags"><span class="tag tag-info">Zip Line מגיל 14+</span><span class="tag tag-info">Alpine Coaster מגיל 5+</span><span class="tag tag-warn">גיל 4 ו-80 – מנוחה בלבד</span></div></div></div>
+      <div class="hr"></div>
+      <div class="stop-row"><div class="stop-time">14:00–15:30</div><div class="stop-body"><div class="stop-title">🚗 נסיעה לוירפאזר</div><div class="stop-desc">~1.5 שעות נסיעה נופית דרך ההרים</div><div class="tags"><span class="tag tag-warn">מפותל – כדורים נגד בחילה!</span></div></div></div>
+      <div class="hr"></div>
+      <div class="stop-row"><div class="stop-time">15:30–17:30</div><div class="stop-body"><div class="stop-title">🚤 שייט באגם סקאדר</div><div class="stop-desc">חבצלות מים, כפרי דייגים, ציפורים, אפשרות שחייה</div><div class="tags"><span class="tag tag-info">~€15–20 לאדם</span><span class="tag tag-ok">נגיש לכולם</span><span class="tag tag-warn">כובע + קרם שמש!</span></div></div></div>
+      <div class="hr"></div>
+      <div class="stop-row"><div class="stop-time">17:30–18:00</div><div class="stop-body"><div class="stop-title">☕ וירפאזר</div><div class="stop-desc">קפה, אוכל מקומי ומזכרות ליד האגם</div></div></div>
+      <div class="hr"></div>
+      <div class="stop-row"><div class="stop-time">18:00–19:30</div><div class="stop-body"><div class="stop-title">🏨 חזרה למלון</div></div></div>
+    </div>
+
+    <div class="date-badge"><div class="date-badge-text">📅 16.7 – חמישי · אי סבטי ניקולה</div><div class="date-badge-line"></div></div>
+    <div class="card">
+      <div class="stop-row"><div class="stop-time">בוקר</div><div class="stop-body"><div class="stop-title">🚤 סירת טקסי לאי סבטי ניקולה</div><div class="stop-desc">יום רגוע בים · מים צלולים – מתאים לשנירקול לנוער ולצלילת בטן-גב למבוגרים</div><div class="tags"><span class="tag tag-ok">נגיש לכולם</span><span class="tag tag-info">ציוד שנירקול מומלץ</span></div></div></div>
+      <div class="hr"></div>
+      <div class="stop-row"><div class="stop-time">אחה"צ</div><div class="stop-body"><div class="stop-title">🏖️ זמן חופשי</div><div class="stop-desc">שחייה, מנוחה, חזרה לבודווה</div></div></div>
+    </div>
+
+    <div class="date-badge"><div class="date-badge-text">📅 17.7 – שישי · בריכה + ערב חב"ד</div><div class="date-badge-line"></div></div>
+    <div class="card">
+      <div class="stop-row"><div class="stop-time">בוקר</div><div class="stop-body"><div class="stop-title">🏊 בריכת המלון</div><div class="stop-desc">יום רגוע בבריכה – שחייה, שיזוף ומנוחה</div><div class="tags"><span class="tag tag-ok">כלול בהישארות</span><span class="tag tag-info">מתאים לכל הגילאים</span></div></div></div>
+      <div class="hr"></div>
+      <div class="stop-row"><div class="stop-time">צהריים</div><div class="stop-body"><div class="stop-title">🍕 ארוחת צהריים</div><div class="stop-desc">מסעדות איטלקיות בעיר העתיקה</div></div></div>
+      <div class="hr"></div>
+      <div class="stop-row"><div class="stop-time">19:30</div><div class="stop-body"><div class="stop-title">✡️ ערב שבת – בית חב"ד</div><div class="stop-desc">ארוחת ליל שבת עם בית חב"ד המקומי</div><div class="tags"><span class="tag tag-info">לתאם מראש</span></div></div></div>
+    </div>
+
+    <div class="date-badge"><div class="date-badge-text">📅 18.7 – שבת · יום חופשי בבודווה</div><div class="date-badge-line"></div></div>
+    <div class="card">
+      <div class="stop-row"><div class="stop-time">בוקר</div><div class="stop-body"><div class="stop-title">🚶 טיילת Mogren + פסל הבלרינה</div><div class="stop-desc">מסלול הליכה רגלי משפחתי לאורך הטיילת. האזור סגור לרכבים – הילדים יכולים לרוץ בבטחה</div><div class="tags"><span class="tag tag-ok">נגיש לכולם</span><span class="tag tag-info">Slovenska Obala</span></div></div></div>
+      <div class="hr"></div>
+      <div class="stop-row"><div class="stop-time">ערב</div><div class="stop-body"><div class="stop-title">🌅 ערב חופשי</div><div class="stop-desc">ארוחת ערב, הליכה בטיילת, מנוחה לפני הטיסה</div></div></div>
+    </div>
+
+    <div class="date-badge"><div class="date-badge-text">📅 19.7 – ראשון · יום האחרון + טיסה</div><div class="date-badge-line"></div></div>
+    <div class="card">
+      <div class="stop-row"><div class="stop-time">בוקר</div><div class="stop-body"><div class="stop-title">🧳 צ'ק-אאוט ואריזה</div><div class="stop-desc">לצאת מהמלון ולהתכונן לנסיעה לשדה</div></div></div>
+      <div class="hr"></div>
+      <div class="stop-row"><div class="stop-time">~09:00</div><div class="stop-body"><div class="stop-title">🚐 נסיעה לשדה טיבאט</div><div class="stop-desc">לצאת עד 09:00 לפחות · Terra Taxi +382 67 178 888</div></div></div>
+      <div class="hr"></div>
+      <div class="stop-row"><div class="stop-time">11:00</div><div class="stop-body"><div class="stop-title">✈️ טיסת חזור</div><div class="stop-desc">ישראייר 6H178 · טיבאט → תל אביב · נחיתה 14:45</div></div></div>
+    </div>
+  </div>
+
+  <!-- ════ BOOKINGS ════ -->
+  <div id="book" class="panel">
+    <div class="section-label">הסעות</div>
+
+    <div class="phone-card">
+      <div>
+        <div class="link-name">🚐 Terra Taxi – הסעה מהשדה למלון</div>
+        <div class="link-desc" style="margin-top:4px">ימתין בשדה טיבאט עם הנחיתה ב-10:20 · נסיעה לבודווה ~40 דקות</div>
+      </div>
+      <a href="tel:+38267178888" class="phone-link">📞 +382 67 178 888</a>
+    </div>
+
+    <div class="section-label">אטרקציות – לרכוש מראש</div>
+
+    <a class="link-card feat" href="https://kotorcablecar.com" target="_blank">
+      <div>
+        <div class="link-name">🚡 רכבל קוטור – kotorcablecar.com</div>
+        <div class="link-desc">€20 לאדם · ~€160 לכל הקבוצה · לקנות אונליין לפני הנסיעה!</div>
+        <span class="lbadge tag-warn">תורים ארוכים בקיץ – חובה להזמין!</span>
+      </div>
+      <span class="arrow-ext">↗</span>
+    </a>
+
+    <a class="link-card" href="https://www.montenegroadventure.travel/tour/national-park-skadar-lake-from-budva/" target="_blank">
+      <div>
+        <div class="link-name">🚤 שייט אגם סקאדר</div>
+        <div class="link-desc">Montenegro Adventure Travel · הזמנת שייט מבודווה</div>
+      </div>
+      <span class="arrow-ext">↗</span>
+    </a>
+
+    <div class="section-label">רשימת מטלות לפני הנסיעה</div>
+    <div class="card" style="background:var(--success-bg);border-color:var(--success-border)">
+      <ul class="checklist" id="checklist">
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>תאם עם Terra Taxi (+382 67 178 888) שיהיה בשדה ב-10:20</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>הזמן כרטיסי רכבל קוטור מקוון (kotorcablecar.com)</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>בדוק גיל מינימום ל-Alpine Coaster (גיל 4 גבולי – לאשר מראש)</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>הכן כדורים נגד בחילה לנסיעה ההרית ללובצ'ן</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>הגעה לשדה התעופה בן גוריון עד <strong>05:20</strong> ביום 14.7.2026</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>תאם ערב שבת עם בית חב"ד בבודווה</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>הכן ציוד שנירקול לאי סבטי ניקולה</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>כובעים ומסנן קרינה לשייט אגם סקאדר</span></li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function showTab(id, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+}
+
+function toggleCheck(el) {
+  el.classList.toggle('done');
+  el.textContent = el.classList.contains('done') ? '✓' : '';
+  saveChecklist();
+}
+
+function saveChecklist() {
+  const boxes = document.querySelectorAll('.check-box');
+  const state = [...boxes].map(b => b.classList.contains('done'));
+  try { localStorage.setItem('mnt2026-checks', JSON.stringify(state)); } catch(e) {}
+}
+
+function loadChecklist() {
+  try {
+    const state = JSON.parse(localStorage.getItem('mnt2026-checks') || '[]');
+    const boxes = document.querySelectorAll('.check-box');
+    state.forEach((done, i) => {
+      if (done && boxes[i]) {
+        boxes[i].classList.add('done');
+        boxes[i].textContent = '✓';
+      }
+    });
+  } catch(e) {}
+}
+
+loadChecklist();
+</script>
+</body>
+</html>
