@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מסע מונטנגרו — אוגוסט 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Assistant', sans-serif;
+  direction: rtl;
+  background: #f5f4f0;
+  color: #1a1a1a;
+  min-height: 100vh;
+}
+.app {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+}
+.hero {
+  text-align: center;
+  padding: 2rem 0 1.5rem;
+  border-bottom: 1px solid #e0ddd5;
+  margin-bottom: 1.5rem;
+}
+.hero-flag { font-size: 32px; margin-bottom: 8px; }
+.hero-title {
+  font-size: 26px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+.hero-sub {
+  font-size: 14px;
+  color: #888;
+  margin-top: 4px;
+}
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 1.5rem;
+}
+.stat-card {
+  background: #fff;
+  border: 1px solid #e8e5de;
+  border-radius: 10px;
+  padding: 0.75rem;
+  text-align: center;
+}
+.stat-label { font-size: 11px; color: #aaa; margin-bottom: 4px; }
+.stat-val { font-size: 22px; font-weight: 600; color: #1a1a1a; }
+.regions { display: flex; flex-direction: column; gap: 10px; }
+.region-card {
+  background: #fff;
+  border: 1px solid #e8e5de;
+  border-radius: 14px;
+  overflow: hidden;
+}
+.region-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px 16px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+}
+.region-header:hover { background: #faf9f6; }
+.region-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.region-meta { flex: 1; }
+.region-name { font-size: 16px; font-weight: 600; color: #1a1a1a; }
+.region-dates { font-size: 12px; color: #aaa; margin-top: 2px; }
+.region-badge {
+  font-size: 11px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+.chevron {
+  font-size: 18px;
+  color: #bbb;
+  transition: transform 0.2s;
+  line-height: 1;
+}
+.chevron.open { transform: rotate(180deg); }
+.region-body { border-top: 1px solid #f0ede6; }
+.day-row {
+  border-bottom: 1px solid #f5f3ee;
+  padding: 14px 16px;
+}
+.day-row:last-child { border-bottom: none; }
+.day-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.day-icon { font-size: 14px; }
+.activities { display: flex; flex-direction: column; gap: 7px; }
+.activity { display: flex; gap: 10px; align-items: flex-start; }
+.act-time {
+  font-size: 11px;
+  color: #bbb;
+  min-width: 52px;
+  text-align: left;
+  padding-top: 3px;
+  flex-shrink: 0;
+  direction: ltr;
+}
+.act-text { font-size: 13px; color: #333; line-height: 1.55; }
+.act-highlight {
+  display: inline-block;
+  font-size: 11px;
+  margin-right: 5px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-weight: 500;
+}
+.tips-section {
+  margin-top: 1.5rem;
+  border-top: 1px solid #e0ddd5;
+  padding-top: 1.5rem;
+}
+.tips-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+  margin-bottom: 10px;
+}
+.tips-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.tip {
+  background: #fff;
+  border: 1px solid #e8e5de;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 12px;
+  color: #555;
+  line-height: 1.55;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+.tip-icon { font-size: 16px; flex-shrink: 0; }
+.footer {
+  text-align: center;
+  margin-top: 2.5rem;
+  font-size: 11px;
+  color: #ccc;
+}
+@media (max-width: 480px) {
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .tips-grid { grid-template-columns: 1fr; }
+  .hero-title { font-size: 22px; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="hero">
+    <div class="hero-flag">🇲🇪</div>
+    <div class="hero-title">מסע מונטנגרו — אוגוסט 2026</div>
+    <div class="hero-sub">4.8 – 16.8 &nbsp;|&nbsp; 6 אזורים &nbsp;|&nbsp; 12 לילות</div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-label">ימי נסיעה</div><div class="stat-val">13</div></div>
+    <div class="stat-card"><div class="stat-label">אזורים</div><div class="stat-val">6</div></div>
+    <div class="stat-card"><div class="stat-label">לילות</div><div class="stat-val">12</div></div>
+    <div class="stat-card"><div class="stat-label">חוויות עיקריות</div><div class="stat-val">10+</div></div>
+  </div>
+
+  <div class="regions" id="regions"></div>
+
+  <div class="tips-section">
+    <div class="tips-title">💡 טיפים לדרך</div>
+    <div class="tips-grid">
+      <div class="tip"><span class="tip-icon">📅</span><span>מומלץ להזמין רפטינג ומערת ליפה מראש</span></div>
+      <div class="tip"><span class="tip-icon">🚗</span><span>רכב שכור הכרחי — כבישי ההרים לא מכוסים בתחב"צ</span></div>
+      <div class="tip"><span class="tip-icon">🎟</span><span>מנוי שנתי לפארקים לאומיים (13.5€) שווה כשמבקרים ב-2+ פארקים</span></div>
+      <div class="tip"><span class="tip-icon">🌊</span><span>המים בקניון הטרה קרים מאוד — חליפות ניאופרן סופקות ברפטינג</span></div>
+    </div>
+  </div>
+
+  <div class="footer">נוצר באהבה לטיול המשפחתי ✈️</div>
+</div>
+
+<script>
+const regions = [
+  {
+    name: "קוטור והמפרץ",
+    dates: "4.8 – 6.8",
+    nights: "2 לילות",
+    color: "#378ADD",
+    bgColor: "#E6F1FB",
+    textColor: "#0C447C",
+    days: [
+      {
+        label: "יום שלישי — 4.8",
+        icon: "✈️",
+        activities: [
+          { time: "13:50", text: "נחיתה ואיסוף רכב", tag: null },
+          { time: "אחה\"צ", text: "נסיעה לקוטור והתמקמות במלון", tag: null },
+          { time: "ערב", text: "סיור רגוע בעיר העתיקה של קוטור", tag: "✨ מומלץ" }
+        ]
+      },
+      {
+        label: "יום רביעי — 5.8",
+        icon: "🚤",
+        activities: [
+          { time: "בוקר", text: "שייט למערה הכחולה — יוצא ממרכז קוטור או מטיווט", tag: "🚤 חוויה" },
+          { time: "אחה\"צ", text: "עליה ברכבל לקוטור (Kotor Cable Car) אל הר לובצ'ן", tag: null },
+          { time: "שקיעה", text: "פארק חבלים ותצפית שקיעה על המפרץ כולו", tag: "🌅 שקיעה" }
+        ]
+      },
+      {
+        label: "יום חמישי — 6.8 (לפני יציאה)",
+        icon: "🏰",
+        activities: [
+          { time: "בוקר", text: "טיפוס על טיילת החומות — נוף פנורמי על העיר והמפרץ", tag: "🏰 חובה" },
+          { time: "צהריים", text: "יציאה צפונה לז'בליאק", tag: null }
+        ]
+      }
+    ]
+  },
+  {
+    name: "ז'בליאק ופארק דורמיטור",
+    dates: "6.8 – 9.8",
+    nights: "3 לילות",
+    color: "#1D9E75",
+    bgColor: "#E1F5EE",
+    textColor: "#085041",
+    days: [
+      {
+        label: "יום חמישי — 6.8",
+        icon: "🏔",
+        activities: [
+          { time: "נסיעה", text: "מקוטור לז'בליאק — עדיפות לדרך דרך ניקשיץ' (קצרה ונוחה יותר)", tag: null },
+          { time: "ערב", text: "התמקמות וסיור רגוע באגם השחור (Black Lake)", tag: "🏔 נוף" }
+        ]
+      },
+      {
+        label: "יום שישי — 7.8",
+        icon: "🚣",
+        activities: [
+          { time: "כל היום", text: "יום רפטינג בנהר הטרה — חוויה מדהימה לכל המשפחה!", tag: "🚣 חובה!" },
+          { time: "אחה\"צ", text: "עצירה בגשר טרה המפורסם — האמיצים יכולים לעשות אומגה מעל הקניון", tag: null }
+        ]
+      },
+      {
+        label: "יום שבת — 8.8",
+        icon: "🏞",
+        activities: [
+          { time: "בוקר", text: "טיול בשמורת Curevac — תצפית מרהיבה על קניון הטרה העמוק", tag: "🏞 תצפית" },
+          { time: "אחה\"צ", text: "זמן חופשי — מסלולי הליכה קצרים נוספים בפארק הלאומי דורמיטור", tag: null }
+        ]
+      }
+    ]
+  },
+  {
+    name: "קולאשין",
+    dates: "9.8 – 11.8",
+    nights: "2 לילות",
+    color: "#3B6D11",
+    bgColor: "#EAF3DE",
+    textColor: "#27500A",
+    days: [
+      {
+        label: "יום ראשון — 9.8",
+        icon: "🌲",
+        activities: [
+          { time: "בדרך", text: "עצירה בפארק הלאומי ביוגראדסקה גורה — טיול סביב האגם בלב יער הגשם", tag: "🌲 פארק" },
+          { time: "ערב", text: "הגעה לדירה בקולאשין", tag: null }
+        ]
+      },
+      {
+        label: "יום שני — 10.8",
+        icon: "🚙",
+        activities: [
+          { time: "כל היום", text: "טיול ג'יפים/רייזרים בהרים (לבדוק גיל מינימום מול הספק)", tag: "🚙 הרפתקה" },
+          { time: "אחה\"צ", text: "ביקור במעיינות הטרה (Tara Springs)", tag: null },
+          { time: "ערב", text: "סיור בעיירה קולאשין ובתי העץ הקסומים שלה", tag: null }
+        ]
+      }
+    ]
+  },
+  {
+    name: "פלוז'ין ואגם פיבה",
+    dates: "11.8 – 13.8",
+    nights: "2 לילות",
+    color: "#185FA5",
+    bgColor: "#E6F1FB",
+    textColor: "#042C53",
+    days: [
+      {
+        label: "יום שלישי — 11.8",
+        icon: "🏔",
+        activities: [
+          { time: "נסיעה", text: "מקולאשין דרך Durmitor Ring ומעבר סדלו (Sedlo Pass) — נוף מדהים", tag: "🏔 מסלול" },
+          { time: "בדרך", text: "ירידה לאגם פיבה — תצפית על המים הטורקיזים", tag: "💎 מרהיב" },
+          { time: "ערב", text: "התמקמות בפלוז'ין", tag: null }
+        ]
+      },
+      {
+        label: "יום רביעי — 12.8",
+        icon: "🛶",
+        activities: [
+          { time: "כל היום", text: "יום רגוע באגם פיבה — שייט, קיאקים, או פשוט נוף פראי ושקט", tag: "🛶 רגיעה" }
+        ]
+      }
+    ]
+  },
+  {
+    name: "פודגוריצה",
+    dates: "13.8 – 14.8",
+    nights: "לילה אחד",
+    color: "#BA7517",
+    bgColor: "#FAEEDA",
+    textColor: "#412402",
+    days: [
+      {
+        label: "יום חמישי — 13.8",
+        icon: "🦇",
+        activities: [
+          { time: "בדרך", text: "דרך אגם סקאדאר — תצפית בכפר רייקה צ'רנוביצ'ה ותצפית פבלובה סטרנה", tag: "📸 נוף" },
+          { time: "ביניים", text: "מערת הנטיפים ליפה (Lipa Cave) — מומלץ להזמין מראש!", tag: "🦇 ייחודי" },
+          { time: "ערב", text: "לינה בפודגוריצה", tag: null }
+        ]
+      }
+    ]
+  },
+  {
+    name: "בודווה והחוף",
+    dates: "14.8 – 16.8",
+    nights: "2 לילות",
+    color: "#D85A30",
+    bgColor: "#FAECE7",
+    textColor: "#4A1B0C",
+    days: [
+      {
+        label: "יום שישי — 14.8",
+        icon: "🌊",
+        activities: [
+          { time: "בוקר", text: "נסיעה קצרה מפודגוריצה לבודווה", tag: null },
+          { time: "אחה\"צ", text: "סיור בעיר העתיקה של בודווה, הטיילת השוקקת והחופים", tag: "🌊 חוף" }
+        ]
+      },
+      {
+        label: "יום שבת — 15.8",
+        icon: "☀️",
+        activities: [
+          { time: "כל היום", text: "יום נופש וחוף בבודווה", tag: "☀️ חופשה" },
+          { time: "אופציה", text: "תצפית על אי סווטי סטפן (Sveti Stefan) — ממש דרומית לבודווה", tag: null },
+          { time: "אופציה", text: "סירה לאי ניקולאי הקדוש — \"הוואי של מונטנגרו\"", tag: "🏝 אי" },
+          { time: "15:30", text: "שייט באגם סקאדאר עם Bojan Gazivoda (📞 +38269425402) — 120€ לכולנו", tag: "🚤 מוזמן" }
+        ]
+      },
+      {
+        label: "יום ראשון — 16.8 (יום אחרון)",
+        icon: "✈️",
+        activities: [
+          { time: "נסיעה", text: "לשדה תעופה — טיווט קרובה (20 דק') | פודגוריצה (שעה וחצי)", tag: null },
+          { time: "טיסה", text: "החזרת רכב וטיסה חזרה לישראל 🇮🇱", tag: null }
+        ]
+      }
+    ]
+  }
+];
+
+function buildRegions() {
+  const container = document.getElementById('regions');
+  regions.forEach((r, i) => {
+    const card = document.createElement('div');
+    card.className = 'region-card';
+
+    const header = document.createElement('div');
+    header.className = 'region-header';
+    header.innerHTML = `
+      <div class="region-dot" style="background:${r.color};"></div>
+      <div class="region-meta">
+        <div class="region-name">${r.name}</div>
+        <div class="region-dates">${r.dates} · ${r.nights}</div>
+      </div>
+      <span class="region-badge" style="background:${r.bgColor}; color:${r.textColor};">${r.nights}</span>
+      <span class="chevron" id="chev-${i}">▾</span>
+    `;
+
+    const body = document.createElement('div');
+    body.className = 'region-body';
+    body.id = `body-${i}`;
+    body.style.display = 'none';
+
+    r.days.forEach(day => {
+      const dayDiv = document.createElement('div');
+      dayDiv.className = 'day-row';
+
+      const actsHtml = day.activities.map(a => `
+        <div class="activity">
+          <span class="act-time">${a.time}</span>
+          <span class="act-text">${a.text}${a.tag ? `<span class="act-highlight" style="background:${r.bgColor}; color:${r.textColor};">${a.tag}</span>` : ''}</span>
+        </div>
+      `).join('');
+
+      dayDiv.innerHTML = `
+        <div class="day-label"><span class="day-icon">${day.icon}</span>${day.label}</div>
+        <div class="activities">${actsHtml}</div>
+      `;
+      body.appendChild(dayDiv);
+    });
+
+    let open = false;
+    header.addEventListener('click', () => {
+      open = !open;
+      body.style.display = open ? 'block' : 'none';
+      const chev = document.getElementById(`chev-${i}`);
+      chev.className = open ? 'chevron open' : 'chevron';
+    });
+
+    card.appendChild(header);
+    card.appendChild(body);
+    container.appendChild(card);
+  });
+}
+
+buildRegions();
+</script>
+</body>
+</html>
