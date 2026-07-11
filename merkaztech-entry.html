@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>הזנת פעילויות – מרכזטק</title>
+<link rel="stylesheet" href="./merkaztech-style.css">
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div>
+      <h1>הזנת פעילויות</h1>
+      <div class="hero-sub">מרכזטק · צוות</div>
+      <div class="live-badge" style="margin-top:8px;"><span class="live-dot"></span><span id="liveStatus">מתחבר…</span></div>
+    </div>
+    <div class="hero-nav">
+      <a href="./merkaztech-log.html">צפייה</a>
+      <a href="./merkaztech-entry.html" class="active">הזנת נתונים</a>
+      <a href="#" id="signOutLink" style="display:none;">התנתקות</a>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+  <div id="notConfigured" class="alert alert-warn" style="display:none;">
+    <strong>המערכת עדיין לא מחוברת ל-Firebase.</strong><br>
+    יש להגדיר את פרטי הפרויקט בקובץ <code>merkaztech-firebase.js</code>. ראו הוראות ב-<code>MERKAZTECH-SETUP.md</code>.
+  </div>
+
+  <div id="connError" class="alert alert-danger" style="display:none;">
+    <strong>לא הצלחנו להתחבר לשרת הנתונים.</strong><br>
+    בדקו את החיבור לאינטרנט ורעננו את הדף. אם הבעיה נמשכת, ייתכן שרשת זו חוסמת גישה ל-Firebase.
+  </div>
+
+  <div id="loginWrap" class="login-wrap" style="display:none;">
+    <div class="card">
+      <div class="card-title">כניסת צוות</div>
+      <div id="loginError" class="alert alert-danger" style="display:none;"></div>
+      <div style="margin-bottom:10px;">
+        <label class="field-label">דוא"ל</label>
+        <input type="email" id="loginEmail" autocomplete="username">
+      </div>
+      <div style="margin-bottom:14px;">
+        <label class="field-label">סיסמה</label>
+        <input type="password" id="loginPassword" autocomplete="current-password">
+      </div>
+      <button type="button" class="btn btn-primary btn-block" id="loginBtn">כניסה</button>
+    </div>
+  </div>
+
+  <div id="appWrap" style="display:none;">
+
+    <div class="card">
+      <div class="card-title" id="formTitle">הוספת פעילות</div>
+      <form id="activityForm">
+        <div class="form-grid">
+          <div><label class="field-label">תאריך *</label><input type="date" id="fDate" required></div>
+          <div><label class="field-label">תחום *</label>
+            <select id="fDomain" required></select>
+          </div>
+          <div><label class="field-label">שעת התחלה *</label><input type="time" id="fStart" required></div>
+          <div><label class="field-label">שעת סיום *</label><input type="time" id="fEnd" required></div>
+          <div class="full"><label class="field-label">בית ספר *</label><input type="text" id="fSchool" required></div>
+          <div><label class="field-label">מגמה</label><select id="fTrack"></select></div>
+          <div id="fTrackOtherWrap" style="display:none;"><label class="field-label">שם מגמה (אחר)</label><input type="text" id="fTrackOther"></div>
+          <div><label class="field-label">65% / 35%</label>
+            <select id="fPercent"><option value="">—</option></select>
+          </div>
+          <div><label class="field-label">כיתה</label><input type="text" id="fClass" placeholder="לדוגמה: יב"></div>
+          <div><label class="field-label">תלמידים מתוכנן</label><input type="number" min="0" id="fPlanned"></div>
+          <div><label class="field-label">תלמידים בפועל</label><input type="number" min="0" id="fActual"></div>
+          <div class="full"><label class="field-label">מורה / איש קשר</label><input type="text" id="fTeacher"></div>
+          <div><label class="field-label">מרחב למידה 1 – שם</label><input type="text" id="fSpace1Name"></div>
+          <div><label class="field-label">מרחב למידה 1 – מספר</label><input type="text" id="fSpace1Num"></div>
+          <div><label class="field-label">מרחב למידה 2 – שם</label><input type="text" id="fSpace2Name"></div>
+          <div><label class="field-label">מרחב למידה 2 – מספר</label><input type="text" id="fSpace2Num"></div>
+          <div class="full"><label class="field-label">הערות</label><textarea id="fNotes"></textarea></div>
+        </div>
+        <div style="display:flex; gap:8px; margin-top:14px;">
+          <button type="submit" class="btn btn-primary" id="submitBtn">שמירה</button>
+          <button type="button" class="btn btn-secondary" id="cancelEditBtn" style="display:none;">ביטול עריכה</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="section-label">פעילויות קיימות</div>
+    <button type="button" class="btn btn-secondary btn-block" id="exportBtn" style="margin-bottom:1rem;" disabled>⬇️ ייצוא כל הנתונים לאקסל</button>
+    <div id="list"></div>
+
+  </div>
+
+</div>
+
+<script type="module">
+  import { isConfigured, loadFirebase } from './merkaztech-firebase.js';
+  import { DOMAINS, TRACKS, PERCENT_GROUPS, renderActivityCard, exportActivitiesToExcel } from './merkaztech-shared.js';
+
+  const liveStatus = document.getElementById('liveStatus');
+
+  let firebaseHandles = null;
+  if (isConfigured) {
+    try {
+      firebaseHandles = await loadFirebase();
+    } catch (err) {
+      document.getElementById('connError').style.display = 'block';
+      liveStatus.textContent = 'שגיאת חיבור';
+      console.error(err);
+    }
+  }
+
+  if (!isConfigured) {
+    document.getElementById('notConfigured').style.display = 'block';
+    liveStatus.textContent = 'לא מחובר';
+  } else if (!firebaseHandles) {
+    // connection failed — error banner already shown above
+  } else {
+    const { db, auth, firestore, authSdk } = firebaseHandles;
+    const {
+      collection, onSnapshot, query, orderBy, addDoc, updateDoc, deleteDoc, doc, serverTimestamp
+    } = firestore;
+    const { onAuthStateChanged, signInWithEmailAndPassword, signOut } = authSdk;
+
+    // populate selects
+    const domainSelect = document.getElementById('fDomain');
+    DOMAINS.forEach(d => domainSelect.appendChild(new Option(d, d)));
+
+    const trackSelect = document.getElementById('fTrack');
+    trackSelect.appendChild(new Option('—', ''));
+    TRACKS.forEach((t, i) => trackSelect.appendChild(new Option(t.name ? `${t.name}${t.code ? ' (' + t.code + ')' : ''}` : 'אחר', i)));
+    trackSelect.addEventListener('change', () => {
+      const t = TRACKS[trackSelect.value];
+      document.getElementById('fTrackOtherWrap').style.display = (t && t.name === 'אחר') ? 'block' : 'none';
+    });
+
+    const percentSelect = document.getElementById('fPercent');
+    PERCENT_GROUPS.forEach(p => percentSelect.appendChild(new Option(p.label, p.value)));
+
+    const loginWrap = document.getElementById('loginWrap');
+    const appWrap = document.getElementById('appWrap');
+    const signOutLink = document.getElementById('signOutLink');
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        loginWrap.style.display = 'none';
+        appWrap.style.display = 'block';
+        signOutLink.style.display = 'inline-block';
+        liveStatus.textContent = 'מחובר · ' + user.email;
+        startListening();
+      } else {
+        loginWrap.style.display = 'block';
+        appWrap.style.display = 'none';
+        signOutLink.style.display = 'none';
+        liveStatus.textContent = 'נדרשת התחברות';
+      }
+    });
+
+    document.getElementById('loginBtn').addEventListener('click', async () => {
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      const errEl = document.getElementById('loginError');
+      errEl.style.display = 'none';
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+      } catch (e) {
+        errEl.textContent = 'התחברות נכשלה: ' + (e.code === 'auth/invalid-credential' ? 'פרטי התחברות שגויים' : e.message);
+        errEl.style.display = 'block';
+      }
+    });
+
+    signOutLink.addEventListener('click', (e) => { e.preventDefault(); signOut(auth); });
+
+    let allActivities = [];
+    let editingId = null;
+    let listenerStarted = false;
+
+    const exportBtn = document.getElementById('exportBtn');
+    exportBtn.addEventListener('click', async () => {
+      exportBtn.disabled = true;
+      exportBtn.textContent = 'מייצא…';
+      try {
+        await exportActivitiesToExcel(allActivities);
+      } finally {
+        exportBtn.disabled = allActivities.length === 0;
+        exportBtn.textContent = '⬇️ ייצוא כל הנתונים לאקסל';
+      }
+    });
+
+    function startListening() {
+      if (listenerStarted) return;
+      listenerStarted = true;
+      const q = query(collection(db, 'activities'), orderBy('date', 'asc'), orderBy('startTime', 'asc'));
+      onSnapshot(q, (snap) => {
+        allActivities = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        exportBtn.disabled = allActivities.length === 0;
+        renderList();
+      });
+    }
+
+    function renderList() {
+      const listEl = document.getElementById('list');
+      if (allActivities.length === 0) {
+        listEl.innerHTML = '<div class="empty-state"><div class="icon">📭</div>עדיין לא הוזנו פעילויות.</div>';
+        return;
+      }
+      listEl.innerHTML = allActivities.map(a => renderActivityCard(a.id, a, { editable: true })).join('');
+      listEl.querySelectorAll('[data-action="edit"]').forEach(btn => btn.addEventListener('click', () => loadForEdit(btn.dataset.id)));
+      listEl.querySelectorAll('[data-action="delete"]').forEach(btn => btn.addEventListener('click', () => removeActivity(btn.dataset.id)));
+    }
+
+    function loadForEdit(id) {
+      const a = allActivities.find(x => x.id === id);
+      if (!a) return;
+      editingId = id;
+      document.getElementById('formTitle').textContent = 'עריכת פעילות';
+      document.getElementById('submitBtn').textContent = 'עדכון';
+      document.getElementById('cancelEditBtn').style.display = 'inline-flex';
+      document.getElementById('fDate').value = a.date || '';
+      document.getElementById('fStart').value = a.startTime || '';
+      document.getElementById('fEnd').value = a.endTime || '';
+      document.getElementById('fDomain').value = a.domain || DOMAINS[0];
+      document.getElementById('fSchool').value = a.school || '';
+      const trackIdx = TRACKS.findIndex(t => t.name === a.trackName && t.code === a.trackCode);
+      trackSelect.value = trackIdx >= 0 ? trackIdx : '';
+      document.getElementById('fTrackOtherWrap').style.display = (trackIdx < 0 && a.trackName) ? 'block' : 'none';
+      document.getElementById('fTrackOther').value = trackIdx < 0 ? (a.trackName || '') : '';
+      document.getElementById('fPercent').value = a.percentGroup || '';
+      document.getElementById('fClass').value = a.className || '';
+      document.getElementById('fPlanned').value = a.studentsPlanned ?? '';
+      document.getElementById('fActual').value = a.studentsActual ?? '';
+      document.getElementById('fTeacher').value = a.teacher || '';
+      document.getElementById('fSpace1Name').value = a.space1Name || '';
+      document.getElementById('fSpace1Num').value = a.space1Number || '';
+      document.getElementById('fSpace2Name').value = a.space2Name || '';
+      document.getElementById('fSpace2Num').value = a.space2Number || '';
+      document.getElementById('fNotes').value = a.notes || '';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function resetForm() {
+      editingId = null;
+      document.getElementById('activityForm').reset();
+      document.getElementById('formTitle').textContent = 'הוספת פעילות';
+      document.getElementById('submitBtn').textContent = 'שמירה';
+      document.getElementById('cancelEditBtn').style.display = 'none';
+      document.getElementById('fTrackOtherWrap').style.display = 'none';
+    }
+
+    document.getElementById('cancelEditBtn').addEventListener('click', resetForm);
+
+    async function removeActivity(id) {
+      if (!confirm('למחוק את הפעילות? הפעולה בלתי הפיכה.')) return;
+      await deleteDoc(doc(db, 'activities', id));
+      if (editingId === id) resetForm();
+    }
+
+    document.getElementById('activityForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const trackIdx = trackSelect.value;
+      const track = trackIdx !== '' ? TRACKS[trackIdx] : null;
+      const trackName = track ? (track.name === 'אחר' ? document.getElementById('fTrackOther').value.trim() : track.name) : '';
+      const trackCode = track && track.name !== 'אחר' ? track.code : '';
+
+      const payload = {
+        date: document.getElementById('fDate').value,
+        startTime: document.getElementById('fStart').value,
+        endTime: document.getElementById('fEnd').value,
+        domain: document.getElementById('fDomain').value,
+        school: document.getElementById('fSchool').value.trim(),
+        trackName,
+        trackCode,
+        percentGroup: document.getElementById('fPercent').value,
+        className: document.getElementById('fClass').value.trim(),
+        studentsPlanned: document.getElementById('fPlanned').value ? Number(document.getElementById('fPlanned').value) : null,
+        studentsActual: document.getElementById('fActual').value ? Number(document.getElementById('fActual').value) : null,
+        teacher: document.getElementById('fTeacher').value.trim(),
+        space1Name: document.getElementById('fSpace1Name').value.trim(),
+        space1Number: document.getElementById('fSpace1Num').value.trim(),
+        space2Name: document.getElementById('fSpace2Name').value.trim(),
+        space2Number: document.getElementById('fSpace2Num').value.trim(),
+        notes: document.getElementById('fNotes').value.trim(),
+        updatedAt: serverTimestamp(),
+        updatedBy: auth.currentUser ? auth.currentUser.email : null,
+      };
+
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      try {
+        if (editingId) {
+          await updateDoc(doc(db, 'activities', editingId), payload);
+        } else {
+          payload.createdAt = serverTimestamp();
+          payload.createdBy = auth.currentUser ? auth.currentUser.email : null;
+          await addDoc(collection(db, 'activities'), payload);
+        }
+        resetForm();
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+  }
+</script>
+</body>
+</html>
