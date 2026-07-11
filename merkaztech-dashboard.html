@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>יומן-טק – תפוסת חדרים</title>
+<link rel="stylesheet" href="./merkaztech-style.css">
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div style="display:flex; align-items:center; gap:14px;">
+      <img src="./ashdod-logo.png" alt="לוגו עיריית אשדוד" class="hero-logo">
+      <div>
+        <h1>יומן-טק</h1>
+        <div class="hero-sub">המרכז הטכנולוגי אשדוד</div>
+        <div class="live-badge" style="margin-top:8px;"><span class="live-dot"></span><span id="liveStatus">מתחבר…</span></div>
+      </div>
+    </div>
+    <div class="hero-nav">
+      <a href="./merkaztech-log.html">צפייה</a>
+      <a href="./merkaztech-entry.html">הזנת נתונים</a>
+      <a href="./merkaztech-dashboard.html" class="active">תפוסת חדרים</a>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+  <div id="notConfigured" class="alert alert-warn" style="display:none;">
+    <strong>המערכת עדיין לא מחוברת ל-Supabase.</strong><br>
+    יש להגדיר את פרטי הפרויקט בקובץ <code>merkaztech-supabase.js</code>. ראו הוראות ב-<code>MERKAZTECH-SETUP.md</code>.
+  </div>
+
+  <div id="connError" class="alert alert-danger" style="display:none;">
+    <strong>לא הצלחנו להתחבר לשרת הנתונים.</strong><br>
+    בדקו את החיבור לאינטרנט ורעננו את הדף. אם הבעיה נמשכת, ייתכן שרשת זו חוסמת גישה ל-Supabase.
+  </div>
+
+  <div class="filter-bar" style="grid-template-columns: 1fr auto;">
+    <div>
+      <label class="field-label">תאריך</label>
+      <input type="date" id="fDate">
+    </div>
+    <div style="display:flex; align-items:flex-end;">
+      <button type="button" class="btn btn-secondary" id="todayBtn">היום</button>
+    </div>
+  </div>
+
+  <div class="summary-strip">
+    <div class="summary-cell"><div class="summary-num" id="statFree">–</div><div class="summary-lbl">חדרים פנויים</div></div>
+    <div class="summary-cell"><div class="summary-num" id="statBusy">–</div><div class="summary-lbl">חדרים תפוסים</div></div>
+    <div class="summary-cell"><div class="summary-num" id="statActivities">–</div><div class="summary-lbl">פעילויות ביום זה</div></div>
+  </div>
+
+  <div id="roomGrid" class="room-grid"></div>
+
+</div>
+
+<script type="module">
+  import { isConfigured, loadSupabase } from './merkaztech-supabase.js';
+  import { ROOMS, escapeHtml, groupActivitiesByRoom } from './merkaztech-shared.js';
+
+  const liveStatus = document.getElementById('liveStatus');
+  const gridEl = document.getElementById('roomGrid');
+  const dateInput = document.getElementById('fDate');
+
+  function todayStr() {
+    return new Date().toISOString().slice(0, 10);
+  }
+  dateInput.value = todayStr();
+  document.getElementById('todayBtn').addEventListener('click', () => {
+    dateInput.value = todayStr();
+    dateInput.dispatchEvent(new Event('change'));
+  });
+
+  function render(dayActivities) {
+    const byRoom = groupActivitiesByRoom(dayActivities, ROOMS);
+    let freeCount = 0;
+    let busyCount = 0;
+    let html = '';
+    for (const room of ROOMS) {
+      const list = byRoom.get(room) || [];
+      const isFree = list.length === 0;
+      if (isFree) freeCount++; else busyCount++;
+      html += `
+        <div class="room-square ${isFree ? 'free' : 'busy'}">
+          <div class="room-square-name">${escapeHtml(room)}</div>
+          <div class="room-square-status">${isFree ? 'פנוי' : `תפוס · ${list.length} פעילויות`}</div>
+          ${list.map(a => `
+            <div class="room-activity">
+              <span class="room-activity-time">${escapeHtml(a.start_time || '')}${a.end_time ? '–' + escapeHtml(a.end_time) : ''}</span>
+              <span class="room-activity-school">${escapeHtml(a.school || '')}</span>
+            </div>`).join('')}
+        </div>`;
+    }
+    gridEl.innerHTML = html;
+    document.getElementById('statFree').textContent = freeCount;
+    document.getElementById('statBusy').textContent = busyCount;
+    document.getElementById('statActivities').textContent = dayActivities.length;
+  }
+
+  if (!isConfigured) {
+    document.getElementById('notConfigured').style.display = 'block';
+    liveStatus.textContent = 'לא מחובר';
+    gridEl.innerHTML = '<div class="empty-state"><div class="icon">🔌</div>יש להשלים את חיבור המערכת כדי לראות נתונים.</div>';
+  } else {
+    let channel = null;
+
+    async function loadDay() {
+      const { client } = await loadSupabase();
+      const selectedDate = dateInput.value;
+
+      const { data, error } = await client.from('activities').select('*').eq('date', selectedDate);
+      if (error) throw error;
+      render(data);
+      liveStatus.textContent = 'מחובר · עודכן ' + new Date().toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+      if (channel) await channel.unsubscribe();
+      channel = client
+        .channel('activities-dashboard-' + selectedDate)
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'activities', filter: `date=eq.${selectedDate}` }, async () => {
+          const { data: fresh, error: freshErr } = await client.from('activities').select('*').eq('date', selectedDate);
+          if (!freshErr) {
+            render(fresh);
+            liveStatus.textContent = 'מחובר · עודכן ' + new Date().toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+          }
+        })
+        .subscribe();
+    }
+
+    try {
+      await loadDay();
+      dateInput.addEventListener('change', () => {
+        loadDay().catch(err => console.error(err));
+      });
+    } catch (err) {
+      document.getElementById('connError').style.display = 'block';
+      liveStatus.textContent = 'שגיאת חיבור';
+      gridEl.innerHTML = '<div class="empty-state"><div class="icon">🔌</div>לא ניתן היה לטעון את הנתונים.</div>';
+      console.error(err);
+    }
+  }
+</script>
+</body>
+</html>
