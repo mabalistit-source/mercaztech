@@ -20,6 +20,7 @@ create table if not exists public.activities (
   space2_name text,
   space2_number text,
   notes text,
+  entered_by_name text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   created_by text,
