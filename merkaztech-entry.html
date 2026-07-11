@@ -60,26 +60,26 @@
       <div class="card-title" id="formTitle">הוספת פעילות</div>
       <form id="activityForm">
         <div class="form-grid">
+          <div class="full"><label class="field-label">שם המזין *</label><select id="fEnteredBy" required></select></div>
           <div><label class="field-label">תאריך *</label><input type="date" id="fDate" required></div>
           <div><label class="field-label">תחום *</label>
             <select id="fDomain" required></select>
           </div>
           <div><label class="field-label">שעת התחלה *</label><input type="time" id="fStart" required></div>
           <div><label class="field-label">שעת סיום *</label><input type="time" id="fEnd" required></div>
+          <div class="full" id="fDurationWrap" style="display:none;"><span class="tag tag-info" id="fDuration"></span></div>
           <div class="full"><label class="field-label">בית ספר *</label><input type="text" id="fSchool" required></div>
           <div><label class="field-label">מגמה</label><select id="fTrack"></select></div>
           <div id="fTrackOtherWrap" style="display:none;"><label class="field-label">שם מגמה (אחר)</label><input type="text" id="fTrackOther"></div>
-          <div><label class="field-label">65% / 35%</label>
-            <select id="fPercent"><option value="">—</option></select>
+          <div><label class="field-label">65% / 35% *</label>
+            <select id="fPercent" required><option value="">— יש לבחור —</option></select>
           </div>
           <div><label class="field-label">כיתה</label><input type="text" id="fClass" placeholder="לדוגמה: יב"></div>
           <div><label class="field-label">תלמידים מתוכנן</label><input type="number" min="0" id="fPlanned"></div>
           <div><label class="field-label">תלמידים בפועל</label><input type="number" min="0" id="fActual"></div>
           <div class="full"><label class="field-label">מורה / איש קשר</label><input type="text" id="fTeacher"></div>
-          <div><label class="field-label">מרחב למידה 1 – שם</label><input type="text" id="fSpace1Name"></div>
-          <div><label class="field-label">מרחב למידה 1 – מספר</label><input type="text" id="fSpace1Num"></div>
-          <div><label class="field-label">מרחב למידה 2 – שם</label><input type="text" id="fSpace2Name"></div>
-          <div><label class="field-label">מרחב למידה 2 – מספר</label><input type="text" id="fSpace2Num"></div>
+          <div><label class="field-label">מרחב למידה 1</label><select id="fSpace1Name"></select></div>
+          <div><label class="field-label">מרחב למידה 2</label><select id="fSpace2Name"></select></div>
           <div class="full"><label class="field-label">הערות</label><textarea id="fNotes"></textarea></div>
         </div>
         <div style="display:flex; gap:8px; margin-top:14px;">
@@ -99,7 +99,7 @@
 
 <script type="module">
   import { isConfigured, loadSupabase } from './merkaztech-supabase.js';
-  import { DOMAINS, TRACKS, PERCENT_GROUPS, renderActivityCard, exportActivitiesToExcel, sortActivities, applyRealtimeChange } from './merkaztech-shared.js';
+  import { DOMAINS, TRACKS, PERCENT_GROUPS, ROOMS, STAFF_NAMES, renderActivityCard, exportActivitiesToExcel, sortActivities, applyRealtimeChange, computeDuration } from './merkaztech-shared.js';
 
   const liveStatus = document.getElementById('liveStatus');
 
@@ -136,6 +136,28 @@
 
     const percentSelect = document.getElementById('fPercent');
     PERCENT_GROUPS.forEach(p => percentSelect.appendChild(new Option(p.label, p.value)));
+
+    const enteredBySelect = document.getElementById('fEnteredBy');
+    enteredBySelect.appendChild(new Option('— יש לבחור —', ''));
+    STAFF_NAMES.forEach(n => enteredBySelect.appendChild(new Option(n, n)));
+
+    const space1Select = document.getElementById('fSpace1Name');
+    const space2Select = document.getElementById('fSpace2Name');
+    space2Select.appendChild(new Option('—', ''));
+    ROOMS.forEach(r => {
+      space1Select.appendChild(new Option(r, r));
+      space2Select.appendChild(new Option(r, r));
+    });
+
+    const fDurationWrap = document.getElementById('fDurationWrap');
+    const fDuration = document.getElementById('fDuration');
+    function updateDuration() {
+      const dur = computeDuration(document.getElementById('fStart').value, document.getElementById('fEnd').value);
+      fDuration.textContent = dur ? `משך הפעילות: ${dur}` : '';
+      fDurationWrap.style.display = dur ? 'block' : 'none';
+    }
+    document.getElementById('fStart').addEventListener('input', updateDuration);
+    document.getElementById('fEnd').addEventListener('input', updateDuration);
 
     const loginWrap = document.getElementById('loginWrap');
     const appWrap = document.getElementById('appWrap');
@@ -226,6 +248,7 @@
       document.getElementById('formTitle').textContent = 'עריכת פעילות';
       document.getElementById('submitBtn').textContent = 'עדכון';
       document.getElementById('cancelEditBtn').style.display = 'inline-flex';
+      document.getElementById('fEnteredBy').value = a.entered_by_name || '';
       document.getElementById('fDate').value = a.date || '';
       document.getElementById('fStart').value = a.start_time || '';
       document.getElementById('fEnd').value = a.end_time || '';
@@ -241,10 +264,9 @@
       document.getElementById('fActual').value = a.students_actual ?? '';
       document.getElementById('fTeacher').value = a.teacher || '';
       document.getElementById('fSpace1Name').value = a.space1_name || '';
-      document.getElementById('fSpace1Num').value = a.space1_number || '';
       document.getElementById('fSpace2Name').value = a.space2_name || '';
-      document.getElementById('fSpace2Num').value = a.space2_number || '';
       document.getElementById('fNotes').value = a.notes || '';
+      updateDuration();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -255,6 +277,7 @@
       document.getElementById('submitBtn').textContent = 'שמירה';
       document.getElementById('cancelEditBtn').style.display = 'none';
       document.getElementById('fTrackOtherWrap').style.display = 'none';
+      updateDuration();
     }
 
     document.getElementById('cancelEditBtn').addEventListener('click', resetForm);
@@ -287,11 +310,10 @@
         students_planned: document.getElementById('fPlanned').value ? Number(document.getElementById('fPlanned').value) : null,
         students_actual: document.getElementById('fActual').value ? Number(document.getElementById('fActual').value) : null,
         teacher: document.getElementById('fTeacher').value.trim(),
-        space1_name: document.getElementById('fSpace1Name').value.trim(),
-        space1_number: document.getElementById('fSpace1Num').value.trim(),
-        space2_name: document.getElementById('fSpace2Name').value.trim(),
-        space2_number: document.getElementById('fSpace2Num').value.trim(),
+        space1_name: document.getElementById('fSpace1Name').value,
+        space2_name: document.getElementById('fSpace2Name').value,
         notes: document.getElementById('fNotes').value.trim(),
+        entered_by_name: document.getElementById('fEnteredBy').value,
         updated_at: new Date().toISOString(),
         updated_by: user ? user.email : null,
       };
