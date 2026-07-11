@@ -5,32 +5,34 @@
 - **merkaztech-log.html** – תצוגה חיה וציבורית של היומן (לכל מי שיש לו את הקישור).
 - **merkaztech-entry.html** – טופס הזנה/עריכה/מחיקה, מוגן בהתחברות, לצוות בלבד.
 
-שני הדפים משתפים נתונים בזמן אמת דרך **Firebase** (שכבת ענן חינמית של גוגל). כדי שהמערכת תעבוד צריך להשלים הקמה חד-פעמית של כ-10 דקות:
+שני הדפים משתפים נתונים בזמן אמת דרך **Supabase** (מסד נתונים + התחברות בענן, בחינם, בלי כרטיס אשראי ובלי חשבון Google Cloud). כדי שהמערכת תעבוד צריך להשלים הקמה חד-פעמית של כ-10 דקות:
 
-## 1. יצירת פרויקט Firebase
-1. גשו ל-https://console.firebase.google.com ובחרו **Add project**.
-2. תנו שם לפרויקט (למשל `merkaztech-yoman`) ולחצו Continue עד שהפרויקט נוצר.
-3. בתפריט הצד: **Build → Firestore Database → Create database**. בחרו מיקום (למשל `eur3`) ומצב **Production**.
+## 1. יצירת חשבון ופרויקט ב-Supabase
+1. גשו ל-https://supabase.com ולחצו **Start your project**, והירשמו עם דוא"ל או GitHub (אין צורך בכרטיס אשראי).
+2. לחצו **New project**. תנו שם (למשל `merkaztech-yoman`), בחרו סיסמה למסד הנתונים (שמרו אותה בצד, לא תצטרכו אותה בקוד) ובחרו אזור קרוב (למשל Europe).
+3. המתינו כדקה עד שהפרויקט מוקם.
 
-## 2. יצירת אפליקציית Web וקבלת מפתחות
-1. בעמוד הראשי של הפרויקט לחצו על סמל ה-Web `</>`.
-2. תנו כינוי לאפליקציה (למשל `yoman-web`) ולחצו Register app.
-3. יופיע אובייקט `firebaseConfig` עם שישה שדות (`apiKey`, `authDomain`, `projectId`, `storageBucket`, `messagingSenderId`, `appId`).
-4. העתיקו את הערכים האלה לתוך הקובץ `merkaztech-firebase.js` בשורש הריפו, במקום הערכים `YOUR_...`.
+## 2. יצירת הטבלה והרשאות האבטחה
+1. בתפריט הצד: **SQL Editor → New query**.
+2. פתחו את הקובץ `supabase-schema.sql` מהריפו, העתיקו את כל התוכן, הדביקו בעורך ולחצו **Run**.
+   - זה יוצר את טבלת `activities`, מגדיר הרשאות (כולם יכולים לקרוא, רק משתמשים מחוברים יכולים לכתוב), ומפעיל עדכונים בזמן אמת.
 
-## 3. הגדרת חוקי אבטחה (Security Rules)
-1. ב-Firestore Database → לשונית **Rules**.
-2. העתיקו לשם את התוכן של הקובץ `firestore.rules` מהריפו, ולחצו **Publish**.
-3. זה מבטיח שכל אחד יכול *לצפות* ביומן, אבל רק צוות מחובר יכול *לערוך*.
+## 3. קבלת מפתחות החיבור
+1. בתפריט הצד: **Project Settings (⚙️) → Data API**.
+2. העתיקו את הערך **Project URL**.
+3. באותו עמוד (או ב-**API Keys**), העתיקו את המפתח **anon public**.
+4. פתחו בריפו את הקובץ `merkaztech-supabase.js`, והחליפו:
+   - `YOUR_SUPABASE_URL` ← ה-Project URL
+   - `YOUR_SUPABASE_ANON_KEY` ← מפתח ה-anon public
 
 ## 4. יצירת התחברות לצוות
-1. בתפריט הצד: **Build → Authentication → Get started**.
-2. בלשונית **Sign-in method** הפעילו את הספק **Email/Password**.
-3. בלשונית **Users → Add user** צרו משתמש אחד (או כמה) עם דוא"ל וסיסמה – אלה פרטי ההתחברות שתמסרו לאנשי הצוות שמזינים נתונים בדף `merkaztech-entry.html`.
-   - אפשר ליצור משתמש נפרד לכל איש צוות, או משתמש משותף אחד לכולם.
+1. בתפריט הצד: **Authentication → Providers**, ודאו ש-**Email** מופעל (מופעל כברירת מחדל).
+2. **Authentication → Users → Add user → Create new user**.
+3. הזינו דוא"ל וסיסמה עבור כל איש צוות (או משתמש משותף אחד לכולם), וסמנו **Auto Confirm User** כדי שיוכלו להתחבר מיד בלי לאשר מייל.
+4. את פרטי ההתחברות האלה מוסרים לצוות כדי שיוכלו להיכנס בדף `merkaztech-entry.html`.
 
 ## 5. פרסום
-לאחר שמילאתם את `merkaztech-firebase.js`, פשוט דחפו (`git push`) את הקבצים – GitHub Pages יעדכן אוטומטית. אין צורך בשרת נוסף.
+לאחר שמילאתם את `merkaztech-supabase.js`, פשוט דחפו (`git push`) את הקבצים – GitHub Pages יעדכן אוטומטית. אין צורך בשרת נוסף.
 
 - דף הצפייה: `https://<הדומיין-שלכם>/merkaztech-log.html`
 - דף ההזנה (לצוות): `https://<הדומיין-שלכם>/merkaztech-entry.html`
@@ -39,7 +41,8 @@
 בשני הדפים יש כפתור **"ייצוא כל הנתונים לאקסל"** שמוריד בכל רגע נתון קובץ `.xlsx` עם כל הפעילויות שבמערכת, באותם טורים כמו ביומן המקורי (תאריך, שעות, תחום, בי"ס, מגמה, כיתה, תלמידים, מרחב למידה, הערות וכו') — כך שאפשר תמיד לקבל תמונת מצב מלאה וברורה מחוץ למערכת, בלי תלות בהתחברות.
 
 ## מבנה הנתונים
-כל פעילות נשמרת כמסמך באוסף `activities` עם השדות: `date`, `startTime`, `endTime`, `domain`, `school`, `trackName`, `trackCode`, `percentGroup`, `className`, `studentsPlanned`, `studentsActual`, `teacher`, `space1Name`, `space1Number`, `space2Name`, `space2Number`, `notes` — תואמים לעמודות ביומן המקורי באקסל ("יומן פעילויות מרכזי").
+כל פעילות נשמרת כשורה בטבלת `activities` עם העמודות: `date`, `start_time`, `end_time`, `domain`, `school`, `track_name`, `track_code`, `percent_group`, `class_name`, `students_planned`, `students_actual`, `teacher`, `space1_name`, `space1_number`, `space2_name`, `space2_number`, `notes` — תואמות לעמודות ביומן המקורי באקסל ("יומן פעילויות מרכזי"). ההגדרה המלאה נמצאת ב-`supabase-schema.sql`.
 
-## עלות
-השימוש בטיר החינמי (Spark) של Firebase מספיק בנוחות ליומן כזה — אלפי קריאות/כתיבות ביום בחינם.
+## עלות ותחזוקה
+- התוכנית החינמית של Supabase כוללת 500MB מסד נתונים ומנוי realtime — מעבר למה שיומן כזה צריך.
+- **שימו לב:** בתוכנית החינמית, פרויקט שלא נעשה בו שימוש כשבוע ימים "נרדם" אוטומטית. פשוט היכנסו ל-supabase.com וללחוץ "Restore project" כדי להעיר אותו — הנתונים לא נמחקים.

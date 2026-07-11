@@ -26,13 +26,13 @@
 <div class="main">
 
   <div id="notConfigured" class="alert alert-warn" style="display:none;">
-    <strong>המערכת עדיין לא מחוברת ל-Firebase.</strong><br>
-    יש להגדיר את פרטי הפרויקט בקובץ <code>merkaztech-firebase.js</code>. ראו הוראות ב-<code>MERKAZTECH-SETUP.md</code>.
+    <strong>המערכת עדיין לא מחוברת ל-Supabase.</strong><br>
+    יש להגדיר את פרטי הפרויקט בקובץ <code>merkaztech-supabase.js</code>. ראו הוראות ב-<code>MERKAZTECH-SETUP.md</code>.
   </div>
 
   <div id="connError" class="alert alert-danger" style="display:none;">
     <strong>לא הצלחנו להתחבר לשרת הנתונים.</strong><br>
-    בדקו את החיבור לאינטרנט ורעננו את הדף. אם הבעיה נמשכת, ייתכן שרשת זו חוסמת גישה ל-Firebase.
+    בדקו את החיבור לאינטרנט ורעננו את הדף. אם הבעיה נמשכת, ייתכן שרשת זו חוסמת גישה ל-Supabase.
   </div>
 
   <div id="loginWrap" class="login-wrap" style="display:none;">
@@ -95,15 +95,15 @@
 </div>
 
 <script type="module">
-  import { isConfigured, loadFirebase } from './merkaztech-firebase.js';
-  import { DOMAINS, TRACKS, PERCENT_GROUPS, renderActivityCard, exportActivitiesToExcel } from './merkaztech-shared.js';
+  import { isConfigured, loadSupabase } from './merkaztech-supabase.js';
+  import { DOMAINS, TRACKS, PERCENT_GROUPS, renderActivityCard, exportActivitiesToExcel, sortActivities, applyRealtimeChange } from './merkaztech-shared.js';
 
   const liveStatus = document.getElementById('liveStatus');
 
-  let firebaseHandles = null;
+  let supabaseHandles = null;
   if (isConfigured) {
     try {
-      firebaseHandles = await loadFirebase();
+      supabaseHandles = await loadSupabase();
     } catch (err) {
       document.getElementById('connError').style.display = 'block';
       liveStatus.textContent = 'שגיאת חיבור';
@@ -114,14 +114,10 @@
   if (!isConfigured) {
     document.getElementById('notConfigured').style.display = 'block';
     liveStatus.textContent = 'לא מחובר';
-  } else if (!firebaseHandles) {
+  } else if (!supabaseHandles) {
     // connection failed — error banner already shown above
   } else {
-    const { db, auth, firestore, authSdk } = firebaseHandles;
-    const {
-      collection, onSnapshot, query, orderBy, addDoc, updateDoc, deleteDoc, doc, serverTimestamp
-    } = firestore;
-    const { onAuthStateChanged, signInWithEmailAndPassword, signOut } = authSdk;
+    const { client } = supabaseHandles;
 
     // populate selects
     const domainSelect = document.getElementById('fDomain');
@@ -142,7 +138,8 @@
     const appWrap = document.getElementById('appWrap');
     const signOutLink = document.getElementById('signOutLink');
 
-    onAuthStateChanged(auth, (user) => {
+    client.auth.onAuthStateChange((_event, session) => {
+      const user = session?.user;
       if (user) {
         loginWrap.style.display = 'none';
         appWrap.style.display = 'block';
@@ -162,15 +159,14 @@
       const password = document.getElementById('loginPassword').value;
       const errEl = document.getElementById('loginError');
       errEl.style.display = 'none';
-      try {
-        await signInWithEmailAndPassword(auth, email, password);
-      } catch (e) {
-        errEl.textContent = 'התחברות נכשלה: ' + (e.code === 'auth/invalid-credential' ? 'פרטי התחברות שגויים' : e.message);
+      const { error } = await client.auth.signInWithPassword({ email, password });
+      if (error) {
+        errEl.textContent = 'התחברות נכשלה: ' + (error.message.includes('Invalid login') ? 'פרטי התחברות שגויים' : error.message);
         errEl.style.display = 'block';
       }
     });
 
-    signOutLink.addEventListener('click', (e) => { e.preventDefault(); signOut(auth); });
+    signOutLink.addEventListener('click', (e) => { e.preventDefault(); client.auth.signOut(); });
 
     let allActivities = [];
     let editingId = null;
@@ -188,15 +184,25 @@
       }
     });
 
-    function startListening() {
+    async function startListening() {
       if (listenerStarted) return;
       listenerStarted = true;
-      const q = query(collection(db, 'activities'), orderBy('date', 'asc'), orderBy('startTime', 'asc'));
-      onSnapshot(q, (snap) => {
-        allActivities = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+      const { data, error } = await client.from('activities').select('*');
+      if (!error) {
+        allActivities = sortActivities(data);
         exportBtn.disabled = allActivities.length === 0;
         renderList();
-      });
+      }
+
+      client
+        .channel('activities-entry-view')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'activities' }, (payload) => {
+          allActivities = applyRealtimeChange(allActivities, payload);
+          exportBtn.disabled = allActivities.length === 0;
+          renderList();
+        })
+        .subscribe();
     }
 
     function renderList() {
@@ -218,23 +224,23 @@
       document.getElementById('submitBtn').textContent = 'עדכון';
       document.getElementById('cancelEditBtn').style.display = 'inline-flex';
       document.getElementById('fDate').value = a.date || '';
-      document.getElementById('fStart').value = a.startTime || '';
-      document.getElementById('fEnd').value = a.endTime || '';
+      document.getElementById('fStart').value = a.start_time || '';
+      document.getElementById('fEnd').value = a.end_time || '';
       document.getElementById('fDomain').value = a.domain || DOMAINS[0];
       document.getElementById('fSchool').value = a.school || '';
-      const trackIdx = TRACKS.findIndex(t => t.name === a.trackName && t.code === a.trackCode);
+      const trackIdx = TRACKS.findIndex(t => t.name === a.track_name && t.code === a.track_code);
       trackSelect.value = trackIdx >= 0 ? trackIdx : '';
-      document.getElementById('fTrackOtherWrap').style.display = (trackIdx < 0 && a.trackName) ? 'block' : 'none';
-      document.getElementById('fTrackOther').value = trackIdx < 0 ? (a.trackName || '') : '';
-      document.getElementById('fPercent').value = a.percentGroup || '';
-      document.getElementById('fClass').value = a.className || '';
-      document.getElementById('fPlanned').value = a.studentsPlanned ?? '';
-      document.getElementById('fActual').value = a.studentsActual ?? '';
+      document.getElementById('fTrackOtherWrap').style.display = (trackIdx < 0 && a.track_name) ? 'block' : 'none';
+      document.getElementById('fTrackOther').value = trackIdx < 0 ? (a.track_name || '') : '';
+      document.getElementById('fPercent').value = a.percent_group || '';
+      document.getElementById('fClass').value = a.class_name || '';
+      document.getElementById('fPlanned').value = a.students_planned ?? '';
+      document.getElementById('fActual').value = a.students_actual ?? '';
       document.getElementById('fTeacher').value = a.teacher || '';
-      document.getElementById('fSpace1Name').value = a.space1Name || '';
-      document.getElementById('fSpace1Num').value = a.space1Number || '';
-      document.getElementById('fSpace2Name').value = a.space2Name || '';
-      document.getElementById('fSpace2Num').value = a.space2Number || '';
+      document.getElementById('fSpace1Name').value = a.space1_name || '';
+      document.getElementById('fSpace1Num').value = a.space1_number || '';
+      document.getElementById('fSpace2Name').value = a.space2_name || '';
+      document.getElementById('fSpace2Num').value = a.space2_number || '';
       document.getElementById('fNotes').value = a.notes || '';
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -252,7 +258,7 @@
 
     async function removeActivity(id) {
       if (!confirm('למחוק את הפעילות? הפעולה בלתי הפיכה.')) return;
-      await deleteDoc(doc(db, 'activities', id));
+      await client.from('activities').delete().eq('id', id);
       if (editingId === id) resetForm();
     }
 
@@ -263,37 +269,38 @@
       const trackName = track ? (track.name === 'אחר' ? document.getElementById('fTrackOther').value.trim() : track.name) : '';
       const trackCode = track && track.name !== 'אחר' ? track.code : '';
 
+      const { data: { user } } = await client.auth.getUser();
+
       const payload = {
         date: document.getElementById('fDate').value,
-        startTime: document.getElementById('fStart').value,
-        endTime: document.getElementById('fEnd').value,
+        start_time: document.getElementById('fStart').value,
+        end_time: document.getElementById('fEnd').value,
         domain: document.getElementById('fDomain').value,
         school: document.getElementById('fSchool').value.trim(),
-        trackName,
-        trackCode,
-        percentGroup: document.getElementById('fPercent').value,
-        className: document.getElementById('fClass').value.trim(),
-        studentsPlanned: document.getElementById('fPlanned').value ? Number(document.getElementById('fPlanned').value) : null,
-        studentsActual: document.getElementById('fActual').value ? Number(document.getElementById('fActual').value) : null,
+        track_name: trackName,
+        track_code: trackCode,
+        percent_group: document.getElementById('fPercent').value,
+        class_name: document.getElementById('fClass').value.trim(),
+        students_planned: document.getElementById('fPlanned').value ? Number(document.getElementById('fPlanned').value) : null,
+        students_actual: document.getElementById('fActual').value ? Number(document.getElementById('fActual').value) : null,
         teacher: document.getElementById('fTeacher').value.trim(),
-        space1Name: document.getElementById('fSpace1Name').value.trim(),
-        space1Number: document.getElementById('fSpace1Num').value.trim(),
-        space2Name: document.getElementById('fSpace2Name').value.trim(),
-        space2Number: document.getElementById('fSpace2Num').value.trim(),
+        space1_name: document.getElementById('fSpace1Name').value.trim(),
+        space1_number: document.getElementById('fSpace1Num').value.trim(),
+        space2_name: document.getElementById('fSpace2Name').value.trim(),
+        space2_number: document.getElementById('fSpace2Num').value.trim(),
         notes: document.getElementById('fNotes').value.trim(),
-        updatedAt: serverTimestamp(),
-        updatedBy: auth.currentUser ? auth.currentUser.email : null,
+        updated_at: new Date().toISOString(),
+        updated_by: user ? user.email : null,
       };
 
       const submitBtn = document.getElementById('submitBtn');
       submitBtn.disabled = true;
       try {
         if (editingId) {
-          await updateDoc(doc(db, 'activities', editingId), payload);
+          await client.from('activities').update(payload).eq('id', editingId);
         } else {
-          payload.createdAt = serverTimestamp();
-          payload.createdBy = auth.currentUser ? auth.currentUser.email : null;
-          await addDoc(collection(db, 'activities'), payload);
+          payload.created_by = user ? user.email : null;
+          await client.from('activities').insert(payload);
         }
         resetForm();
       } finally {

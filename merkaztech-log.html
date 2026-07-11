@@ -25,13 +25,13 @@
 <div class="main">
 
   <div id="notConfigured" class="alert alert-warn" style="display:none;">
-    <strong>המערכת עדיין לא מחוברת ל-Firebase.</strong><br>
-    יש להגדיר את פרטי הפרויקט בקובץ <code>merkaztech-firebase.js</code>. ראו הוראות ב-<code>MERKAZTECH-SETUP.md</code>.
+    <strong>המערכת עדיין לא מחוברת ל-Supabase.</strong><br>
+    יש להגדיר את פרטי הפרויקט בקובץ <code>merkaztech-supabase.js</code>. ראו הוראות ב-<code>MERKAZTECH-SETUP.md</code>.
   </div>
 
   <div id="connError" class="alert alert-danger" style="display:none;">
     <strong>לא הצלחנו להתחבר לשרת הנתונים.</strong><br>
-    בדקו את החיבור לאינטרנט ורעננו את הדף. אם הבעיה נמשכת, ייתכן שרשת זו חוסמת גישה ל-Firebase.
+    בדקו את החיבור לאינטרנט ורעננו את הדף. אם הבעיה נמשכת, ייתכן שרשת זו חוסמת גישה ל-Supabase.
   </div>
 
   <div class="summary-strip">
@@ -75,8 +75,8 @@
 </div>
 
 <script type="module">
-  import { isConfigured, loadFirebase } from './merkaztech-firebase.js';
-  import { DOMAINS, formatDateHe, getActivityStatus, renderActivityCard, exportActivitiesToExcel } from './merkaztech-shared.js';
+  import { isConfigured, loadSupabase } from './merkaztech-supabase.js';
+  import { DOMAINS, formatDateHe, getActivityStatus, renderActivityCard, exportActivitiesToExcel, sortActivities, applyRealtimeChange } from './merkaztech-shared.js';
 
   const domainSelect = document.getElementById('fDomain');
   DOMAINS.forEach(d => {
@@ -107,19 +107,24 @@
     });
 
     try {
-      const { db, firestore } = await loadFirebase();
-      const { collection, onSnapshot, query, orderBy } = firestore;
+      const { client } = await loadSupabase();
 
-      const q = query(collection(db, 'activities'), orderBy('date', 'asc'), orderBy('startTime', 'asc'));
-      onSnapshot(q, (snap) => {
-        allActivities = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        liveStatus.textContent = 'מחובר · עודכן ' + new Date().toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        exportBtn.disabled = allActivities.length === 0;
-        render();
-      }, (err) => {
-        liveStatus.textContent = 'שגיאת חיבור';
-        console.error(err);
-      });
+      const { data, error } = await client.from('activities').select('*');
+      if (error) throw error;
+      allActivities = sortActivities(data);
+      liveStatus.textContent = 'מחובר · עודכן ' + new Date().toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      exportBtn.disabled = allActivities.length === 0;
+      render();
+
+      client
+        .channel('activities-log-view')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'activities' }, (payload) => {
+          allActivities = applyRealtimeChange(allActivities, payload);
+          liveStatus.textContent = 'מחובר · עודכן ' + new Date().toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+          exportBtn.disabled = allActivities.length === 0;
+          render();
+        })
+        .subscribe();
     } catch (err) {
       document.getElementById('connError').style.display = 'block';
       liveStatus.textContent = 'שגיאת חיבור';
@@ -144,7 +149,7 @@
         if (from && a.date < from) return false;
         if (to && a.date > to) return false;
         if (search) {
-          const haystack = [a.school, a.teacher, a.notes, a.trackName, a.className].join(' ').toLowerCase();
+          const haystack = [a.school, a.teacher, a.notes, a.track_name, a.class_name].join(' ').toLowerCase();
           if (!haystack.includes(search)) return false;
         }
         return true;
