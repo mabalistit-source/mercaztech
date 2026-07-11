@@ -105,6 +105,21 @@ export function applyRealtimeChange(list, payload) {
   return list;
 }
 
+// Buckets a day's activities by room (an activity can occupy space1 and/or space2),
+// sorted by start time within each room — used by the room-occupancy dashboard.
+export function groupActivitiesByRoom(activities, rooms) {
+  const byRoom = new Map(rooms.map(r => [r, []]));
+  for (const a of activities) {
+    for (const room of [a.space1_name, a.space2_name]) {
+      if (room && byRoom.has(room)) byRoom.get(room).push(a);
+    }
+  }
+  for (const list of byRoom.values()) {
+    list.sort((a, b) => (a.start_time || '').localeCompare(b.start_time || ''));
+  }
+  return byRoom;
+}
+
 const STATUS_LABEL = { past: 'התקיים', today: 'היום', upcoming: 'מתוכנן' };
 const STATUS_TAG_CLASS = { past: 'tag-muted', today: 'tag-ok', upcoming: 'tag-info' };
 

@@ -174,7 +174,23 @@ textarea { resize: vertical; min-height: 60px; }
 .login-wrap { max-width: 380px; margin: 4rem auto 0; padding: 0 1rem; }
 .section-label { font-size: 11px; font-weight: 700; letter-spacing: .07em; color: var(--text-muted); text-transform: uppercase; margin: 1.5rem 0 .6rem; }
 
+/* ─── ROOM OCCUPANCY DASHBOARD ─── */
+.room-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+.room-square {
+  border-radius: var(--radius); padding: .85rem .9rem; min-height: 110px;
+  border: 2px solid var(--success-border); background: var(--success-bg);
+}
+.room-square.busy { border-color: #bfdbfe; background: var(--accent-bg); }
+.room-square-name { font-size: 13px; font-weight: 800; margin-bottom: 6px; line-height: 1.3; }
+.room-square-status { font-size: 11px; font-weight: 700; margin-bottom: 6px; }
+.room-square.free .room-square-status { color: var(--success-text); }
+.room-square.busy .room-square-status { color: var(--accent-text); }
+.room-activity { font-size: 11px; margin-bottom: 4px; line-height: 1.4; }
+.room-activity-time { font-weight: 700; direction: ltr; display: inline-block; }
+.room-activity-school { color: var(--text-secondary); display: block; }
+
 @media (max-width: 480px) {
   .filter-bar, .form-grid { grid-template-columns: 1fr; }
   .summary-strip { grid-template-columns: repeat(3, 1fr); }
+  .room-grid { grid-template-columns: repeat(2, 1fr); }
 }
