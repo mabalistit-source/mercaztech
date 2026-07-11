@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>משפחת חזי – מונטנגרו 2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f0f2f5;
+    --surface: #ffffff;
+    --surface2: #f8f9fb;
+    --border: #e2e5ea;
+    --text-primary: #111827;
+    --text-secondary: #6b7280;
+    --text-muted: #9ca3af;
+    --accent: #1d4ed8;
+    --accent-light: #3b82f6;
+    --accent-bg: #eff6ff;
+    --accent-text: #1e40af;
+    --success-bg: #f0fdf4;
+    --success-border: #86efac;
+    --success-text: #166534;
+    --warn-bg: #fffbeb;
+    --warn-border: #fcd34d;
+    --warn-text: #92400e;
+    --danger-bg: #fef2f2;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    --shadow: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+    --shadow-lg: 0 10px 25px -5px rgba(0,0,0,0.1), 0 4px 10px -5px rgba(0,0,0,0.06);
+  }
+
+  body {
+    font-family: 'Heebo', sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+    padding: 0;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* ─── HERO BANNER ─── */
+  .hero {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 40%, #0ea5e9 100%);
+    padding: 2rem 1.5rem 5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .hero-inner { max-width: 680px; margin: 0 auto; position: relative; }
+  .hero-flag { font-size: 40px; margin-bottom: .5rem; }
+  .hero h1 {
+    font-size: 26px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: .35rem;
+  }
+  .hero-sub { font-size: 14px; color: rgba(255,255,255,0.75); margin-bottom: 1.5rem; }
+
+  .meta-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+  .meta-pill {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 30px;
+  }
+
+  /* ─── MAIN CONTENT ─── */
+  .main {
+    max-width: 680px;
+    margin: -3rem auto 0;
+    padding: 0 1rem 2rem;
+    position: relative;
+  }
+
+  /* ─── TABS ─── */
+  .tabs {
+    display: flex;
+    gap: 0;
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 5px;
+    box-shadow: var(--shadow);
+    margin-bottom: 1.25rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .tab {
+    flex: 1;
+    min-width: 0;
+    text-align: center;
+    padding: 9px 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-radius: 10px;
+    transition: all .2s;
+    border: none;
+    background: none;
+    font-family: inherit;
+    white-space: nowrap;
+  }
+  .tab:hover { background: var(--bg); color: var(--text-primary); }
+  .tab.active { background: var(--accent); color: #fff; box-shadow: 0 2px 8px rgba(29,78,216,.35); }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ─── CARDS ─── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.2rem 1.35rem;
+    margin-bottom: .85rem;
+    box-shadow: var(--shadow-sm);
+  }
+  .card-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: .65rem;
+  }
+
+  .hr { border: none; border-top: 1px solid var(--border); margin: .75rem 0; }
+
+  /* ─── FLIGHT CARD ─── */
+  .flight-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: .85rem; }
+  .flight-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: .07em; }
+  .flight-num { font-size: 11px; color: var(--text-muted); background: var(--bg); padding: 3px 8px; border-radius: 6px; }
+  .flight-route { display: flex; align-items: center; gap: 14px; margin-bottom: .65rem; }
+  .airport { text-align: center; min-width: 80px; }
+  .airport-time { font-size: 28px; font-weight: 800; color: var(--text-primary); letter-spacing: -1px; }
+  .airport-code { font-size: 13px; font-weight: 700; color: var(--accent-light); margin-top: 2px; }
+  .airport-name { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+  .arrow-line { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .arrow-track { width: 100%; display: flex; align-items: center; gap: 4px; }
+  .arrow-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent-light); flex-shrink: 0; }
+  .arrow-bar { flex: 1; height: 2px; background: linear-gradient(90deg, var(--accent-light), #93c5fd); border-radius: 2px; }
+  .arrow-plane { font-size: 14px; flex-shrink: 0; }
+  .arrow-dur { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+
+  .seats-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
+  .seats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 6px; }
+  .seat-chip {
+    background: var(--accent-bg);
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    padding: 7px 8px;
+    font-size: 12px;
+  }
+  .seat-name { font-weight: 700; color: var(--accent-text); display: block; font-size: 11px; }
+  .seat-num { color: var(--text-secondary); font-size: 13px; font-weight: 600; }
+
+  /* ─── DATE BADGE ─── */
+  .date-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 1.25rem 0 .6rem;
+  }
+  .date-badge-text {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent-text);
+    background: var(--accent-bg);
+    border: 1px solid #bfdbfe;
+    padding: 5px 14px;
+    border-radius: 30px;
+  }
+  .date-badge-line { flex: 1; height: 1px; background: var(--border); }
+
+  /* ─── TIMELINE ─── */
+  .stop-row { display: flex; gap: 12px; align-items: flex-start; padding: 2px 0; }
+  .stop-time {
+    min-width: 86px;
+    font-size: 12px;
+    color: var(--text-muted);
+    padding-top: 3px;
+    direction: ltr;
+    text-align: left;
+    flex-shrink: 0;
+    font-weight: 600;
+  }
+  .stop-body { flex: 1; }
+  .stop-title { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+  .stop-desc { font-size: 12px; color: var(--text-secondary); margin-top: 3px; line-height: 1.55; }
+  .tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+  .tag { font-size: 11px; padding: 2px 9px; border-radius: 20px; font-weight: 600; }
+  .tag-info { background: var(--accent-bg); color: var(--accent-text); border: 1px solid #bfdbfe; }
+  .tag-warn { background: var(--warn-bg); color: var(--warn-text); border: 1px solid var(--warn-border); }
+  .tag-ok { background: var(--success-bg); color: var(--success-text); border: 1px solid var(--success-border); }
+
+  /* ─── ALERTS ─── */
+  .alert {
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.1rem;
+    margin-bottom: .85rem;
+  }
+  .alert-warn { background: var(--warn-bg); border: 1px solid var(--warn-border); }
+  .alert-ok { background: var(--success-bg); border: 1px solid var(--success-border); }
+  .alert-title { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+  .alert-body { font-size: 13px; line-height: 1.75; }
+  .alert-warn .alert-title, .alert-warn .alert-body { color: var(--warn-text); }
+  .alert-ok .alert-title, .alert-ok .alert-body { color: var(--success-text); }
+
+  /* ─── HOTEL ─── */
+  .hotel-header {
+    background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.1rem;
+    margin-bottom: .85rem;
+    border: 1px solid var(--success-border);
+  }
+  .hotel-name { font-size: 17px; font-weight: 800; margin-bottom: 3px; }
+  .hotel-addr { font-size: 12px; color: var(--text-secondary); }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: .75rem; }
+  .info-cell { background: var(--surface); border-radius: var(--radius-sm); padding: 10px 13px; border: 1px solid var(--border); }
+  .info-lbl { font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 2px; }
+  .info-val { font-size: 14px; font-weight: 700; }
+  .map-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    text-decoration: none;
+    margin-top: .75rem;
+    padding: 7px 14px;
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    background: var(--accent-bg);
+    transition: background .15s;
+  }
+  .map-link:hover { background: #dbeafe; }
+
+  /* ─── BOOKING LINKS ─── */
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .07em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin: 1.25rem 0 .6rem;
+  }
+  .link-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem;
+    margin-bottom: .6rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    text-decoration: none;
+    box-shadow: var(--shadow-sm);
+    transition: all .2s;
+  }
+  .link-card:hover { border-color: var(--accent-light); box-shadow: 0 0 0 3px rgba(59,130,246,.12); transform: translateY(-1px); }
+  .link-card.feat { border: 2px solid var(--accent); background: var(--accent-bg); }
+  .link-card.feat:hover { box-shadow: 0 0 0 4px rgba(29,78,216,.15); }
+  .link-name { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+  .link-desc { font-size: 12px; color: var(--text-secondary); margin-top: 3px; line-height: 1.45; }
+  .lbadge { display: inline-block; font-size: 11px; padding: 2px 9px; border-radius: 20px; margin-top: 6px; font-weight: 600; }
+  .arrow-ext { font-size: 20px; color: var(--text-muted); flex-shrink: 0; }
+  .link-card.feat .arrow-ext { color: var(--accent); }
+
+  .phone-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem;
+    margin-bottom: .6rem;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .phone-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--accent);
+    text-decoration: none;
+    padding: 8px 16px;
+    border: 2px solid var(--accent);
+    border-radius: 10px;
+    background: var(--accent-bg);
+    white-space: nowrap;
+    transition: background .15s;
+  }
+  .phone-link:hover { background: #dbeafe; }
+
+  /* ─── CHECKLIST ─── */
+  .checklist { list-style: none; }
+  .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--success-border);
+    font-size: 13px;
+    color: var(--success-text);
+    line-height: 1.5;
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .check-box {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--success-border);
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    cursor: pointer;
+    transition: all .15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: transparent;
+    background: var(--surface);
+  }
+  .check-box.done { background: var(--success-text); border-color: var(--success-text); color: #fff; }
+
+  @media (max-width: 480px) {
+    .hero h1 { font-size: 21px; }
+    .seats-grid { grid-template-columns: 1fr 1fr; }
+    .tab { font-size: 12px; padding: 8px 4px; }
+    .airport-time { font-size: 22px; }
+    .meta-pills { gap: 6px; }
+    .meta-pill { font-size: 12px; padding: 5px 11px; }
+    .info-grid { grid-template-columns: 1fr 1fr; }
+    .phone-card { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-flag">🇲🇪</div>
+    <h1>משפחת חזי – מונטנגרו 2026</h1>
+    <div class="hero-sub">ישראייר · Docket 4447100 · Economy</div>
+    <div class="meta-pills">
+      <div class="meta-pill">📅 14–19 יולי 2026</div>
+      <div class="meta-pill">🛏️ 5 לילות</div>
+      <div class="meta-pill">👨‍👩‍👧‍👦 8 נוסעים</div>
+      <div class="meta-pill">🏖️ בודווה</div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('flights',this)">✈️ טיסות</button>
+    <button class="tab" onclick="showTab('hotel',this)">🏨 מלון</button>
+    <button class="tab" onclick="showTab('trip',this)">📅 יומן</button>
+    <button class="tab" onclick="showTab('book',this)">🔗 הזמנות</button>
+  </div>
+
+  <!-- ════ FLIGHTS ════ -->
+  <div id="flights" class="panel active">
+
+    <div class="date-badge">
+      <div class="date-badge-text">📅 14.7.2026 – טיסת הלוך</div>
+      <div class="date-badge-line"></div>
+    </div>
+    <div class="card">
+      <div class="flight-meta">
+        <div class="flight-label">ישראייר 6H 177 · Economy</div>
+        <div class="flight-num">Docket 4447100</div>
+      </div>
+      <div class="flight-route">
+        <div class="airport">
+          <div class="airport-time">08:20</div>
+          <div class="airport-code">TLV</div>
+          <div class="airport-name">תל אביב T3</div>
+        </div>
+        <div class="arrow-line">
+          <div class="arrow-track">
+            <div class="arrow-dot"></div>
+            <div class="arrow-bar"></div>
+            <div class="arrow-plane">✈️</div>
+          </div>
+          <div class="arrow-dur">~2:00 שעות</div>
+        </div>
+        <div class="airport">
+          <div class="airport-time">10:20</div>
+          <div class="airport-code">TIV</div>
+          <div class="airport-name">טיבאט, מונטנגרו</div>
+        </div>
+      </div>
+      <div class="hr"></div>
+      <div class="seats-label">מושבים</div>
+      <div class="seats-grid">
+        <div class="seat-chip"><span class="seat-name">שרי</span><span class="seat-num">8F</span></div>
+        <div class="seat-chip"><span class="seat-name">עידן</span><span class="seat-num">8E</span></div>
+        <div class="seat-chip"><span class="seat-name">שרונה</span><span class="seat-num">8D</span></div>
+        <div class="seat-chip"><span class="seat-name">אוריין</span><span class="seat-num">8C</span></div>
+        <div class="seat-chip"><span class="seat-name">אריאל</span><span class="seat-num">8B</span></div>
+        <div class="seat-chip"><span class="seat-name">בת שבע</span><span class="seat-num">8A</span></div>
+        <div class="seat-chip"><span class="seat-name">אביתר</span><span class="seat-num">7F</span></div>
+        <div class="seat-chip"><span class="seat-name">גאיה</span><span class="seat-num">7E</span></div>
+      </div>
+    </div>
+
+    <div class="date-badge">
+      <div class="date-badge-text">📅 19.7.2026 – טיסת חזור</div>
+      <div class="date-badge-line"></div>
+    </div>
+    <div class="card">
+      <div class="flight-meta">
+        <div class="flight-label">ישראייר 6H 178 · Economy</div>
+        <div class="flight-num">Docket 4447100</div>
+      </div>
+      <div class="flight-route">
+        <div class="airport">
+          <div class="airport-time">11:00</div>
+          <div class="airport-code">TIV</div>
+          <div class="airport-name">טיבאט, מונטנגרו</div>
+        </div>
+        <div class="arrow-line">
+          <div class="arrow-track">
+            <div class="arrow-dot"></div>
+            <div class="arrow-bar"></div>
+            <div class="arrow-plane">✈️</div>
+          </div>
+          <div class="arrow-dur">~2:45 שעות</div>
+        </div>
+        <div class="airport">
+          <div class="airport-time">14:45</div>
+          <div class="airport-code">TLV</div>
+          <div class="airport-name">תל אביב</div>
+        </div>
+      </div>
+      <div class="hr"></div>
+      <div class="seats-label">מושבים</div>
+      <div class="seats-grid">
+        <div class="seat-chip"><span class="seat-name">שרי</span><span class="seat-num">7F</span></div>
+        <div class="seat-chip"><span class="seat-name">עידן</span><span class="seat-num">7E</span></div>
+        <div class="seat-chip"><span class="seat-name">שרונה</span><span class="seat-num">8F</span></div>
+        <div class="seat-chip"><span class="seat-name">אוריין</span><span class="seat-num">8E</span></div>
+        <div class="seat-chip"><span class="seat-name">אריאל</span><span class="seat-num">8D</span></div>
+        <div class="seat-chip"><span class="seat-name">בת שבע</span><span class="seat-num">8C</span></div>
+        <div class="seat-chip"><span class="seat-name">אביתר</span><span class="seat-num">8B</span></div>
+        <div class="seat-chip"><span class="seat-name">גאיה</span><span class="seat-num">8A</span></div>
+      </div>
+    </div>
+
+    <div class="alert alert-warn">
+      <div class="alert-title">⚠️ חשוב לטיסה</div>
+      <div class="alert-body">
+        · להגיע לשדה התעופה בן גוריון לפחות 3 שעות לפני – כלומר עד <strong>05:20</strong> ביום 14.7<br>
+        · ילדים מתחת לגיל 18 חייבים ליווי הורה<br>
+        · טרולי (מזוודה) עד 10 ק"ג כלול בכרטיס
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ HOTEL ════ -->
+  <div id="hotel" class="panel">
+    <div class="card">
+      <div class="hotel-header">
+        <div class="hotel-name">🏨 מלון בבודווה</div>
+        <div class="hotel-addr">📍 Ulica Alekse Santica 4, 85310 Budva, Montenegro</div>
+      </div>
+      <div class="info-grid">
+        <div class="info-cell"><div class="info-lbl">צ'ק-אין</div><div class="info-val">14.7.2026</div></div>
+        <div class="info-cell"><div class="info-lbl">צ'ק-אאוט</div><div class="info-val">19.7.2026</div></div>
+        <div class="info-cell"><div class="info-lbl">לילות</div><div class="info-val">5 לילות</div></div>
+        <div class="info-cell"><div class="info-lbl">נוסעים</div><div class="info-val">8 אנשים</div></div>
+      </div>
+      <a class="map-link" href="https://maps.google.com/?q=Ulica+Alekse+Santica+4+Budva+Montenegro" target="_blank">📍 פתח ב-Google Maps ↗</a>
+    </div>
+    <div class="alert alert-warn">
+      <div class="alert-title">🕐 תזמון הגעה למלון</div>
+      <div class="alert-body">הטיסה נוחתת ב-10:20 בטיבאט. לאחר ביקורת דרכונים ואיסוף מזוודות, ההגעה למלון בבודווה צפויה בסביבות <strong>12:00–13:00</strong> (נסיעה של כ-40 דקות משדה התעופה טיבאט).</div>
+    </div>
+  </div>
+
+  <!-- ════ TRIP DIARY ════ -->
+  <div id="trip" class="panel">
+
+    <div class="date-badge"><div class="date-badge-text">📅 14.7 – שלישי · הגעה</div><div class="date-badge-line"></div></div>
+    <div class="card">
+      <div class="stop-row"><div class="stop-time">08:20</div><div class="stop-body"><div class="stop-title">✈️ המראה מתל אביב</div><div class="stop-desc">ישראייר 6H177 · טרמינל 3</div></div></div>
+      <div class="hr"></div>
+      <div class="stop-row"><div class="stop-time">10:20</div><div class="stop-body"><div class="stop-title">🛬 נחיתה בטיבאט</div><div class="stop-desc">Terra Taxi ממתין בשדה · נסיעה לבודווה ~40 דקות</div></div></div>
+      <div class="hr"></div>
+      <div class="stop-row"><div class="stop-time">~14:00</div><div class="stop-body"><div class="stop-title">🏨 צ'ק-אין למלון</div><div class="stop-desc">Ulica Alekse Santica 4 · מנוחה והתארגנות</div></div></div>
+      <div class="hr"></div>
+      <div class="stop-row"><div class="stop-time">אחה"צ</div><div class="stop-body"><div class="stop-title">🩰 טיילת לפסל הבלרינה</div><div class="stop-desc">הליכה קלה מהמלון לאורך הטיילת ועד שער העיר העתיקה, ומשם שביל צוקים מרהיב (עם מנהרה קצרה בסלע) עד לפסל הבלרינה המפורסם על הסלע · נוף ים פתוח, מומלץ לקראת השקיעה</div><div class="tags"><span class="tag tag-ok">נגיש לכולם</span><span class="tag tag-info">🚶 הליכה: כ-20–25 דק' מהמלון לאורך הטיילת (Slovenska Obala) עד שער העיר העתיקה, ועוד כ-10 דק' בשביל הצוק עד הפסל</span><span class="tag tag-info">🚌 אוטובוס: מיניבוסים מקומיים (Olimpia) בין התחנה המרכזית/סלובנסקה פלאז'ה למוגרן – עולים ליד סלובנסקה פלאז'ה, יורדים ליד שער העיר העתיקה · כ-€2.5 לנוסע, משלמים לנהג במזומן</span></div></div></div>
+    </div>
+
+    <div class="date-badge"><div class="date-badge-text">🗺️ אופציה מורחבת ליום הראשון</div><div class="date-badge-line"></div></div>
+    <div class="card">
+      <div class="card-title" style="font-size:14px">מסלול הליכה: עיר עתיקה ← פסל הבלרינה ← חוף מוגרן</div>
+      <div class="stop-desc" style="margin-bottom:.85rem">התחלה: העיר העתיקה (Stari Grad) · סיום: חוף מוגרן · כ-1.5 ק"מ הלוך-חזור · קלה מאוד, שביל מרוצף ומישורי ברובו</div>
+      <div class="hr"></div>
+      <div class="stop-row"><div class="stop-time">🚌 שלב 1</div><div class="stop-body"><div class="stop-title">איך מגיעים מהמלון לעיר העתיקה</div><div class="stop-desc">אוטובוס מקומי (Mediteran Express): מהמלון יורדים לרחוב Jadranski Put (כ-2–3 דק' הליכה), עולים על קו הנוסע לכיוון Budva Centar / Stari Grad (הקווים מכיוון Sveti Stefan או Bečići עוברים בתדירות גבוהה), יורדים בתחנה המרכזית ליד רחוב Mediteranska/חומות העיר · נסיעה של כ-5–7 דק' · עלות כ-€1.5–2 לאדם, במזומן לנהג</div><div class="tags"><span class="tag tag-info">⛵ אלטרנטיבה: סירת מונית (Water Taxi) מסלובנסקה פלאז'ה ישירות לנמל העיר העתיקה – דקות בודדות, כמה יורו בודדים</span></div></div></div>
+      <div class="hr"></div>
+      <div class="stop-row"><div class="stop-time">🏛️ שלב 2</div><div class="stop-body"><div class="stop-title">חומות העיר העתיקה (Stari Grad)</div><div class="stop-desc">הולכים לאורך קו החוף החיצוני של החומות בצד המערבי (קרוב למרינה) – שביל מרוצף ונוח, עם ארכיטקטורה ונציאנית מצד אחד וים כחול מהצד השני</div></div></div>
+      <div class="hr"></div>
+      <div class="stop-row"><div class="stop-time">🩰 שלב 3</div><div class="stop-body"><div class="stop-title">פסל הבלרינה (Dancing Girl)</div><div class="stop-desc">השביל הצר יוצא מהעיר העתיקה מערבה, צמוד לקו המים (ליד מלון Avala) · כ-3–5 דק' הליכה עד לפסל הברונזה המפורסם – נקודת צילום משפחתית מושלמת, עם ספסלים קטנים לאורך השביל</div></div></div>
+      <div class="hr"></div>
+      <div class="stop-row"><div class="stop-time">🪨 שלב 4</div><div class="stop-body"><div class="stop-title">שביל הצוקים לחוף מוגרן</div><div class="stop-desc">ממשיכים על אותו שביל מוגן במעקה, חצוב בחלקו בסלע · עוד כ-5–10 דק' הליכה עד מעבר סלעי קצר (מנהרה פתוחה) שמוביל ישירות לרצועת החוף הנסתרת</div></div></div>
+      <div class="hr"></div>
+      <div class="stop-row"><div class="stop-time">🏖️ שלב 5</div><div class="stop-body"><div class="stop-title">חוף מוגרן 1 ומוגרן 2</div><div class="stop-desc">חוף חולי היפה מוקף בצוקים המגנים מהרוח · בתי קפה קטנים על קו המים · גשר עץ קטן (כדקה הליכה) מחבר למוגרן 2 – החלק השקט והאינטימי יותר · מעולה לילדים לשחק בחוף או לטבול רגליים</div></div></div>
+      <div class="hr"></div>
+      <div class="stop-row"><div class="stop-time">🍕 שלב 6</div><div class="stop-body"><div class="stop-title">ארוחה בעיר העתיקה וחזרה למלון</div><div class="stop-desc">חוזרים באותו שביל לעיר העתיקה – מומלץ לעצור לארוחה קלה באחת הפיצריות/מסעדות בסמטאות. חזרה: אותה תחנת אוטובוס (בצד הנגדי של הכביש) בכיוון Bečići / Sveti Stefan, יורדים ליד המלון</div><div class="tags"><span class="tag tag-warn">מרחק כולל פחות מ-2.5 ק"מ – מונית מהעיר העתיקה למלון עולה בד"כ כ-€5–7 לכל המשפחה יחד, פתרון נוח לסוף היום</span></div></div></div>
+    </div>
+
+    <div class="date-badge"><div class="date-badge-text">📅 15.7 – רביעי · קוטור ולובצ'ן</div><div class="date-badge-line"></div></div>
+    <div class="card">
+      <div class="stop-row"><div class="stop-time">09:00</div><div class="stop-body"><div class="stop-title">🚗 יציאה לקוטור</div><div class="stop-desc">מיניוואן ל-8 אנשים · ~45 דקות נסיעה לאורך החוף</div></div></div>
+      <div class="hr"></div>
+      <div class="stop-row"><div class="stop-time">10:00–12:00</div><div class="stop-body"><div class="stop-title">🚶 עיר העתיקה – קוטור</div><div class="stop-desc">רחובות ימי ביניים, כיכרות ובתי קפה. ביקור בסיטאדל – מוזיאון, ספרייה עתיקה, נוף על המפרץ</div><div class="tags"><span class="tag tag-ok">כניסה חינם לעיר</span><span class="tag tag-warn">להיכנס מוקדם לפני הקהל</span></div></div></div>
+      <div class="hr"></div>
+      <div class="stop-row"><div class="stop-time">12:20</div><div class="stop-body"><div class="stop-title">🚡 רכבל קוטור–לובצ'ן</div><div class="stop-desc">~10 דקות · נוף פנורמי מרהיב על מפרץ קוטור · כיוון אחד (Jedan Smjer)</div><div class="tags"><span class="tag tag-ok">כרטיסים נרכשו ✅ €92 סה"כ</span></div></div></div>
+      <div class="hr"></div>
+      <div class="stop-row"><div class="stop-time">12:30–14:00</div><div class="stop-body"><div class="stop-title">🏔️ פסגת לובצ'ן</div><div class="stop-desc">ארוחת צהריים, Zip Line, Alpine Coaster, נוף עוצר נשימה</div><div class="tags"><span class="tag tag-info">Zip Line מגיל 14+</span><span class="tag tag-info">Alpine Coaster מגיל 5+</span><span class="tag tag-warn">גיל 4 ו-80 – מנוחה בלבד</span></div></div></div>
+      <div class="hr"></div>
+      <div class="stop-row"><div class="stop-time">14:00–15:30</div><div class="stop-body"><div class="stop-title">🚗 נסיעה לוירפאזר</div><div class="stop-desc">~1.5 שעות נסיעה נופית דרך ההרים</div><div class="tags"><span class="tag tag-warn">מפותל – כדורים נגד בחילה!</span></div></div></div>
+      <div class="hr"></div>
+      <div class="stop-row"><div class="stop-time">15:30–17:30</div><div class="stop-body"><div class="stop-title">🚤 שייט באגם סקאדר</div><div class="stop-desc">חבצלות מים, כפרי דייגים, ציפורים, אפשרות שחייה · הוזמן עם Bojan Gazivoda</div><div class="tags"><span class="tag tag-info">€120 לכולם (8 אנשים)</span><span class="tag tag-ok">נגיש לכולם</span><span class="tag tag-warn">כובע + קרם שמש!</span></div></div></div>
+      <div class="hr"></div>
+      <div class="stop-row"><div class="stop-time">17:30–18:00</div><div class="stop-body"><div class="stop-title">☕ וירפאזר</div><div class="stop-desc">קפה, אוכל מקומי ומזכרות ליד האגם</div></div></div>
+      <div class="hr"></div>
+      <div class="stop-row"><div class="stop-time">18:00–19:30</div><div class="stop-body"><div class="stop-title">🏨 חזרה למלון</div></div></div>
+    </div>
+
+    <div class="date-badge"><div class="date-badge-text">📅 16.7 – חמישי · אי סבטי ניקולה</div><div class="date-badge-line"></div></div>
+    <div class="card">
+      <div class="stop-row"><div class="stop-time">בוקר</div><div class="stop-body"><div class="stop-title">🚤 סירת טקסי לאי סבטי ניקולה</div><div class="stop-desc">יום רגוע בים · מים צלולים – מתאים לשנירקול לנוער ולצלילת בטן-גב למבוגרים</div><div class="tags"><span class="tag tag-ok">נגיש לכולם</span><span class="tag tag-info">ציוד שנירקול מומלץ</span></div></div></div>
+      <div class="hr"></div>
+      <div class="stop-row"><div class="stop-time">אחה"צ</div><div class="stop-body"><div class="stop-title">🏖️ זמן חופשי</div><div class="stop-desc">שחייה, מנוחה, חזרה לבודווה</div></div></div>
+    </div>
+
+    <div class="date-badge"><div class="date-badge-text">📅 17.7 – שישי · בריכה + ארוחת ערב</div><div class="date-badge-line"></div></div>
+    <div class="card">
+      <div class="stop-row"><div class="stop-time">בוקר</div><div class="stop-body"><div class="stop-title">🏊 בריכת המלון</div><div class="stop-desc">יום רגוע בבריכה – שחייה, שיזוף ומנוחה</div><div class="tags"><span class="tag tag-ok">כלול בהישארות</span><span class="tag tag-info">מתאים לכל הגילאים</span></div></div></div>
+      <div class="hr"></div>
+      <div class="stop-row"><div class="stop-time">צהריים</div><div class="stop-body"><div class="stop-title">🍕 ארוחת צהריים</div><div class="stop-desc">מסעדות איטלקיות בעיר העתיקה</div></div></div>
+      <div class="hr"></div>
+      <div class="stop-row"><div class="stop-time">ערב</div><div class="stop-body"><div class="stop-title">🍽️ ארוחת ערב</div><div class="stop-desc">לתאם מיקום מראש</div></div></div>
+    </div>
+
+    <div class="date-badge"><div class="date-badge-text">📅 18.7 – שבת · יום חופשי בבודווה</div><div class="date-badge-line"></div></div>
+    <div class="card">
+      <div class="stop-row"><div class="stop-time">בוקר</div><div class="stop-body"><div class="stop-title">🏖️ חוף מוגרן – הליכה + ים</div><div class="stop-desc">אותו מסלול הליכה כמו ביום הראשון (טיילת ← שער העיר העתיקה ← שביל הצוק ← פסל הבלרינה), הפעם ממשיכים דרך מנהרה בסלע אל חוף מוגרן 1 (חלוקים וחול עדין, מים צלולים – מעולה לשחייה), ואפשר להמשיך דרך מנהרה נוספת לחוף מוגרן 2 השקט יותר · לשלב הליכה על כל הרצועה עם שהייה וטבילה בים</div><div class="tags"><span class="tag tag-ok">נגיש לכולם</span><span class="tag tag-info">האזור סגור לרכבים – בטוח לילדים לרוץ</span><span class="tag tag-warn">להביא מגבות, קרם שיזוף ושתייה – במוגרן 2 אין ברים/מיטות שיזוף</span></div></div></div>
+      <div class="hr"></div>
+      <div class="stop-row"><div class="stop-time">ערב</div><div class="stop-body"><div class="stop-title">🌅 ערב חופשי</div><div class="stop-desc">ארוחת ערב, הליכה בטיילת, מנוחה לפני הטיסה</div></div></div>
+    </div>
+
+    <div class="date-badge"><div class="date-badge-text">📅 19.7 – ראשון · יום האחרון + טיסה</div><div class="date-badge-line"></div></div>
+    <div class="card">
+      <div class="stop-row"><div class="stop-time">בוקר</div><div class="stop-body"><div class="stop-title">🧳 צ'ק-אאוט ואריזה</div><div class="stop-desc">לצאת מהמלון ולהתכונן לנסיעה לשדה</div></div></div>
+      <div class="hr"></div>
+      <div class="stop-row"><div class="stop-time">~09:00</div><div class="stop-body"><div class="stop-title">🚐 נסיעה לשדה טיבאט</div><div class="stop-desc">לצאת עד 09:00 לפחות · Terra Taxi +382 67 178 888</div></div></div>
+      <div class="hr"></div>
+      <div class="stop-row"><div class="stop-time">11:00</div><div class="stop-body"><div class="stop-title">✈️ טיסת חזור</div><div class="stop-desc">ישראייר 6H178 · טיבאט → תל אביב · נחיתה 14:45</div></div></div>
+    </div>
+  </div>
+
+  <!-- ════ BOOKINGS ════ -->
+  <div id="book" class="panel">
+    <div class="section-label">הסעות</div>
+
+    <div class="phone-card">
+      <div>
+        <div class="link-name">🚐 Terra Taxi – הסעה מהשדה למלון</div>
+        <div class="link-desc" style="margin-top:4px">ימתין בשדה טיבאט עם הנחיתה ב-10:20 · נסיעה לבודווה ~40 דקות</div>
+      </div>
+      <a href="tel:+38267178888" class="phone-link">📞 +382 67 178 888</a>
+    </div>
+
+    <div class="phone-card">
+      <div>
+        <div class="link-name">🚐 Terrae Taxi Budva – יום סיורים 15.7</div>
+        <div class="link-desc" style="margin-top:4px">נהג פרטי ליום שלם · קוטור, לובצ'ן, אגם סקאדר · <strong>€350 לכל הקבוצה</strong> · שולם ✅</div>
+      </div>
+      <a href="tel:+38267178888" class="phone-link">📞 +382 67 178 888</a>
+    </div>
+
+    <div class="section-label">אטרקציות והזמנות</div>
+
+    <a class="link-card feat" href="https://kotorcablecar.com" target="_blank">
+      <div>
+        <div class="link-name">🚡 רכבל קוטור – 15.7</div>
+        <div class="link-desc">כיוון אחד · 6 מבוגרים (€14) + 2 ילדים (€4) · שולם בכרטיס ✅</div>
+        <span class="lbadge tag-ok">€92 סה"כ · נרכש</span>
+      </div>
+      <span class="arrow-ext">↗</span>
+    </a>
+
+    <div class="card">
+      <div class="card-title" style="font-size:14px">🎫 כרטיסי רכבל – ברקודים לסריקה</div>
+      <div class="link-desc" style="margin-bottom:.75rem">8 כרטיסים · כיוון אחד · אין צורך להדפיס – להראות את הברקוד מהטלפון בקופה</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="text-align:center;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 8px">
+          <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAM8AAADPCAIAAADd4xIIAAAACXBIWXMAAAsSAAALEgHS3X78AAAC5UlEQVR42u3dy2orMRBF0Sj0//+yM3UIaFA5lEvda00v14/ORoJCyOv1en1Bi2+PALWhNlAbagO1oTbUBjHX5t/WWud+sc3Uesj3mv8J49/L2oadFLWB2lAbqA21oTbIuWr/bciJ3/gUtDZx7ZzTHv3krW3YSVEbqA21gdpQG2qDnCv+inedZ9Y+RueHn//krW3YSVEbqA21gdpQG2qDnMsjeHfX0bS1DbWB2lAbqA21oTZQG7fzxOnukPO0Dxz8WttQG2oDtaE2UBtqQ22Qk5/uzh9a1g7oxq/kfeCTt7ahNtQGakNtoDbUhtogpzjdjd9gMETnr6rVhrFHP3lrG2pDbaA21AZqQ22oDXKWi2F/PY7G2ambGUBtqA3UhtpQm0eA2lAb/MPu7G78BoP4e8U/Ru0FO29miB8hjtt8DGsbdlLUBmpDbaA21IbaIGc33Y1PC+ePcOPm/6pa59Ta2oadFLWB2lAbqA21oTbIWZ0HPjuP9c4/yFr7ykcfjba2YSdFbaA21AZqQ22oDXKu+CvGz4J2nnHtfK/OY71DrpWwtmEnRW2gNtQGakNtqA1yijczxMWvkx1y70HnOeH4e8VPTVvbsJOiNlAbagO1oTbUBjlr/tW1+e988q/FxXUGYG3DToraQG2oDdSG2lAb5OzO7s6fTG7Er3qInxMecibZzQzYSUFtqA3UhtpQG6iNMxXv3T363oMhNxjUHu+QyyhqH8Pahp0UtYHaUBuoDbWhNsjJ/6pa56gzrjZWHfLhO/8o1jbspKA21IbaQG2oDdTGp10P/M7xixQ24r8W1/le8ZmwtQ07KWoDtaE2UBtqQ22Qc3kE7+YfPB5yabC1DTspqA21oTZQG2oDtfFp+enukLsINuKjziHX/8afRvyvbG3DToraQG2oDdSG2lAb5BSnu0Mmk50671iIP/n41NqvqmEnBbWhNtQGakNtoDY+bc0/aou1DdSG2kBtqA21gdpQG/zxA3E5951AogzSAAAAAElFTkSuQmCC" style="width:100%;max-width:140px;border-radius:4px" alt="QR מבוגר 628-21-92383">
+          <div style="font-size:12px;font-weight:700;margin-top:6px">מבוגר · €14</div>
+          <div style="font-size:10px;color:var(--text-muted);margin-top:1px;direction:ltr">628-21-92383</div>
+        </div>
+        <div style="text-align:center;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 8px">
+          <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAM8AAADPCAIAAADd4xIIAAAACXBIWXMAAAsSAAALEgHS3X78AAACwklEQVR42u3dwWrDMBBF0aro/3853XbllOF1MrLP2ZaksblIMAh7vV6vL2jx7RagNtQGakNtoDbUhtogZl/8ba117oXVptYXl3zxhbUbFf/C+Xfe2oadFLWB2lAbqA21oTbI2bWPDTnx2zkFjY9wH3jnrW3YSVEbqA21gdpQG2qDnB3/xvjENT7P7DxqWzsMfNc7b23DToraQG2oDdSG2lAb5OwHXnPnIxE81tjahtpQG6gNtYHaUBtqg/+x3YLfaoPf+KesbaA21AZqQ22oDdSG2uCd/HT3rkPL+dc1/xda21AbagO1oTZQG2pDbZBTnO52vs4s7uhTuEffeWsbakNtoDbUBmpDbagNctYDnw/Q+Va12hda20BtqA3UhtpQG6gNtcE7a8grxo4+ktp5yfGZcOeZZGsbdlLUBmpDbaA21IbaIKd4dnfI4Pfo87TzHxAR/1/WNuykqA3UhtpAbagNtUFO8bm788eP8R/f+YWdd6N2XdY27KSgNtSG2kBtqA3Uxqftzn929LMIOge/d30mhrUNOylqA7WhNlAbakNtkHM13Y2fwh0y6uzU+eOHHKi2tmEnRW2gNtQGakNtqA1arM7h3pRrTo867/qFnruLnRTUhtpQG6gNtYHaGKx4dne+IWPVuNov7DxrffEpaxt2UtQGakNtoDbUhtogJ/9WtU7z3yM25K1q8Vm3tQ07KagNtaE2UBtqA7Xxafm3qs2fuHbqHKt67i6oDbWhNlAbagO1oTaeZD/wmmtTUP54D61t2ElRG6gNtYHaUBtqgxZPnO52ni7uPDQ7/7qsbdhJURuoDbWB2lAbaoOc/HT36Acp1NRGnUMGv52vabO2YSdFbaA21AZqQ22oDXKK0927PsGgc6zaOfiNP4zC2V3spKA21IbaQG2oDdTGp60HHrXF2obaQG2oDdSG2lAbqI3z/QBPeQOvIlSkOgAAAABJRU5ErkJggg==" style="width:100%;max-width:140px;border-radius:4px" alt="QR מבוגר 628-21-92384">
+          <div style="font-size:12px;font-weight:700;margin-top:6px">מבוגר · €14</div>
+          <div style="font-size:10px;color:var(--text-muted);margin-top:1px;direction:ltr">628-21-92384</div>
+        </div>
+        <div style="text-align:center;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 8px">
+          <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAM8AAADPCAIAAADd4xIIAAAACXBIWXMAAAsSAAALEgHS3X78AAAC5ElEQVR42u3dQY7jMAxFQavh+1/ZfQMtmA+Gjqq2g3Ziz4MEEIKznue5oMWfR4DaUBuoDbWB2lAbaoOYe/Nva6333lhtar255c0Faw8qfsH5T97ahp0UtYHaUBuoDbWhNsi5a3825MRvbQraOTuNP6hXP3lrG3ZS1AZqQ22gNtSG2iDnjl8xPjud/+6I2inc+H3Nf/LWNuykqA3UhtpAbagNtUHOfeA9x1+J0DnCtbaB2lAbagO1oTZQG2qD67rOnO7Gh7FDzu5a20BtqA21gdpQG6gNtXGS/HT3wKHlkB9Bm//krW2oDbWB2lAbqA21oTbIKU53h8wzO9VO4cYf1KufvLUNtaE2UBtqA7WhNtQGOctR22/xZgZQG2oDtaE21OYRoDbUBh/Ynd2tTUE7X0Lb+Q1rF6yJz5+H3LK1DTspagO1oTZQG2pDbZCzOt8qMOTXx+LvWIiPpjtn3XGbL29tw06K2kBtqA3UhtpQG+SszsnkkAFp52nVzql17WvEb9nahp0UtYHaUBuoDbWhNmhR/FW1Iedp45Pk2hR0/pA5fsHaLVvbsJOiNlAbagO1oTbUBjmt792N/1XnuyNqfzVkyDzkf9nahp0UtYHaUBuoDbWhNshZne8HmHLPbz5qO+S1ErXPsrZhJ0VtoDbUBmpDbagNcvJnd4fonFoP+azN/1f8xRfWNuykoDbUhtpAbagN1Ma3TXnvbs2vnqedf0C39jWsbdhJURuoDbWB2lAbaoOcO37FIe/CHaJzhNt5QLf25a1t2ElRG6gNtYHaUBtqg5z7wHuuTUE3OufPna/LiH+WtQ07KWoDtaE2UBtqQ22Qc+J091eHsZ0Pytld7KSgNtSG2kBtqA3Uxrflp7vzX6QQP7sbv2DtszovWLsvaxt2UtQGakNtoDbUhtogpzjdffWR1M776hz8DvmZNmsbdlLUBmpDbaA21IbaoMV69W+WYW0DtaE21AZqQ22gNtTGqf4B7aMJrHjkJUMAAAAASUVORK5CYII=" style="width:100%;max-width:140px;border-radius:4px" alt="QR מבוגר 628-21-92385">
+          <div style="font-size:12px;font-weight:700;margin-top:6px">מבוגר · €14</div>
+          <div style="font-size:10px;color:var(--text-muted);margin-top:1px;direction:ltr">628-21-92385</div>
+        </div>
+        <div style="text-align:center;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 8px">
+          <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAM8AAADPCAIAAADd4xIIAAAACXBIWXMAAAsSAAALEgHS3X78AAAC00lEQVR42u3d0WrjMBCG0aro/V85vU0o+GL6Mx3Z59wuydreDwkGr7Jer9cXtPj2CFAbagO1oTZQG2pDbRCzL/5srXXujV1MrYfc1/wrjN+XtQ07KWoDtaE2UBtqQ22Qs2sfG/LGb3wKWpu4ds5pj37y1jbspKgN1IbaQG2oDbVBzo5/413nmbXL6Lz4+U/e2oadFLWB2lAbqA21oTbI2R7Bu7uOpq1tqA3UhtpAbagNtYHauJ0nTneHvE/7wMGvtQ21oTZQG2oDtaE21AY5+enu/KFl7QXd+JG8D3zy1jbUhtpAbagN1IbaUBvkFKe78RMMhuj8VbXaMPboJ29tQ22oDdSG2kBtqA21Qc5yMOzH42icnTqZAdSG2kBtqA21eQSoDbXBH1y9uxs/wSD+d8Uvo/aFnSczxF8hjru4DGsbdlLUBmpDbaA21IbaIGcdfT7AAw836BwXx6/Q2oadFLWB2lAbqA21oTbIWUOmhUe/8Tvk3d0hj9d0FzspagO1oTZQG2pDbdCieDLDkDNj73oZQ0a48fuytmEnRW2gNtQGakNtqA1yrqa78ZNmLz5119MS5k/IL3h3FzspqA21oTZQG2oDtTHYrn2sNpkcMs8cMknufEE3/q9cu3hrG3ZS1AZqQ22gNtSG2iBnxSd4Qww5piD+knP8lq1t2ElBbagN1IbaUBuojTO1vrsbV5uCdn4q/oVHT62tbdhJURuoDbWB2lAbaoOcHf/G+BT06LMIOs8u7rwMaxt2UlAbakNtoDbUBmrjv+0H3vNdZ6dDJsnWNuykqA3UhtpAbagNtUGL7RG8q40647PTzsFv/FPWNuykqA3UhtpAbagNtUGL/HR3/m97dY5VO69w/i+4Wduwk6I2UBtqA7WhNtQGOcXpbvz/7A/R+etj8+8r/rqytQ07KWoDtaE2UBtqQ22Qs+a/aou1DdSG2kBtqA21gdpQG/zyA1sDCaBP9TTuAAAAAElFTkSuQmCC" style="width:100%;max-width:140px;border-radius:4px" alt="QR מבוגר 628-21-92386">
+          <div style="font-size:12px;font-weight:700;margin-top:6px">מבוגר · €14</div>
+          <div style="font-size:10px;color:var(--text-muted);margin-top:1px;direction:ltr">628-21-92386</div>
+        </div>
+        <div style="text-align:center;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 8px">
+          <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAM8AAADPCAIAAADd4xIIAAAACXBIWXMAAAsSAAALEgHS3X78AAAC0klEQVR42u3dwWrrMBCG0aro/V853SYUtFD/jkf2OdvLTR3xIYEwk/F6vb6gxLclQG2oDdSG2kBtqA21Qcxc/NsY49wvtri1bvK9+j9h/HvZ23CSojZQG2oDtaE21AY5c++/NXnjN34LunfjWnlPe/TK29twkqI2UBtqA7WhNtQGOTP+iXe9z9x7jMqH77/y9jacpKgN1IbaQG2oDbVBzrQE7+56NW1vQ22gNtQGakNtqA3Uxu088Xa3yfu0D7z4tbehNtQGakNtoDbUhtogJ3+72//Scu8F3fhI3geuvL0NtaE2UBtqA7WhNtQGOZu3u/EJBk1U/qra3mXs0Stvb0NtqA3UhtpAbagNtUHOMBj2YzkK705NZgC1oTZQG2pDbZYAtaE2+IPVu7vxCQbxvxV/jL0PrJzMEH+FOG7xGPY2nKSoDdSG2kBtqA21Qc7mZIb+V7hNRiL0H6RQ+QqxvQ0nKWoDtaE2UBtqQ22QUzp3t3KqbdzRI3mbvEJsb8NJitpAbagN1IbaUBvklM7dbTJ+ofIWNL5QTb6y212cpKA21IbaQG2oDdTG1Ublm7HmOfyryntat7s4SUFtqA21gdpQG6iNq40mb6uWfucevxb3wLem7W04SVEbqA21gdpQG2qDnNFkqm1c5au2R6+hX1XDSQpqQ22gNtSG2kBtnGnzV9X6z6eN/6/KD6z8BTeTGXCSgtpQG6gNtaE2UBtnmvFPbDIEoPJvxS9I956wcuKEvQ0nKagNtaE2UBtqA7VxtfnA7xy/z4zfuDaZ5xB/DHsbTlLUBmpDbaA21IbaIGdagneVYwr2HmOhcjKDvQ0nKagNtaE2UBtqA7VxtfztbpORvAuVgxT2HqNyeStvre1tOElRG6gNtYHaUBtqg5xReZ9ZqfLScrW+J69hfOXtbThJURuoDbWB2lAbaoOc0f9VW+xtoDbUBmpDbagN1Iba4JcfD6kJo0zabHkAAAAASUVORK5CYII=" style="width:100%;max-width:140px;border-radius:4px" alt="QR מבוגר 628-21-92387">
+          <div style="font-size:12px;font-weight:700;margin-top:6px">מבוגר · €14</div>
+          <div style="font-size:10px;color:var(--text-muted);margin-top:1px;direction:ltr">628-21-92387</div>
+        </div>
+        <div style="text-align:center;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 8px">
+          <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAM8AAADPCAIAAADd4xIIAAAACXBIWXMAAAsSAAALEgHS3X78AAACvUlEQVR42u3d0WoDIRCG0Vp8/1fe3KYUDMjP7Lg557Y0abYfCiKTcV3XD5T49QhQG2oDtaE2UBtqQ20QMxc/G2Oc+8GanFovnuHiL3zqk7e2YSdFbaA21AZqQ22oDXLm3q/1PzutfK/Kp3H0k7e2YSdFbaA21AZqQ22oDXJm/BXjJ679Z0c0uWrb/8lb27CTojZQG2oDtaE21AY58ws/c/wW7lNnLFjbUBuoDbWhNlAbagO10dj0CN41Gb9gbQO1oTZQG2pDbaA21Aaf5E93+5+Cxq/aGslrbUNtqA3UhtpAbagN1Ea5zdPdowcO7B3GVv7WU5+8tQ21oTZQG2oDtaE21AY5w8ABrG2oDdSG2kBtqA21gdo40Oru7t410fhxcfy2auVfWHl43uT/ZW3DToraQG2oDdSG2lAblBhHzweoHKTQ/3PtvWD8v7x4L2sbdlLUBmpDbaA21IbaIGc0uWrb5MT16Gu9/S85W9uwk6I2UBtqA7WhNtQGOaXfqnb0t49VvmD8WLXJdGVrG2pDbaA21AZqQ22oDXI2T3f7n7gav3DXRzaZATspagO1oTZQG2pDbVBiNLnVWfqZe4yufeoLWtuwk6I2UBtqA7WhNtQGJUb/O657mkyBaHLJ2WQG7KSgNtQGakNtqA3UxuOUTmaIazLq4egzYXd3sZOC2lAbqA21oTZQG2ea8Vfsf+9071pv5TyHJo83fvBrbcNOitpAbagN1IbaUBvkTI/gXfyos/JmbOXXtFnbsJOC2lAbagO1oTZQG3dzuvtH/Ah3770W9k5cK0c9LN7L2oadFLWB2lAbqA21oTbIyZ/uNhnJu1A5nzZ+QNrkFq7JDNhJQW2oDbWB2lAbqI27bZ7uxqe/fqHKW7iVf6G1DTspagO1oTZQG2pDbVBi9L9qi7UN1IbaQG2oDbWB2lAb/PMCedz3mrBLqCAAAAAASUVORK5CYII=" style="width:100%;max-width:140px;border-radius:4px" alt="QR מבוגר 628-21-92388">
+          <div style="font-size:12px;font-weight:700;margin-top:6px">מבוגר · €14</div>
+          <div style="font-size:10px;color:var(--text-muted);margin-top:1px;direction:ltr">628-21-92388</div>
+        </div>
+        <div style="text-align:center;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 8px">
+          <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAM8AAADPCAIAAADd4xIIAAAACXBIWXMAAAsSAAALEgHS3X78AAACt0lEQVR42u3d0UoDMRRFUUfy/79cXxUhQjzcnmnXehXrTNwkEEJ6PR6PDxjxaQhQG2oDtaE2UBtqQ20QszY/u67rvi9Wsmu9GcPNE77qyJvbsJKiNlAbagO1oTbUBjnr7Nf6904n/9bkaNx65M1tWElRG6gNtYHaUBtqg5wV/8T4jmv/3RElR237R97chpUUtYHaUBuoDbWhNshZb/jO8VO4r3rHgrkNtYHaUBtqA7WhNlAbxZYh+K7k+gVzG6gNtYHaUBtqA7WhNvhLfne3fxc0ftTWlbzmNtSG2kBtqA3UhtpAbYw73N299YUDZ5uxk7/1qiNvbkNtqA3UhtpAbagNtUHO5cIBzG2oDdSG2kBtqA21gdq4od3Z3bNjovHt4vhp1cknnNw8L/l/mduwkqI2UBtqA7WhNtQGI674JbRnJi832A1H/Sv327yXuQ0rKWoDtaE2UBtqQ22Qs/ofcfIu3LPH2Nj8rcmHn/ynmNuwkqI2UBtqA7WhNtQGIw53d2+941rydWZv+A1u5jaspKgN1IbaQG2oDbVBzlWy7zep/5VLvuouvuVubsNKitpAbagN1IbaUBvk5M/u9is5hVvy8JPvZW7DSoraQG2oDdSG2lAb5Ox2d9/wgO6Zkht0J1/ZvbtYSUFtqA21gdpQG6iNZ7v32d3+u3Dj73Xr7WJzG1ZS1AZqQ22gNtSG2iBnxT+xf4+x/+vM4sMbv2rY2V2spKA21IbaQG2oDdTGsy1D8H/952nP9mmd3cVKCmpDbagN1IbaQG0Us7v7Q8k+bcmNx/FzwuY2rKSoDdSG2kBtqA21QU5+d7fkSt6NkssNzv5W/wea27CSojZQG2oDtaE21AYjDnd3Sw6XxpVcrhtX8vDmNqykqA3UhtpAbagNtUHO1b8zibkN1IbaQG2oDbWB2lAb/PIFYl3uoBlJIDQAAAAASUVORK5CYII=" style="width:100%;max-width:140px;border-radius:4px" alt="QR ילד 628-21-92389">
+          <div style="font-size:12px;font-weight:700;margin-top:6px">ילד · €4</div>
+          <div style="font-size:10px;color:var(--text-muted);margin-top:1px;direction:ltr">628-21-92389</div>
+        </div>
+        <div style="text-align:center;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 8px">
+          <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAM8AAADPCAIAAADd4xIIAAAACXBIWXMAAAsSAAALEgHS3X78AAACw0lEQVR42u3dUWrDMBRFwapo/1tOfwMFF8Tl5tmd+S1xbOcggRDqer1eX1Dx7RWgNtQGakNtoDbUhtogZl/8ba113wcbsmp98Q4v7vCpb97YhpkUtYHaUBuoDbWhNsjZZx+bv3ba/K7m27j1mze2YSZFbaA21AZqQ22oDXJ2/IrxFdf5Z0cM2Wo7/80b2zCTojZQG2oDtaE21AY5+x8+c3wX7lPPWDC2oTZQG2pDbaA21AZqY7DtFbwbcvyCsQ3UhtpAbagNtYHaUBv8Jb+6O38VNL7V1pG8xjbUhtpAbagN1IbaQG3UHa7u3vrAgbPF2OannvrmjW2oDbWB2lAbqA21oTbIWQ4cwNiG2kBtqA3UhtpQG6iNG7rau3u2TTS+XBzfrdq8w+bi+ZDfy9iGmRS1gdpQG6gNtaE2qMifuxtfY7z1CQbN25h/nrCxDTMpagO1oTZQG2pDbZBzuLrbXHGNL5A2NwM3V3ebW4jPvsvYhpkUtYHaUBuoDbWhNshZzXXa+HfNP/eg+Taa7N3FTApqQ22oDdSG2kBtfFr+3N0zzW29Z1tth2zQPXuu5o9ibMNMitpAbagN1IbaUBtUrOb21ynPPP4EgyHf5dxdzKSgNtSG2kBtqA3UxmBr/pbUM/HnGrLjt3lBYxtmUlAbakNtoDbUBmpjsOp/VYsbchZu/FMXz3XrJXdjG2pDbaA21AZqQ22oDXJ2/IpDVlzPLti8+aduITa2YSZFbaA21AZqQ22oDSq2V/CuuXYa37sbvw1jG2ZSUBtqQ22gNtQGamMwq7sBzdMSmqdAxO/Q2IaZFLWB2lAbqA21oTbIya/uDjmS98KQ4xfi+2mbG3SdzICZFNSG2lAbqA21gdr4tMPV3Vv/b68zQxZIm79X/A6NbZhJURuoDbWB2lAbaoOcNX+rLcY2UBtqA7WhNtQGakNt8MsPzsDrrwUiJEYAAAAASUVORK5CYII=" style="width:100%;max-width:140px;border-radius:4px" alt="QR ילד 628-21-92390">
+          <div style="font-size:12px;font-weight:700;margin-top:6px">ילד · €4</div>
+          <div style="font-size:10px;color:var(--text-muted);margin-top:1px;direction:ltr">628-21-92390</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="phone-card">
+      <div>
+        <div class="link-name">🚤 שייט אגם סקאדר – 15.7, 15:30</div>
+        <div class="link-desc" style="margin-top:4px">הוזמן עם Bojan Gazivoda · שייט ל-8 אנשים · <strong style="color:var(--warn-text)">נדרש לשלם €120 לכולנו (8 אנשים) ⚠️</strong></div>
+      </div>
+      <a href="tel:+38269425402" class="phone-link">📞 +382 69 425 402</a>
+    </div>
+
+    <div class="section-label">רשימת מטלות לפני הנסיעה</div>
+    <div class="card" style="background:var(--success-bg);border-color:var(--success-border)">
+      <ul class="checklist" id="checklist">
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>תאם עם Terra Taxi (+382 67 178 888) שיהיה בשדה ב-10:20</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>בדוק גיל מינימום ל-Alpine Coaster (גיל 4 גבולי – לאשר מראש)</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>הכן כדורים נגד בחילה לנסיעה ההרית ללובצ'ן</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>הגעה לשדה התעופה בן גוריון עד <strong>05:20</strong> ביום 14.7.2026</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>הכן ציוד שנירקול לאי סבטי ניקולה</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>כובעים ומסנן קרינה לשייט אגם סקאדר</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>לשלם €120 ל-Bojan Gazivoda עבור שייט אגם סקאדר</span></li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function showTab(id, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+}
+
+function toggleCheck(el) {
+  el.classList.toggle('done');
+  el.textContent = el.classList.contains('done') ? '✓' : '';
+  saveChecklist();
+}
+
+function saveChecklist() {
+  const boxes = document.querySelectorAll('.check-box');
+  const state = [...boxes].map(b => b.classList.contains('done'));
+  try { localStorage.setItem('mnt2026-checks', JSON.stringify(state)); } catch(e) {}
+}
+
+function loadChecklist() {
+  try {
+    const state = JSON.parse(localStorage.getItem('mnt2026-checks') || '[]');
+    const boxes = document.querySelectorAll('.check-box');
+    state.forEach((done, i) => {
+      if (done && boxes[i]) {
+        boxes[i].classList.add('done');
+        boxes[i].textContent = '✓';
+      }
+    });
+  } catch(e) {}
+}
+
+loadChecklist();
+</script>
+</body>
+</html>
