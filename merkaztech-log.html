@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>יומן פעילויות מרכזי – מרכזטק</title>
+<link rel="stylesheet" href="./merkaztech-style.css">
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div>
+      <h1>יומן פעילויות מרכזי</h1>
+      <div class="hero-sub">מרכזטק · תצוגה חיה</div>
+      <div class="live-badge" style="margin-top:8px;"><span class="live-dot"></span><span id="liveStatus">מתחבר…</span></div>
+    </div>
+    <div class="hero-nav">
+      <a href="./merkaztech-log.html" class="active">צפייה</a>
+      <a href="./merkaztech-entry.html">הזנת נתונים</a>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+  <div id="notConfigured" class="alert alert-warn" style="display:none;">
+    <strong>המערכת עדיין לא מחוברת ל-Supabase.</strong><br>
+    יש להגדיר את פרטי הפרויקט בקובץ <code>merkaztech-supabase.js</code>. ראו הוראות ב-<code>MERKAZTECH-SETUP.md</code>.
+  </div>
+
+  <div id="connError" class="alert alert-danger" style="display:none;">
+    <strong>לא הצלחנו להתחבר לשרת הנתונים.</strong><br>
+    בדקו את החיבור לאינטרנט ורעננו את הדף. אם הבעיה נמשכת, ייתכן שרשת זו חוסמת גישה ל-Supabase.
+  </div>
+
+  <div class="summary-strip">
+    <div class="summary-cell"><div class="summary-num" id="statTotal">–</div><div class="summary-lbl">סה"כ פעילויות</div></div>
+    <div class="summary-cell"><div class="summary-num" id="statToday">–</div><div class="summary-lbl">היום</div></div>
+    <div class="summary-cell"><div class="summary-num" id="statUpcoming">–</div><div class="summary-lbl">מתוכננות</div></div>
+  </div>
+
+  <button type="button" class="btn btn-secondary btn-block" id="exportBtn" style="margin-bottom:1.25rem;" disabled>⬇️ ייצוא כל הנתונים לאקסל</button>
+
+  <div class="filter-bar">
+    <div class="full">
+      <label class="field-label">חיפוש חופשי</label>
+      <input type="text" id="fSearch" placeholder="בית ספר, מורה, הערות...">
+    </div>
+    <div>
+      <label class="field-label">תחום</label>
+      <select id="fDomain"><option value="">הכל</option></select>
+    </div>
+    <div>
+      <label class="field-label">סטטוס</label>
+      <select id="fStatus">
+        <option value="">הכל</option>
+        <option value="upcoming">מתוכננות</option>
+        <option value="today">היום</option>
+        <option value="past">התקיימו</option>
+      </select>
+    </div>
+    <div>
+      <label class="field-label">מתאריך</label>
+      <input type="date" id="fFrom">
+    </div>
+    <div>
+      <label class="field-label">עד תאריך</label>
+      <input type="date" id="fTo">
+    </div>
+  </div>
+
+  <div id="list"></div>
+
+</div>
+
+<script type="module">
+  import { isConfigured, loadSupabase } from './merkaztech-supabase.js';
+  import { DOMAINS, formatDateHe, getActivityStatus, renderActivityCard, exportActivitiesToExcel, sortActivities, applyRealtimeChange } from './merkaztech-shared.js';
+
+  const domainSelect = document.getElementById('fDomain');
+  DOMAINS.forEach(d => {
+    const opt = document.createElement('option');
+    opt.value = d; opt.textContent = d;
+    domainSelect.appendChild(opt);
+  });
+
+  const listEl = document.getElementById('list');
+  const liveStatus = document.getElementById('liveStatus');
+
+  if (!isConfigured) {
+    document.getElementById('notConfigured').style.display = 'block';
+    liveStatus.textContent = 'לא מחובר';
+    listEl.innerHTML = '<div class="empty-state"><div class="icon">🔌</div>יש להשלים את חיבור המערכת כדי לראות נתונים.</div>';
+  } else {
+    let allActivities = [];
+    const exportBtn = document.getElementById('exportBtn');
+    exportBtn.addEventListener('click', async () => {
+      exportBtn.disabled = true;
+      exportBtn.textContent = 'מייצא…';
+      try {
+        await exportActivitiesToExcel(allActivities);
+      } finally {
+        exportBtn.disabled = false;
+        exportBtn.textContent = '⬇️ ייצוא כל הנתונים לאקסל';
+      }
+    });
+
+    try {
+      const { client } = await loadSupabase();
+
+      const { data, error } = await client.from('activities').select('*');
+      if (error) throw error;
+      allActivities = sortActivities(data);
+      liveStatus.textContent = 'מחובר · עודכן ' + new Date().toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      exportBtn.disabled = allActivities.length === 0;
+      render();
+
+      client
+        .channel('activities-log-view')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'activities' }, (payload) => {
+          allActivities = applyRealtimeChange(allActivities, payload);
+          liveStatus.textContent = 'מחובר · עודכן ' + new Date().toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+          exportBtn.disabled = allActivities.length === 0;
+          render();
+        })
+        .subscribe();
+    } catch (err) {
+      document.getElementById('connError').style.display = 'block';
+      liveStatus.textContent = 'שגיאת חיבור';
+      listEl.innerHTML = '<div class="empty-state"><div class="icon">🔌</div>לא ניתן היה לטעון את הנתונים.</div>';
+      console.error(err);
+    }
+
+    ['fSearch', 'fDomain', 'fStatus', 'fFrom', 'fTo'].forEach(id => {
+      document.getElementById(id).addEventListener('input', render);
+    });
+
+    function render() {
+      const search = document.getElementById('fSearch').value.trim().toLowerCase();
+      const domain = document.getElementById('fDomain').value;
+      const status = document.getElementById('fStatus').value;
+      const from = document.getElementById('fFrom').value;
+      const to = document.getElementById('fTo').value;
+
+      let filtered = allActivities.filter(a => {
+        if (domain && a.domain !== domain) return false;
+        if (status && getActivityStatus(a.date) !== status) return false;
+        if (from && a.date < from) return false;
+        if (to && a.date > to) return false;
+        if (search) {
+          const haystack = [a.school, a.teacher, a.notes, a.track_name, a.class_name].join(' ').toLowerCase();
+          if (!haystack.includes(search)) return false;
+        }
+        return true;
+      });
+
+      document.getElementById('statTotal').textContent = allActivities.length;
+      document.getElementById('statToday').textContent = allActivities.filter(a => getActivityStatus(a.date) === 'today').length;
+      document.getElementById('statUpcoming').textContent = allActivities.filter(a => getActivityStatus(a.date) === 'upcoming').length;
+
+      if (filtered.length === 0) {
+        listEl.innerHTML = '<div class="empty-state"><div class="icon">📭</div>לא נמצאו פעילויות התואמות את הסינון.</div>';
+        return;
+      }
+
+      let html = '';
+      let lastDate = null;
+      for (const a of filtered) {
+        if (a.date !== lastDate) {
+          html += `<div class="date-badge"><span class="date-badge-text">${formatDateHe(a.date)}</span><span class="date-badge-line"></span></div>`;
+          lastDate = a.date;
+        }
+        html += renderActivityCard(a.id, a, { editable: false });
+      }
+      listEl.innerHTML = html;
+    }
+  }
+</script>
+</body>
+</html>
