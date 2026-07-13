@@ -32,13 +32,14 @@ export const ROOMS = [
   'חדר פרונטלי 2 (222)',
   'אולם רב תכליתי',
   'מעבדת חשמל',
+  'סדנת אלקטרוניקה',
   'מעבדת מכונות',
   'מעבדת מייקרס',
   'מעבדת ביוטכנולוגיה גדולה',
   'מעבדת ביוטכנולוגיה קטנה',
 ];
 
-export const STAFF_NAMES = ['שרי', 'אורפז', 'בר', 'לנה', 'אולגה', 'שמעון א', 'שמעון ס'];
+export const STAFF_NAMES = ['שרי', 'אורפז', 'בר', 'לנה', 'אולגה', 'שמעון א', 'שמעון ס', 'נעמי'];
 
 export function escapeHtml(str) {
   if (str === null || str === undefined) return '';
@@ -103,6 +104,32 @@ export function applyRealtimeChange(list, payload) {
     return list.filter(x => x.id !== payload.old.id);
   }
   return list;
+}
+
+// "HH:MM" strings compare correctly lexically for same-day ranges.
+export function timeRangesOverlap(start1, end1, start2, end2) {
+  if (!start1 || !end1 || !start2 || !end2) return false;
+  return start1 < end2 && start2 < end1;
+}
+
+// Returns the activities that already occupy `room` on `date` during any part of
+// [startTime, endTime), excluding `excludeId` (the activity being edited, if any).
+export function findRoomConflicts(activities, { date, room, startTime, endTime, excludeId }) {
+  if (!room || !date || !startTime || !endTime) return [];
+  return activities.filter(a => (
+    a.id !== excludeId
+    && a.date === date
+    && (a.space1_name === room || a.space2_name === room)
+    && timeRangesOverlap(startTime, endTime, a.start_time, a.end_time)
+  ));
+}
+
+// All of a room's bookings on a given date, sorted by start time — for showing
+// "what's free / what's busy" before the person even tries to submit.
+export function getRoomBookingsForDate(activities, room, date, excludeId) {
+  return activities
+    .filter(a => a.id !== excludeId && a.date === date && (a.space1_name === room || a.space2_name === room))
+    .sort((a, b) => (a.start_time || '').localeCompare(b.start_time || ''));
 }
 
 // Buckets a day's activities by room (an activity can occupy space1 and/or space2),
