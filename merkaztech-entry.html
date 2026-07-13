@@ -59,6 +59,7 @@
 
     <div class="card">
       <div class="card-title" id="formTitle">הוספת פעילות</div>
+      <div id="formError" class="alert alert-danger" style="display:none;"></div>
       <form id="activityForm">
         <div class="form-grid">
           <div class="full"><label class="field-label">שם המזין *</label><select id="fEnteredBy" required></select></div>
@@ -79,8 +80,8 @@
           <div><label class="field-label">תלמידים מתוכנן</label><input type="number" min="0" id="fPlanned"></div>
           <div><label class="field-label">תלמידים בפועל</label><input type="number" min="0" id="fActual"></div>
           <div class="full"><label class="field-label">מורה / איש קשר</label><input type="text" id="fTeacher"></div>
-          <div><label class="field-label">מרחב למידה 1</label><select id="fSpace1Name"></select></div>
-          <div><label class="field-label">מרחב למידה 2</label><select id="fSpace2Name"></select></div>
+          <div><label class="field-label">מרחב למידה 1</label><select id="fSpace1Name"></select><div id="fSpace1Avail" class="field-hint"></div></div>
+          <div><label class="field-label">מרחב למידה 2</label><select id="fSpace2Name"></select><div id="fSpace2Avail" class="field-hint"></div></div>
           <div class="full"><label class="field-label">הערות</label><textarea id="fNotes"></textarea></div>
         </div>
         <div style="display:flex; gap:8px; margin-top:14px;">
@@ -100,7 +101,7 @@
 
 <script type="module">
   import { isConfigured, loadSupabase } from './merkaztech-supabase.js';
-  import { DOMAINS, TRACKS, PERCENT_GROUPS, ROOMS, STAFF_NAMES, renderActivityCard, exportActivitiesToExcel, sortActivities, applyRealtimeChange, computeDuration } from './merkaztech-shared.js';
+  import { DOMAINS, TRACKS, PERCENT_GROUPS, ROOMS, STAFF_NAMES, renderActivityCard, exportActivitiesToExcel, sortActivities, applyRealtimeChange, computeDuration, findRoomConflicts, getRoomBookingsForDate, escapeHtml } from './merkaztech-shared.js';
 
   const liveStatus = document.getElementById('liveStatus');
 
@@ -159,6 +160,29 @@
     }
     document.getElementById('fStart').addEventListener('input', updateDuration);
     document.getElementById('fEnd').addEventListener('input', updateDuration);
+
+    // Shows each room's existing bookings for the selected date, so staff can see
+    // what's free before they even try to submit.
+    function renderRoomAvailability(elId, room, date) {
+      const el = document.getElementById(elId);
+      if (!room || !date) { el.textContent = ''; el.className = 'field-hint'; return; }
+      const bookings = getRoomBookingsForDate(allActivities, room, date, editingId);
+      if (bookings.length === 0) {
+        el.textContent = 'פנוי כל היום';
+        el.className = 'field-hint ok';
+      } else {
+        el.textContent = 'תפוס: ' + bookings.map(b => `${b.start_time}–${b.end_time} (${b.school || 'ללא שם'})`).join(', ');
+        el.className = 'field-hint warn';
+      }
+    }
+    function updateRoomAvailability() {
+      const date = document.getElementById('fDate').value;
+      renderRoomAvailability('fSpace1Avail', document.getElementById('fSpace1Name').value, date);
+      renderRoomAvailability('fSpace2Avail', document.getElementById('fSpace2Name').value, date);
+    }
+    ['fDate', 'fSpace1Name', 'fSpace2Name'].forEach(id => {
+      document.getElementById(id).addEventListener('change', updateRoomAvailability);
+    });
 
     const loginWrap = document.getElementById('loginWrap');
     const appWrap = document.getElementById('appWrap');
@@ -219,6 +243,7 @@
         allActivities = sortActivities(data);
         exportBtn.disabled = allActivities.length === 0;
         renderList();
+        updateRoomAvailability();
       }
 
       client
@@ -227,6 +252,7 @@
           allActivities = applyRealtimeChange(allActivities, payload);
           exportBtn.disabled = allActivities.length === 0;
           renderList();
+          updateRoomAvailability();
         })
         .subscribe();
     }
@@ -268,6 +294,7 @@
       document.getElementById('fSpace2Name').value = a.space2_name || '';
       document.getElementById('fNotes').value = a.notes || '';
       updateDuration();
+      updateRoomAvailability();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -278,7 +305,9 @@
       document.getElementById('submitBtn').textContent = 'שמירה';
       document.getElementById('cancelEditBtn').style.display = 'none';
       document.getElementById('fTrackOtherWrap').style.display = 'none';
+      document.getElementById('formError').style.display = 'none';
       updateDuration();
+      updateRoomAvailability();
     }
 
     document.getElementById('cancelEditBtn').addEventListener('click', resetForm);
@@ -291,6 +320,7 @@
 
     document.getElementById('activityForm').addEventListener('submit', async (e) => {
       e.preventDefault();
+      document.getElementById('formError').style.display = 'none';
       const trackIdx = trackSelect.value;
       const track = trackIdx !== '' ? TRACKS[trackIdx] : null;
       const trackName = track ? (track.name === 'אחר' ? document.getElementById('fTrackOther').value.trim() : track.name) : '';
@@ -318,6 +348,24 @@
         updated_at: new Date().toISOString(),
         updated_by: user ? user.email : null,
       };
+
+      const roomsToCheck = [payload.space1_name, payload.space2_name].filter(Boolean);
+      const conflictLines = [];
+      for (const room of roomsToCheck) {
+        const conflicts = findRoomConflicts(allActivities, {
+          date: payload.date, room, startTime: payload.start_time, endTime: payload.end_time, excludeId: editingId,
+        });
+        for (const c of conflicts) {
+          conflictLines.push(`«${escapeHtml(room)}» תפוס ${escapeHtml(c.start_time)}–${escapeHtml(c.end_time)} (${escapeHtml(c.school || 'ללא שם')})`);
+        }
+      }
+      if (conflictLines.length > 0) {
+        const formError = document.getElementById('formError');
+        formError.innerHTML = `<strong>המרחב תפוס בטווח הזמן הזה — בחר/י מרחב אחר או תזמן/י לשעה אחרת.</strong><br>${[...new Set(conflictLines)].join('<br>')}`;
+        formError.style.display = 'block';
+        formError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
 
       const submitBtn = document.getElementById('submitBtn');
       submitBtn.disabled = true;

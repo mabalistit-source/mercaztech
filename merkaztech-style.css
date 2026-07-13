@@ -171,6 +171,10 @@ textarea { resize: vertical; min-height: 60px; }
 .alert-danger { background: var(--danger-bg); border: 1px solid var(--danger-border); color: var(--danger-text); }
 .alert-ok { background: var(--success-bg); border: 1px solid var(--success-border); color: var(--success-text); }
 
+.field-hint { font-size: 11px; margin-top: 4px; line-height: 1.5; }
+.field-hint.ok { color: var(--success-text); }
+.field-hint.warn { color: var(--warn-text); }
+
 .login-wrap { max-width: 380px; margin: 4rem auto 0; padding: 0 1rem; }
 .section-label { font-size: 11px; font-weight: 700; letter-spacing: .07em; color: var(--text-muted); text-transform: uppercase; margin: 1.5rem 0 .6rem; }
 
