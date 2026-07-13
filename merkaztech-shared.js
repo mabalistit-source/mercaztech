@@ -132,6 +132,18 @@ export function getRoomBookingsForDate(activities, room, date, excludeId) {
     .sort((a, b) => (a.start_time || '').localeCompare(b.start_time || ''));
 }
 
+// Every weekly occurrence date from startDate through endDateInclusive (same weekday), as "YYYY-MM-DD" strings.
+export function generateWeeklyDates(startDate, endDateInclusive) {
+  const dates = [];
+  let d = new Date(startDate + 'T00:00:00');
+  const end = new Date(endDateInclusive + 'T00:00:00');
+  while (d <= end) {
+    dates.push(d.toISOString().slice(0, 10));
+    d.setDate(d.getDate() + 7);
+  }
+  return dates;
+}
+
 // Buckets a day's activities by room (an activity can occupy space1 and/or space2),
 // sorted by start time within each room — used by the room-occupancy dashboard.
 export function groupActivitiesByRoom(activities, rooms) {

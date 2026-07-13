@@ -70,6 +70,16 @@
           <div><label class="field-label">שעת התחלה *</label><input type="time" id="fStart" required></div>
           <div><label class="field-label">שעת סיום *</label><input type="time" id="fEnd" required></div>
           <div class="full" id="fDurationWrap" style="display:none;"><span class="tag tag-info" id="fDuration"></span></div>
+          <div class="full">
+            <label style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; cursor:pointer;">
+              <input type="checkbox" id="fRecurring" style="width:auto;">
+              פעילות חוזרת (כל שבוע, מאותו יום ושעה)
+            </label>
+          </div>
+          <div class="full" id="fRecurUntilWrap" style="display:none;">
+            <label class="field-label">חוזר עד תאריך (כולל) *</label>
+            <input type="date" id="fRecurUntil">
+          </div>
           <div class="full"><label class="field-label">בית ספר *</label><input type="text" id="fSchool" required></div>
           <div><label class="field-label">מגמה</label><select id="fTrack"></select></div>
           <div id="fTrackOtherWrap" style="display:none;"><label class="field-label">שם מגמה (אחר)</label><input type="text" id="fTrackOther"></div>
@@ -101,7 +111,7 @@
 
 <script type="module">
   import { isConfigured, loadSupabase } from './merkaztech-supabase.js';
-  import { DOMAINS, TRACKS, PERCENT_GROUPS, ROOMS, STAFF_NAMES, renderActivityCard, exportActivitiesToExcel, sortActivities, applyRealtimeChange, computeDuration, findRoomConflicts, getRoomBookingsForDate, escapeHtml } from './merkaztech-shared.js';
+  import { DOMAINS, TRACKS, PERCENT_GROUPS, ROOMS, STAFF_NAMES, renderActivityCard, exportActivitiesToExcel, sortActivities, applyRealtimeChange, computeDuration, findRoomConflicts, getRoomBookingsForDate, escapeHtml, generateWeeklyDates, formatDateShort } from './merkaztech-shared.js';
 
   const liveStatus = document.getElementById('liveStatus');
 
@@ -182,6 +192,12 @@
     }
     ['fDate', 'fSpace1Name', 'fSpace2Name'].forEach(id => {
       document.getElementById(id).addEventListener('change', updateRoomAvailability);
+    });
+
+    const fRecurring = document.getElementById('fRecurring');
+    const fRecurUntilWrap = document.getElementById('fRecurUntilWrap');
+    fRecurring.addEventListener('change', () => {
+      fRecurUntilWrap.style.display = fRecurring.checked ? 'block' : 'none';
     });
 
     const loginWrap = document.getElementById('loginWrap');
@@ -293,6 +309,9 @@
       document.getElementById('fSpace1Name').value = a.space1_name || '';
       document.getElementById('fSpace2Name').value = a.space2_name || '';
       document.getElementById('fNotes').value = a.notes || '';
+      fRecurring.checked = false;
+      fRecurring.disabled = true;
+      fRecurUntilWrap.style.display = 'none';
       updateDuration();
       updateRoomAvailability();
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -305,6 +324,8 @@
       document.getElementById('submitBtn').textContent = 'שמירה';
       document.getElementById('cancelEditBtn').style.display = 'none';
       document.getElementById('fTrackOtherWrap').style.display = 'none';
+      fRecurring.disabled = false;
+      fRecurUntilWrap.style.display = 'none';
       document.getElementById('formError').style.display = 'none';
       updateDuration();
       updateRoomAvailability();
@@ -349,29 +370,52 @@
         updated_by: user ? user.email : null,
       };
 
-      const roomsToCheck = [payload.space1_name, payload.space2_name].filter(Boolean);
-      const conflictLines = [];
-      for (const room of roomsToCheck) {
-        const conflicts = findRoomConflicts(allActivities, {
-          date: payload.date, room, startTime: payload.start_time, endTime: payload.end_time, excludeId: editingId,
-        });
-        for (const c of conflicts) {
-          conflictLines.push(`«${escapeHtml(room)}» תפוס ${escapeHtml(c.start_time)}–${escapeHtml(c.end_time)} (${escapeHtml(c.school || 'ללא שם')})`);
-        }
-      }
-      if (conflictLines.length > 0) {
-        const formError = document.getElementById('formError');
-        formError.innerHTML = `<strong>המרחב תפוס בטווח הזמן הזה — בחר/י מרחב אחר או תזמן/י לשעה אחרת.</strong><br>${[...new Set(conflictLines)].join('<br>')}`;
+      const formError = document.getElementById('formError');
+      function showFormError(html) {
+        formError.innerHTML = html;
         formError.style.display = 'block';
         formError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+
+      const isRecurring = !editingId && fRecurring.checked;
+      const recurUntil = document.getElementById('fRecurUntil').value;
+      if (isRecurring && (!recurUntil || recurUntil < payload.date)) {
+        showFormError('<strong>יש לבחור "חוזר עד תאריך" תקין (בתאריך ההתחלה או אחריו).</strong>');
         return;
       }
+      const occurrenceDates = isRecurring ? generateWeeklyDates(payload.date, recurUntil) : [payload.date];
 
       const submitBtn = document.getElementById('submitBtn');
       submitBtn.disabled = true;
       try {
+        // Re-check against the server's current data (not the local cache) right before
+        // saving, so two tabs/devices booking the same slot moments apart can't both succeed.
+        const { data: freshData, error: freshErr } = await client.from('activities').select('*').in('date', occurrenceDates);
+        const conflictSource = freshErr ? allActivities : freshData;
+
+        const roomsToCheck = [payload.space1_name, payload.space2_name].filter(Boolean);
+        const conflictLines = [];
+        for (const date of occurrenceDates) {
+          for (const room of roomsToCheck) {
+            const conflicts = findRoomConflicts(conflictSource, {
+              date, room, startTime: payload.start_time, endTime: payload.end_time, excludeId: editingId,
+            });
+            for (const c of conflicts) {
+              conflictLines.push(`${formatDateShort(date)} · «${escapeHtml(room)}» תפוס ${escapeHtml(c.start_time)}–${escapeHtml(c.end_time)} (${escapeHtml(c.school || 'ללא שם')})`);
+            }
+          }
+        }
+        if (conflictLines.length > 0) {
+          showFormError(`<strong>המרחב תפוס בטווח הזמן הזה — בחר/י מרחב אחר או תזמן/י לשעה אחרת.</strong><br>${[...new Set(conflictLines)].join('<br>')}`);
+          return;
+        }
+
         if (editingId) {
           await client.from('activities').update(payload).eq('id', editingId);
+        } else if (isRecurring) {
+          payload.created_by = user ? user.email : null;
+          const rows = occurrenceDates.map(date => ({ ...payload, date }));
+          await client.from('activities').insert(rows);
         } else {
           payload.created_by = user ? user.email : null;
           await client.from('activities').insert(payload);
