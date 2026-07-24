@@ -49,26 +49,35 @@
 מכיוון שהניתוח קורא ל-API בתשלום, מפתח ה-API לא יכול לשבת בקוד הצד-לקוח (כמו שאר האתר) — הוא רץ
 בתוך **Supabase Edge Function** (קוד שרת קטן שרץ אצל Supabase, לא אצלכם), כדי שהמפתח יישאר סודי.
 
-### הקמה חד-פעמית
+**חשוב:** `tpack.html` משתמש בפרויקט Supabase **נפרד לגמרי** מזה של יומן הפעילויות — מוגדר בקובץ
+`tpack-supabase.js` (ולא ב-`merkaztech-supabase.js`). זה מכוון: הכלי עצמאי ולא אמור לגעת בנתוני היומן.
+המשמעות המעשית: יש להעלות את הפונקציה **לאותו פרויקט Supabase שכתובתו מופיעה ב-`tpack-supabase.js`**
+(שדה `supabaseUrl`) — לא לפרויקט אחר, גם אם יש כמה פרויקטים בחשבון.
+
+### הקמה חד-פעמית — דרך אתר Supabase (בלי התקנות, מומלץ)
 1. קבלת מפתח API מ-[console.anthropic.com](https://console.anthropic.com) (יש ליצור חשבון ולהטעין קרדיט — העלות משוערת: כמה סנטים לניתוח בודד).
-2. התקנת [Supabase CLI](https://supabase.com/docs/guides/cli) במחשב (חד-פעמי):
-   ```
-   npm install -g supabase
-   ```
-3. התחברות וקישור לפרויקט (ה-`<project-ref>` נמצא בכתובת ה-Project URL, לדוגמה `ecyqkfyxnexypwaahcgq`):
+2. ב-[supabase.com](https://supabase.com) → נכנסים ל**אותו פרויקט** שכתובתו (`supabaseUrl`) מופיעה ב-`tpack-supabase.js`.
+3. בתפריט הצד: **Edge Functions** → **Create a new function** → שם מדויק: `tpack-analyze`.
+4. מדביקים בעורך את **כל** תוכן הקובץ `supabase/functions/tpack-analyze/index.ts` מהריפו → **Deploy**.
+5. **Project Settings** (⚙️) → **Edge Functions** (או **Secrets**) → מוסיפים secret בשם `ANTHROPIC_API_KEY` עם המפתח משלב 1.
+6. זהו — `tpack.html` יתחיל לעבוד תוך כמה שניות.
+
+### הקמה חד-פעמית — דרך שורת פקודה (Supabase CLI, לחלופין)
+1. קבלת מפתח API כמו למעלה.
+2. התקנת [Supabase CLI](https://supabase.com/docs/guides/cli) במחשב (חד-פעמי): `npm install -g supabase`
+3. התחברות וקישור **לאותו פרויקט** שמוגדר ב-`tpack-supabase.js` (ה-`<project-ref>` הוא החלק הראשון בכתובת, למשל `kvgdmwbxovioqrrynsjl`):
    ```
    supabase login
    supabase link --project-ref <project-ref>
    ```
-4. הגדרת מפתח ה-API כ-secret בפרויקט (לא נחשף ללקוח, לא נכנס לגיט):
+4. הגדרת מפתח ה-API כ-secret (לא נחשף ללקוח, לא נכנס לגיט):
    ```
    supabase secrets set ANTHROPIC_API_KEY=sk-ant-...
    ```
-5. פריסת הפונקציה מתוך שורש הריפו (הקוד נמצא ב-`supabase/functions/tpack-analyze`):
+5. פריסת הפונקציה מתוך שורש הריפו:
    ```
    supabase functions deploy tpack-analyze
    ```
-6. זהו — הדף `tpack.html` יתחיל לעבוד מיד לאחר הפריסה, בלי שינוי נוסף בקוד.
 
 ### עדכון עתידי
 כל שינוי בקובץ `supabase/functions/tpack-analyze/index.ts` (למשל שינוי הפרומפט או הדגם) דורש הרצה חוזרת של
