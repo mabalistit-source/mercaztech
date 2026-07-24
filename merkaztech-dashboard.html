@@ -60,15 +60,12 @@
 
 <script type="module">
   import { isConfigured, loadSupabase } from './merkaztech-supabase.js';
-  import { ROOMS, escapeHtml, groupActivitiesByRoom } from './merkaztech-shared.js';
+  import { ROOMS, escapeHtml, groupActivitiesByRoom, todayStr } from './merkaztech-shared.js';
 
   const liveStatus = document.getElementById('liveStatus');
   const gridEl = document.getElementById('roomGrid');
   const dateInput = document.getElementById('fDate');
 
-  function todayStr() {
-    return new Date().toISOString().slice(0, 10);
-  }
   dateInput.value = todayStr();
   document.getElementById('todayBtn').addEventListener('click', () => {
     dateInput.value = todayStr();

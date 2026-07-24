@@ -335,7 +335,8 @@
 
     async function removeActivity(id) {
       if (!confirm('למחוק את הפעילות? הפעולה בלתי הפיכה.')) return;
-      await client.from('activities').delete().eq('id', id);
+      const { error } = await client.from('activities').delete().eq('id', id);
+      if (error) { alert('המחיקה נכשלה: ' + error.message); return; }
       if (editingId === id) resetForm();
     }
 
@@ -410,15 +411,20 @@
           return;
         }
 
+        let saveError = null;
         if (editingId) {
-          await client.from('activities').update(payload).eq('id', editingId);
+          ({ error: saveError } = await client.from('activities').update(payload).eq('id', editingId));
         } else if (isRecurring) {
           payload.created_by = user ? user.email : null;
           const rows = occurrenceDates.map(date => ({ ...payload, date }));
-          await client.from('activities').insert(rows);
+          ({ error: saveError } = await client.from('activities').insert(rows));
         } else {
           payload.created_by = user ? user.email : null;
-          await client.from('activities').insert(payload);
+          ({ error: saveError } = await client.from('activities').insert(payload));
+        }
+        if (saveError) {
+          showFormError(`<strong>השמירה נכשלה.</strong><br>${escapeHtml(saveError.message)}`);
+          return;
         }
         resetForm();
       } finally {
