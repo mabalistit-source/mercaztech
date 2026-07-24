@@ -10,21 +10,19 @@
   .tpack-standalone-header h1 { font-size: 26px; font-weight: 800; color: var(--text-primary); }
   .tpack-standalone-header .sub { font-size: 14px; color: var(--text-secondary); margin-top: .4rem; }
   .main { margin-top: 0; }
+  .check-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; margin-bottom: 1rem; }
+  .check-grid label { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; font-weight: 600; cursor: pointer; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 10px; }
+  .check-grid input[type="checkbox"] { width: auto; margin-top: 2px; }
 </style>
 </head>
 <body>
 
 <div class="tpack-standalone-header">
   <h1>🧭 ניתוח TPACK</h1>
-  <div class="sub">מסלול לימוד אינטראקטיבי במודל TPACK, וניתוח מערכי שיעור ופעילויות לפיו</div>
+  <div class="sub">מסלול לימוד אינטראקטיבי במודל TPACK, ושאלון חד-פעמי לניתוח פעילות או מערך שיעור לפיו — חינמי, ורץ כולו בדפדפן</div>
 </div>
 
 <div class="main">
-
-  <div id="notConfigured" class="alert alert-warn" style="display:none;">
-    <strong>המערכת עדיין לא מחוברת ל-Supabase.</strong><br>
-    יש להגדיר את פרטי הפרויקט בקובץ <code>tpack-supabase.js</code>.
-  </div>
 
   <div class="card" id="tpackModelCard">
     <div class="card-title">מודל TPACK — מסלול לימוד אינטראקטיבי</div>
@@ -49,31 +47,97 @@
     <div id="tpackAccordion" class="tpack-accordion"></div>
   </div>
 
-  <div class="section-label">ניתוח מערך שיעור / פעילות לפי המודל</div>
+  <div class="section-label">ניתוח פעילות / מערך שיעור לפי המודל</div>
 
   <div class="card">
     <div class="alert alert-ok" style="margin-bottom:1rem;">
-      מעלים קובץ <strong>Word (.docx)</strong> או <strong>PDF</strong> של מערך השיעור או הפעילות, והמערכת מנתחת אותו
-      לפי מודל <strong>TPACK</strong> — שילוב ידע טכנולוגי, פדגוגי ותוכני — ומחזירה ציון וחוות דעת
-      לכל אחד משבעת התחומים, לצד חוזקות, פערים והמלצות מעשיות. הניתוח חד-פעמי ומוצג על המסך בלבד — הוא אינו נשמר במערכת.
+      עונים על כמה שאלות קצרות על הפעילות או מערך השיעור, והמערכת מחשבת — <strong>מיד, בדפדפן שלכם, ללא AI וללא כל
+      עלות</strong> — ציון וחוות דעת לכל אחד משבעת תחומי מודל TPACK, לצד חוזקות, פערים והמלצות. שום דבר לא נשלח לשום שרת
+      ולא נשמר במערכת.
     </div>
 
-    <label id="dropZone" class="upload-drop" for="fileInput">
-      <div class="icon">📄</div>
-      <div>גררו לכאן קובץ Word/PDF, או לחצו לבחירה</div>
-      <div class="fname" id="fileNameLabel"></div>
-      <input type="file" id="fileInput" accept=".docx,.pdf,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
-    </label>
+    <form id="tpackForm">
+      <div class="form-grid">
+        <div class="full"><label class="field-label">שם הפעילות / השיעור (אופציונלי)</label><input type="text" id="qTitle" placeholder="לדוגמה: מבוא לחיישני טמפרטורה"></div>
+        <div class="full"><label class="field-label">תיאור קצר של הפעילות (אופציונלי)</label><textarea id="qDesc" placeholder="מה עושים בפעילות, בכמה משפטים"></textarea></div>
+      </div>
 
-    <div id="errorBox" class="alert alert-danger" style="display:none; margin-top:1rem;"></div>
+      <div class="section-label">ידע תוכן (CK)</div>
+      <div class="form-grid">
+        <div class="full">
+          <label class="field-label">עד כמה את/ה בקיא/ה בנושא הנלמד?</label>
+          <select id="qContentDepth">
+            <option value="1">בינונית-נמוכה — עדיין לומד/ת את הנושא</option>
+            <option value="3" selected>טובה — שולט/ת בחומר הבסיסי</option>
+            <option value="5">מעמיקה מאוד — כולל הקשרים והרחבות</option>
+          </select>
+        </div>
+        <div class="full">
+          <label style="display:flex; align-items:flex-start; gap:8px; font-size:13px; font-weight:600; cursor:pointer;">
+            <input type="checkbox" id="qMisconceptions" style="width:auto; margin-top:2px;">
+            התייחסתי מראש לקשיים או לתפיסות שגויות נפוצות שתלמידים חווים בנושא הזה
+          </label>
+        </div>
+      </div>
 
-    <div id="progressBox" class="progress-steps" style="display:none;">
-      <div class="progress-step" id="stepExtract"><span class="dot"></span><span>חילוץ טקסט מהקובץ…</span></div>
-      <div class="progress-step" id="stepAnalyze"><span class="dot"></span><span>ניתוח לפי מודל TPACK…</span></div>
-    </div>
+      <div class="section-label">ידע פדגוגי (PK) — אילו שיטות הוראה שימשו בפעילות?</div>
+      <div id="qPedagogy" class="check-grid">
+        <label><input type="checkbox" value="frontal"><span>הסבר / הרצאה פרונטלית</span></label>
+        <label><input type="checkbox" value="group"><span>עבודה בזוגות / קבוצות</span></label>
+        <label><input type="checkbox" value="discussion"><span>דיון כיתתי</span></label>
+        <label><input type="checkbox" value="project"><span>למידה מבוססת פרויקט / חקר</span></label>
+        <label><input type="checkbox" value="formative"><span>הערכה מעצבת באמצע הפעילות</span></label>
+        <label><input type="checkbox" value="diff"><span>התאמה אישית / דיפרנציאציה</span></label>
+        <label><input type="checkbox" value="reflection"><span>רפלקציה או סיכום בסיום</span></label>
+        <label><input type="checkbox" value="gamification"><span>משחוק / גיימיפיקציה</span></label>
+      </div>
+
+      <div class="section-label">ידע טכנולוגי (TK) — אילו כלים טכנולוגיים שימשו בפעילות?</div>
+      <div id="qTech" class="check-grid">
+        <label><input type="checkbox" id="qTechNone" value="none"><span>לא נעשה שימוש בטכנולוגיה בפעילות זו</span></label>
+        <label><input type="checkbox" value="doc"><span>מצגת / מסמך דיגיטלי</span></label>
+        <label><input type="checkbox" value="video"><span>סרטון / הדמיה חזותית</span></label>
+        <label><input type="checkbox" value="app"><span>אתר או אפליקציה אינטראקטיבית</span></label>
+        <label><input type="checkbox" value="sim"><span>כלי סימולציה</span></label>
+        <label><input type="checkbox" value="hw"><span>חומרה / רובוטיקה / חיישנים</span></label>
+        <label><input type="checkbox" value="code"><span>כלי תכנות / קוד</span></label>
+        <label><input type="checkbox" value="cloud"><span>כלי שיתופי בענן (מסמך/גיליון משותף)</span></label>
+        <label><input type="checkbox" value="ai"><span>כלי בינה מלאכותית</span></label>
+      </div>
+
+      <div class="section-label">שילוב — TPK, TCK, PCK</div>
+      <div class="form-grid">
+        <div class="full">
+          <label class="field-label">האם הטכנולוגיה שיפרה את תהליך ההוראה עצמו (שיתופיות / משוב מיידי / יצירה), ולא רק החליפה כלי מסורתי?</label>
+          <select id="qTPK">
+            <option value="0">לא רלוונטי / לא</option>
+            <option value="3">במידה מסוימת</option>
+            <option value="5">כן, משמעותית</option>
+          </select>
+        </div>
+        <div class="full">
+          <label class="field-label">האם הטכנולוגיה מאפשרת להראות, למדוד או לדמות את התוכן בדרך שלא הייתה אפשרית בלעדיה?</label>
+          <select id="qTCK">
+            <option value="0">לא רלוונטי / לא</option>
+            <option value="3">במידה מסוימת</option>
+            <option value="5">כן, משמעותית</option>
+          </select>
+        </div>
+        <div class="full">
+          <label class="field-label">האם השתמשת בהסבר / אנלוגיה / רצף הוראה שמותאם ספציפית לנושא הזה (ולא בגישה כללית)?</label>
+          <select id="qPCK">
+            <option value="0">לא</option>
+            <option value="3">במידה מסוימת</option>
+            <option value="5">כן, משמעותית</option>
+          </select>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block">נתחו את הפעילות</button>
+    </form>
 
     <div style="display:flex; gap:8px; margin-top:1rem;">
-      <button type="button" class="btn btn-secondary" id="resetBtn" style="display:none;">קובץ אחר</button>
+      <button type="button" class="btn btn-secondary" id="resetBtn" style="display:none;">ניתוח חדש</button>
       <button type="button" class="btn btn-secondary" id="printBtn" style="display:none;">🖨️ הדפסה / שמירה כ-PDF</button>
     </div>
   </div>
@@ -83,8 +147,6 @@
 </div>
 
 <script type="module">
-  import { isConfigured, loadSupabase } from './tpack-supabase.js';
-
   function escapeHtml(str) {
     if (str === null || str === undefined) return '';
     return String(str)
@@ -165,103 +227,180 @@
     TPACK: { cx: 200, cy: 188 },
   };
 
-  const dropZone = document.getElementById('dropZone');
-  const fileInput = document.getElementById('fileInput');
-  const fileNameLabel = document.getElementById('fileNameLabel');
-  const errorBox = document.getElementById('errorBox');
-  const progressBox = document.getElementById('progressBox');
-  const stepExtract = document.getElementById('stepExtract');
-  const stepAnalyze = document.getElementById('stepAnalyze');
+  const PEDAGOGY_LABELS = {
+    frontal: 'הסבר / הרצאה פרונטלית', group: 'עבודה בזוגות / קבוצות', discussion: 'דיון כיתתי',
+    project: 'למידה מבוססת פרויקט / חקר', formative: 'הערכה מעצבת באמצע הפעילות', diff: 'התאמה אישית / דיפרנציאציה',
+    reflection: 'רפלקציה או סיכום בסיום', gamification: 'משחוק / גיימיפיקציה',
+  };
+  const TECH_LABELS = {
+    doc: 'מצגת / מסמך דיגיטלי', video: 'סרטון / הדמיה חזותית', app: 'אתר או אפליקציה אינטראקטיבית',
+    sim: 'כלי סימולציה', hw: 'חומרה / רובוטיקה / חיישנים', code: 'כלי תכנות / קוד',
+    cloud: 'כלי שיתופי בענן', ai: 'כלי בינה מלאכותית',
+  };
+
+  const resultsEl = document.getElementById('results');
   const resetBtn = document.getElementById('resetBtn');
   const printBtn = document.getElementById('printBtn');
-  const resultsEl = document.getElementById('results');
+  const form = document.getElementById('tpackForm');
+  const qTechNone = document.getElementById('qTechNone');
 
-  function showError(msg) {
-    errorBox.textContent = msg;
-    errorBox.style.display = 'block';
-  }
-  function clearError() {
-    errorBox.style.display = 'none';
-    errorBox.textContent = '';
-  }
-  function setStep(el, state) {
-    el.className = 'progress-step' + (state ? ' ' + state : '');
-  }
-
-  ['dragover', 'dragenter'].forEach(evt => dropZone.addEventListener(evt, (e) => {
-    e.preventDefault();
-    dropZone.classList.add('dragover');
-  }));
-  ['dragleave', 'drop'].forEach(evt => dropZone.addEventListener(evt, (e) => {
-    e.preventDefault();
-    dropZone.classList.remove('dragover');
-  }));
-  dropZone.addEventListener('drop', (e) => {
-    const file = e.dataTransfer.files && e.dataTransfer.files[0];
-    if (file) handleFile(file);
-  });
-  fileInput.addEventListener('change', () => {
-    const file = fileInput.files && fileInput.files[0];
-    if (file) handleFile(file);
+  qTechNone.addEventListener('change', () => {
+    document.querySelectorAll('#qTech input[type="checkbox"]:not(#qTechNone)').forEach((cb) => {
+      cb.disabled = qTechNone.checked;
+      if (qTechNone.checked) cb.checked = false;
+    });
   });
 
-  resetBtn.addEventListener('click', () => {
-    fileInput.value = '';
-    fileNameLabel.textContent = '';
-    clearError();
-    progressBox.style.display = 'none';
-    resultsEl.style.display = 'none';
-    resultsEl.innerHTML = '';
-    resetBtn.style.display = 'none';
-    printBtn.style.display = 'none';
-    dropZone.style.display = 'flex';
-  });
-  printBtn.addEventListener('click', () => window.print());
-
-  let pdfjsLibPromise = null;
-  function loadPdfjs() {
-    if (!pdfjsLibPromise) {
-      pdfjsLibPromise = import('./vendor/pdf.min.mjs').then((lib) => {
-        lib.GlobalWorkerOptions.workerSrc = './vendor/pdf.worker.min.mjs';
-        return lib;
-      });
-    }
-    return pdfjsLibPromise;
+  function countBy(count) {
+    if (count <= 0) return 0;
+    if (count === 1) return 2;
+    if (count === 2) return 3;
+    if (count <= 4) return 4;
+    return 5;
   }
 
-  let mammothLoadPromise = null;
-  function loadMammoth() {
-    if (window.mammoth) return Promise.resolve(window.mammoth);
-    if (!mammothLoadPromise) {
-      mammothLoadPromise = new Promise((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = './vendor/mammoth.browser.min.js';
-        script.onload = () => resolve(window.mammoth);
-        script.onerror = () => reject(new Error('טעינת ספריית קריאת Word נכשלה.'));
-        document.head.appendChild(script);
-      });
-    }
-    return mammothLoadPromise;
-  }
+  function analyzeForm() {
+    const title = document.getElementById('qTitle').value.trim();
+    const desc = document.getElementById('qDesc').value.trim();
+    const contentDepth = Number(document.getElementById('qContentDepth').value);
+    const misconceptions = document.getElementById('qMisconceptions').checked;
+    const pedagogySelected = Array.from(document.querySelectorAll('#qPedagogy input:checked')).map((cb) => cb.value);
+    const techNone = qTechNone.checked;
+    const techSelected = techNone ? [] : Array.from(document.querySelectorAll('#qTech input:checked:not(#qTechNone)')).map((cb) => cb.value);
+    const tpkAnswer = Number(document.getElementById('qTPK').value);
+    const tckAnswer = Number(document.getElementById('qTCK').value);
+    const pckAnswer = Number(document.getElementById('qPCK').value);
+    const hasTech = techSelected.length > 0;
 
-  async function extractDocxText(file) {
-    const mammoth = await loadMammoth();
-    const arrayBuffer = await file.arrayBuffer();
-    const result = await mammoth.extractRawText({ arrayBuffer });
-    return result.value;
-  }
+    const scores = {};
+    scores.CK = Math.min(5, contentDepth + (misconceptions && contentDepth < 5 ? 1 : 0));
+    scores.PK = countBy(pedagogySelected.length);
+    scores.TK = hasTech ? countBy(techSelected.length) : 0;
+    scores.TPK = hasTech ? tpkAnswer : 0;
+    scores.TCK = hasTech ? tckAnswer : 0;
+    scores.PCK = pckAnswer;
 
-  async function extractPdfText(file) {
-    const pdfjsLib = await loadPdfjs();
-    const arrayBuffer = await file.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-    let text = '';
-    for (let i = 1; i <= pdf.numPages; i++) {
-      const page = await pdf.getPage(i);
-      const content = await page.getTextContent();
-      text += content.items.map((it) => it.str || '').join(' ') + '\n';
+    const baseAvg = (scores.TK + scores.PK + scores.CK) / 3;
+    const integrationAvg = (scores.TPK + scores.TCK + scores.PCK) / 3;
+    let core = Math.round(integrationAvg * 0.6 + baseAvg * 0.4);
+    if (!hasTech) core = Math.min(core, 1);
+    scores.TPACK = Math.max(0, Math.min(5, core));
+
+    const domains = {};
+    domains.CK = {
+      score: scores.CK,
+      assessment: contentDepth >= 5
+        ? 'ציינת שליטה מעמיקה בתוכן, כולל הקשרים והרחבות מעבר לחומר הבסיסי.'
+        : contentDepth >= 3
+          ? 'ציינת שליטה טובה בחומר הבסיסי של הנושא.'
+          : 'ציינת שליטה בינונית-נמוכה בתוכן — עדיין לומד/ת את הנושא.',
+      evidence: misconceptions ? ['סימנת התייחסות מראש לקשיים/תפיסות שגויות נפוצות בנושא'] : [],
+    };
+    domains.PK = {
+      score: scores.PK,
+      assessment: pedagogySelected.length === 0
+        ? 'לא סומנה אף שיטת הוראה — קשה להעריך גיוון פדגוגי.'
+        : `נבחרו ${pedagogySelected.length} שיטות הוראה, מה שמעיד על ${pedagogySelected.length >= 3 ? 'גיוון פדגוגי טוב' : 'שימוש בסיסי בשיטות הוראה'}.`,
+      evidence: pedagogySelected.map((k) => PEDAGOGY_LABELS[k]),
+    };
+    domains.TK = {
+      score: scores.TK,
+      assessment: !hasTech
+        ? 'לא סומן שימוש בטכנולוגיה בפעילות זו.'
+        : `נעשה שימוש ב-${techSelected.length} סוגי כלים טכנולוגיים.`,
+      evidence: techSelected.map((k) => TECH_LABELS[k]),
+    };
+    domains.TPK = {
+      score: scores.TPK,
+      assessment: !hasTech
+        ? 'אין טכנולוגיה בפעילות, ולכן אין ידע טכנולוגי-פדגוגי לשלב.'
+        : tpkAnswer >= 5
+          ? 'הטכנולוגיה שינתה משמעותית את תהליך ההוראה עצמו (שיתופיות/משוב מיידי/יצירה).'
+          : tpkAnswer >= 3
+            ? 'הטכנולוגיה תרמה במידה מסוימת לתהליך ההוראה.'
+            : 'הטכנולוגיה כנראה שימשה כתחליף לכלי מסורתי, ללא שינוי משמעותי בתהליך ההוראה.',
+      evidence: [],
+    };
+    domains.TCK = {
+      score: scores.TCK,
+      assessment: !hasTech
+        ? 'אין טכנולוגיה בפעילות, ולכן אין ידע טכנולוגי-תוכני לשלב.'
+        : tckAnswer >= 5
+          ? 'הטכנולוגיה מאפשרת להראות/למדוד/לדמות את התוכן בדרך שלא הייתה אפשרית בלעדיה.'
+          : tckAnswer >= 3
+            ? 'הטכנולוגיה תורמת במידה מסוימת לייצוג התוכן.'
+            : 'לא ברור שהטכנולוגיה חושפת משהו בתוכן שלא ניתן היה לראות בלעדיה.',
+      evidence: [],
+    };
+    domains.PCK = {
+      score: scores.PCK,
+      assessment: pckAnswer >= 5
+        ? 'נעשה שימוש בהסבר/אנלוגיה/רצף הוראה המותאם ספציפית לנושא.'
+        : pckAnswer >= 3
+          ? 'יש התאמה חלקית של ההסברה לנושא הספציפי.'
+          : 'ההסברה נראית כללית ולא מותאמת במיוחד לנושא הזה.',
+      evidence: [],
+    };
+    domains.TPACK = {
+      score: scores.TPACK,
+      assessment: !hasTech
+        ? 'ללא שילוב טכנולוגי, לא ניתן לדבר על TPACK מלא — זו פעילות פדגוגית-תוכנית (PCK) אך לא שילוב משולש.'
+        : scores.TPACK >= 4
+          ? 'שילוב טוב בין שלושת התחומים סביב מטרה פדגוגית אחת וברורה.'
+          : scores.TPACK >= 2
+            ? 'יש התחלה של שילוב, אך לא כל התחומים מחוברים באותה מידה.'
+            : 'השילוב בין הטכנולוגיה, הפדגוגיה והתוכן חלש — כדאי לחזק את הקשר ביניהם.',
+      evidence: [],
+    };
+
+    const strengths = [];
+    const gaps = [];
+    const recommendations = [];
+
+    if (domains.CK.score >= 4) strengths.push('שליטה טובה בתוכן הנלמד, כולל התייחסות לקשיים נפוצים.');
+    if (domains.PK.score >= 4) strengths.push('גיוון טוב בשיטות ההוראה שנבחרו.');
+    if (domains.TK.score >= 4) strengths.push('שימוש מגוון בכלים טכנולוגיים.');
+    if (domains.TPK.score >= 4) strengths.push('הטכנולוגיה שינתה בפועל את תהליך ההוראה, לא רק "קישטה" אותו.');
+    if (domains.TCK.score >= 4) strengths.push('הטכנולוגיה חושפת או מודדת את התוכן בדרך שלא הייתה אפשרית בלעדיה.');
+    if (domains.PCK.score >= 4) strengths.push('ההסברה מותאמת היטב לנושא הספציפי.');
+    if (domains.TPACK.score >= 4) strengths.push('שילוב הרמוני בין טכנולוגיה, פדגוגיה ותוכן סביב מטרה אחת.');
+    if (strengths.length === 0) strengths.push('הפעילות תקינה בסיסית — יש מקום לחזק כמעט בכל תחום (ראו פערים והמלצות).');
+
+    if (!hasTech) {
+      gaps.push('לא נעשה שימוש בטכנולוגיה כלל, כך שאי אפשר להעריך שילוב טכנולוגי אמיתי.');
+      recommendations.push('שקול/י להוסיף כלי טכנולוגי אחד שמשנה את האופן שבו התלמידים חווים את התוכן — לא רק מצגת.');
+    } else {
+      if (domains.TPK.score <= 2) {
+        gaps.push('הטכנולוגיה נראית דקורטיבית ולא משפרת את תהליך ההוראה עצמו.');
+        recommendations.push('נסה/י להשתמש בטכנולוגיה כדי לאפשר שיתופיות או משוב מיידי, לא רק כתחליף לכלי מסורתי.');
+      }
+      if (domains.TCK.score <= 2) {
+        gaps.push('לא ברור שהטכנולוגיה חושפת בתוכן משהו שלא ניתן לראות בלעדיה.');
+        recommendations.push('שקול/י שימוש בטכנולוגיה שממחישה, מודדת או מדמה תופעה בתוכן בדרך חדשה.');
+      }
     }
-    return text;
+    if (domains.PCK.score <= 2) {
+      gaps.push('ההסברה כללית ולא מותאמת ספציפית לנושא.');
+      recommendations.push('הוסף/י אנלוגיה או דוגמה ספציפית לנושא הזה, שמתייחסת לקושי נפוץ שתלמידים חווים בו.');
+    }
+    if (domains.PK.score <= 2) {
+      gaps.push('מגוון שיטות ההוראה מצומצם.');
+      recommendations.push('שקול/י לשלב שיטת הוראה נוספת — למשל דיון קצר או הערכה מעצבת באמצע הפעילות.');
+    }
+    if (!misconceptions) {
+      recommendations.push('כדאי לחשוב מראש על קשיים/טעויות נפוצות של תלמידים בנושא, ולהיערך אליהם בפעילות.');
+    }
+    if (gaps.length === 0) gaps.push('לא זוהו פערים משמעותיים — הפעילות מאוזנת יחסית בין התחומים.');
+    if (recommendations.length === 0) recommendations.push('הפעילות מציגה שילוב טוב — אפשר להמשיך באותו כיוון ולנסות לשכפל אותו בפעילויות נוספות.');
+
+    return {
+      title: title || 'ניתוח TPACK',
+      summary: desc || 'לא סופק תיאור לפעילות.',
+      domains,
+      strengths,
+      gaps: gaps.slice(0, 5),
+      recommendations: recommendations.slice(0, 4),
+    };
   }
 
   function scoreBarHtml(score) {
@@ -273,21 +412,17 @@
     return html;
   }
 
-  function renderResults(analysis, truncated) {
+  function renderResults(analysis) {
     let html = '';
 
-    if (truncated) {
-      html += `<div class="alert alert-warn">הקובץ ארוך מהרגיל — הניתוח בוצע על תחילת המסמך בלבד.</div>`;
-    }
-
     html += `<div class="tpack-summary-card">
-      <div class="activity-title">${escapeHtml(analysis.title || 'ניתוח TPACK')}</div>
-      <div class="activity-sub">${escapeHtml(analysis.summary || '')}</div>
+      <div class="activity-title">${escapeHtml(analysis.title)}</div>
+      <div class="activity-sub">${escapeHtml(analysis.summary)}</div>
     </div>`;
 
     html += '<div class="tpack-domain-grid">';
     for (const key of DOMAIN_ORDER) {
-      const d = analysis.domains[key] || { score: 0, assessment: '', evidence: [] };
+      const d = analysis.domains[key];
       const isCore = key === 'TPACK';
       html += `<div class="tpack-domain-card${isCore ? ' core' : ''}">
         <div class="tpack-domain-head">
@@ -296,7 +431,7 @@
         </div>
         ${scoreBarHtml(d.score)}
         <div class="tpack-domain-assessment">${escapeHtml(d.assessment || '')}</div>
-        ${(d.evidence || []).map((ev) => `<div class="tpack-evidence">"${escapeHtml(ev)}"</div>`).join('')}
+        ${(d.evidence || []).map((ev) => `<div class="tpack-evidence">${escapeHtml(ev)}</div>`).join('')}
       </div>`;
     }
     html += '</div>';
@@ -313,82 +448,26 @@
     resultsEl.innerHTML = html;
     resultsEl.style.display = 'block';
     printBtn.style.display = 'inline-flex';
+    resetBtn.style.display = 'inline-flex';
+    resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  async function handleFile(file) {
-    clearError();
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const analysis = analyzeForm();
+    renderResults(analysis);
+  });
+
+  resetBtn.addEventListener('click', () => {
+    form.reset();
+    document.querySelectorAll('#qTech input[type="checkbox"]').forEach((cb) => { cb.disabled = false; });
     resultsEl.style.display = 'none';
     resultsEl.innerHTML = '';
-    fileNameLabel.textContent = file.name;
-
-    const isDocx = /\.docx$/i.test(file.name) || file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-    const isPdf = /\.pdf$/i.test(file.name) || file.type === 'application/pdf';
-    if (!isDocx && !isPdf) {
-      showError('סוג קובץ לא נתמך. יש להעלות קובץ Word (.docx) או PDF בלבד.');
-      return;
-    }
-
-    dropZone.style.display = 'none';
-    progressBox.style.display = 'flex';
-    setStep(stepExtract, 'active');
-    setStep(stepAnalyze, '');
     resetBtn.style.display = 'none';
     printBtn.style.display = 'none';
-
-    let text;
-    try {
-      text = isDocx ? await extractDocxText(file) : await extractPdfText(file);
-    } catch (err) {
-      console.error(err);
-      showError('לא הצלחנו לחלץ טקסט מהקובץ. ודאו שהוא לא פגום ושהוא אכן קובץ Word/PDF תקין.');
-      progressBox.style.display = 'none';
-      dropZone.style.display = 'flex';
-      resetBtn.style.display = 'inline-flex';
-      return;
-    }
-
-    if (!text || text.trim().length < 40) {
-      showError('לא נמצא מספיק טקסט בקובץ. אם מדובר ב-PDF סרוק (תמונה), חילוץ טקסט אוטומטי אינו אפשרי כרגע.');
-      progressBox.style.display = 'none';
-      dropZone.style.display = 'flex';
-      resetBtn.style.display = 'inline-flex';
-      return;
-    }
-
-    setStep(stepExtract, 'done');
-    setStep(stepAnalyze, 'active');
-
-    try {
-      const { client } = await loadSupabase();
-      const { data, error } = await client.functions.invoke('tpack-analyze', {
-        body: { text, filename: file.name },
-      });
-      if (error) {
-        let message = error.message || 'שגיאה בניתוח.';
-        try {
-          const body = await error.context.json();
-          if (body && body.error) message = body.error;
-        } catch { /* keep default message */ }
-        throw new Error(message);
-      }
-      setStep(stepAnalyze, 'done');
-      progressBox.style.display = 'none';
-      resetBtn.style.display = 'inline-flex';
-      renderResults(data.analysis, data.truncated);
-    } catch (err) {
-      console.error(err);
-      showError(err.message || 'קרתה שגיאה בעת הניתוח. נסו שוב בעוד רגע.');
-      progressBox.style.display = 'none';
-      dropZone.style.display = 'flex';
-      resetBtn.style.display = 'inline-flex';
-    }
-  }
-
-  if (!isConfigured) {
-    document.getElementById('notConfigured').style.display = 'block';
-    dropZone.style.pointerEvents = 'none';
-    dropZone.style.opacity = '.5';
-  }
+    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+  printBtn.addEventListener('click', () => window.print());
 
   // --- Interactive TPACK model diagram ---
   const tooltipEl = document.getElementById('tpackTooltip');
