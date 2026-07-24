@@ -23,7 +23,7 @@
 
   <div id="notConfigured" class="alert alert-warn" style="display:none;">
     <strong>המערכת עדיין לא מחוברת ל-Supabase.</strong><br>
-    יש להגדיר את פרטי הפרויקט בקובץ <code>merkaztech-supabase.js</code>.
+    יש להגדיר את פרטי הפרויקט בקובץ <code>tpack-supabase.js</code>.
   </div>
 
   <div class="card" id="tpackModelCard">
@@ -83,7 +83,7 @@
 </div>
 
 <script type="module">
-  import { isConfigured, loadSupabase } from './merkaztech-supabase.js';
+  import { isConfigured, loadSupabase } from './tpack-supabase.js';
 
   function escapeHtml(str) {
     if (str === null || str === undefined) return '';
