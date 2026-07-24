@@ -3,34 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>יומן-טק – ניתוח TPACK</title>
+<title>ניתוח TPACK</title>
 <link rel="stylesheet" href="./merkaztech-style.css">
+<style>
+  .tpack-standalone-header { max-width: 760px; margin: 0 auto; padding: 2rem 1rem 1rem; text-align: center; }
+  .tpack-standalone-header h1 { font-size: 26px; font-weight: 800; color: var(--text-primary); }
+  .tpack-standalone-header .sub { font-size: 14px; color: var(--text-secondary); margin-top: .4rem; }
+  .main { margin-top: 0; }
+</style>
 </head>
 <body>
 
-<div class="hero">
-  <div class="hero-inner">
-    <div style="display:flex; align-items:center; gap:14px;">
-      <img src="./ashdod-logo.png" alt="לוגו עיריית אשדוד" class="hero-logo">
-      <div>
-        <h1>יומן-טק</h1>
-        <div class="hero-sub">המרכז הטכנולוגי אשדוד</div>
-      </div>
-    </div>
-    <div class="hero-nav">
-      <a href="./merkaztech-log.html">צפייה</a>
-      <a href="./merkaztech-entry.html">הזנת נתונים</a>
-      <a href="./merkaztech-dashboard.html">תפוסת חדרים</a>
-      <a href="./merkaztech-tpack.html" class="active">ניתוח TPACK</a>
-    </div>
-  </div>
+<div class="tpack-standalone-header">
+  <h1>🧭 ניתוח TPACK</h1>
+  <div class="sub">מסלול לימוד אינטראקטיבי במודל TPACK, וניתוח מערכי שיעור ופעילויות לפיו</div>
 </div>
 
 <div class="main">
 
   <div id="notConfigured" class="alert alert-warn" style="display:none;">
     <strong>המערכת עדיין לא מחוברת ל-Supabase.</strong><br>
-    יש להגדיר את פרטי הפרויקט בקובץ <code>merkaztech-supabase.js</code>. ראו הוראות ב-<code>MERKAZTECH-SETUP.md</code>.
+    יש להגדיר את פרטי הפרויקט בקובץ <code>merkaztech-supabase.js</code>.
   </div>
 
   <div class="card" id="tpackModelCard">
@@ -91,7 +84,16 @@
 
 <script type="module">
   import { isConfigured, loadSupabase } from './merkaztech-supabase.js';
-  import { escapeHtml } from './merkaztech-shared.js';
+
+  function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
 
   const DOMAIN_ORDER = ['TK', 'PK', 'CK', 'PCK', 'TCK', 'TPK', 'TPACK'];
   const DOMAIN_META = {
