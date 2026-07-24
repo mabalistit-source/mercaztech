@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>יומן-טק – ניתוח TPACK</title>
+<link rel="stylesheet" href="./merkaztech-style.css">
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div style="display:flex; align-items:center; gap:14px;">
+      <img src="./ashdod-logo.png" alt="לוגו עיריית אשדוד" class="hero-logo">
+      <div>
+        <h1>יומן-טק</h1>
+        <div class="hero-sub">המרכז הטכנולוגי אשדוד</div>
+      </div>
+    </div>
+    <div class="hero-nav">
+      <a href="./merkaztech-log.html">צפייה</a>
+      <a href="./merkaztech-entry.html">הזנת נתונים</a>
+      <a href="./merkaztech-dashboard.html">תפוסת חדרים</a>
+      <a href="./merkaztech-tpack.html" class="active">ניתוח TPACK</a>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+  <div id="notConfigured" class="alert alert-warn" style="display:none;">
+    <strong>המערכת עדיין לא מחוברת ל-Supabase.</strong><br>
+    יש להגדיר את פרטי הפרויקט בקובץ <code>merkaztech-supabase.js</code>. ראו הוראות ב-<code>MERKAZTECH-SETUP.md</code>.
+  </div>
+
+  <div class="card">
+    <div class="card-title">ניתוח מערך שיעור / פעילות לפי מודל TPACK</div>
+    <div class="alert alert-ok" style="margin-bottom:1rem;">
+      מעלים קובץ <strong>Word (.docx)</strong> או <strong>PDF</strong> של מערך השיעור או הפעילות, והמערכת מנתחת אותו
+      לפי מודל <strong>TPACK</strong> (Mishra &amp; Koehler) — שילוב ידע טכנולוגי, פדגוגי ותוכני — ומחזירה ציון וחוות דעת
+      לכל אחד משבעת התחומים, לצד חוזקות, פערים והמלצות מעשיות. הניתוח חד-פעמי ומוצג על המסך בלבד — הוא אינו נשמר במערכת.
+    </div>
+
+    <label id="dropZone" class="upload-drop" for="fileInput">
+      <div class="icon">📄</div>
+      <div>גררו לכאן קובץ Word/PDF, או לחצו לבחירה</div>
+      <div class="fname" id="fileNameLabel"></div>
+      <input type="file" id="fileInput" accept=".docx,.pdf,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+    </label>
+
+    <div id="errorBox" class="alert alert-danger" style="display:none; margin-top:1rem;"></div>
+
+    <div id="progressBox" class="progress-steps" style="display:none;">
+      <div class="progress-step" id="stepExtract"><span class="dot"></span><span>חילוץ טקסט מהקובץ…</span></div>
+      <div class="progress-step" id="stepAnalyze"><span class="dot"></span><span>ניתוח לפי מודל TPACK…</span></div>
+    </div>
+
+    <div style="display:flex; gap:8px; margin-top:1rem;">
+      <button type="button" class="btn btn-secondary" id="resetBtn" style="display:none;">קובץ אחר</button>
+      <button type="button" class="btn btn-secondary" id="printBtn" style="display:none;">🖨️ הדפסה / שמירה כ-PDF</button>
+    </div>
+  </div>
+
+  <div id="results" style="display:none;"></div>
+
+</div>
+
+<script type="module">
+  import { isConfigured, loadSupabase } from './merkaztech-supabase.js';
+  import { escapeHtml } from './merkaztech-shared.js';
+
+  const DOMAIN_ORDER = ['TK', 'PK', 'CK', 'PCK', 'TCK', 'TPK', 'TPACK'];
+  const DOMAIN_META = {
+    TK: { label: 'ידע טכנולוגי' },
+    PK: { label: 'ידע פדגוגי' },
+    CK: { label: 'ידע תוכן' },
+    PCK: { label: 'ידע פדגוגי-תוכני' },
+    TCK: { label: 'ידע טכנולוגי-תוכני' },
+    TPK: { label: 'ידע טכנולוגי-פדגוגי' },
+    TPACK: { label: 'שילוב TPACK (הליבה המשולבת)' },
+  };
+
+  const dropZone = document.getElementById('dropZone');
+  const fileInput = document.getElementById('fileInput');
+  const fileNameLabel = document.getElementById('fileNameLabel');
+  const errorBox = document.getElementById('errorBox');
+  const progressBox = document.getElementById('progressBox');
+  const stepExtract = document.getElementById('stepExtract');
+  const stepAnalyze = document.getElementById('stepAnalyze');
+  const resetBtn = document.getElementById('resetBtn');
+  const printBtn = document.getElementById('printBtn');
+  const resultsEl = document.getElementById('results');
+
+  function showError(msg) {
+    errorBox.textContent = msg;
+    errorBox.style.display = 'block';
+  }
+  function clearError() {
+    errorBox.style.display = 'none';
+    errorBox.textContent = '';
+  }
+  function setStep(el, state) {
+    el.className = 'progress-step' + (state ? ' ' + state : '');
+  }
+
+  ['dragover', 'dragenter'].forEach(evt => dropZone.addEventListener(evt, (e) => {
+    e.preventDefault();
+    dropZone.classList.add('dragover');
+  }));
+  ['dragleave', 'drop'].forEach(evt => dropZone.addEventListener(evt, (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+  }));
+  dropZone.addEventListener('drop', (e) => {
+    const file = e.dataTransfer.files && e.dataTransfer.files[0];
+    if (file) handleFile(file);
+  });
+  fileInput.addEventListener('change', () => {
+    const file = fileInput.files && fileInput.files[0];
+    if (file) handleFile(file);
+  });
+
+  resetBtn.addEventListener('click', () => {
+    fileInput.value = '';
+    fileNameLabel.textContent = '';
+    clearError();
+    progressBox.style.display = 'none';
+    resultsEl.style.display = 'none';
+    resultsEl.innerHTML = '';
+    resetBtn.style.display = 'none';
+    printBtn.style.display = 'none';
+    dropZone.style.display = 'flex';
+  });
+  printBtn.addEventListener('click', () => window.print());
+
+  let pdfjsLibPromise = null;
+  function loadPdfjs() {
+    if (!pdfjsLibPromise) {
+      pdfjsLibPromise = import('./vendor/pdf.min.mjs').then((lib) => {
+        lib.GlobalWorkerOptions.workerSrc = './vendor/pdf.worker.min.mjs';
+        return lib;
+      });
+    }
+    return pdfjsLibPromise;
+  }
+
+  let mammothLoadPromise = null;
+  function loadMammoth() {
+    if (window.mammoth) return Promise.resolve(window.mammoth);
+    if (!mammothLoadPromise) {
+      mammothLoadPromise = new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = './vendor/mammoth.browser.min.js';
+        script.onload = () => resolve(window.mammoth);
+        script.onerror = () => reject(new Error('טעינת ספריית קריאת Word נכשלה.'));
+        document.head.appendChild(script);
+      });
+    }
+    return mammothLoadPromise;
+  }
+
+  async function extractDocxText(file) {
+    const mammoth = await loadMammoth();
+    const arrayBuffer = await file.arrayBuffer();
+    const result = await mammoth.extractRawText({ arrayBuffer });
+    return result.value;
+  }
+
+  async function extractPdfText(file) {
+    const pdfjsLib = await loadPdfjs();
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    let text = '';
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      text += content.items.map((it) => it.str || '').join(' ') + '\n';
+    }
+    return text;
+  }
+
+  function scoreBarHtml(score) {
+    let html = '<div class="tpack-score-bar">';
+    for (let i = 1; i <= 5; i++) {
+      html += `<div class="tpack-score-seg${i <= score ? ' filled' : ''}"></div>`;
+    }
+    html += '</div>';
+    return html;
+  }
+
+  function renderResults(analysis, truncated) {
+    let html = '';
+
+    if (truncated) {
+      html += `<div class="alert alert-warn">הקובץ ארוך מהרגיל — הניתוח בוצע על תחילת המסמך בלבד.</div>`;
+    }
+
+    html += `<div class="tpack-summary-card">
+      <div class="activity-title">${escapeHtml(analysis.title || 'ניתוח TPACK')}</div>
+      <div class="activity-sub">${escapeHtml(analysis.summary || '')}</div>
+    </div>`;
+
+    html += '<div class="tpack-domain-grid">';
+    for (const key of DOMAIN_ORDER) {
+      const d = analysis.domains[key] || { score: 0, assessment: '', evidence: [] };
+      const isCore = key === 'TPACK';
+      html += `<div class="tpack-domain-card${isCore ? ' core' : ''}">
+        <div class="tpack-domain-head">
+          <div class="tpack-domain-name">${escapeHtml(DOMAIN_META[key].label)}</div>
+          <div class="tpack-domain-code">${key} · ${d.score}/5</div>
+        </div>
+        ${scoreBarHtml(d.score)}
+        <div class="tpack-domain-assessment">${escapeHtml(d.assessment || '')}</div>
+        ${(d.evidence || []).map((ev) => `<div class="tpack-evidence">"${escapeHtml(ev)}"</div>`).join('')}
+      </div>`;
+    }
+    html += '</div>';
+
+    const section = (title, items, emoji) => `
+      <div class="card tpack-list-card">
+        <div class="card-title">${emoji} ${title}</div>
+        <ul>${(items || []).map((it) => `<li>${escapeHtml(it)}</li>`).join('')}</ul>
+      </div>`;
+    html += section('חוזקות', analysis.strengths, '✅');
+    html += section('פערים', analysis.gaps, '⚠️');
+    html += section('המלצות לשיפור', analysis.recommendations, '💡');
+
+    resultsEl.innerHTML = html;
+    resultsEl.style.display = 'block';
+    printBtn.style.display = 'inline-flex';
+  }
+
+  async function handleFile(file) {
+    clearError();
+    resultsEl.style.display = 'none';
+    resultsEl.innerHTML = '';
+    fileNameLabel.textContent = file.name;
+
+    const isDocx = /\.docx$/i.test(file.name) || file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+    const isPdf = /\.pdf$/i.test(file.name) || file.type === 'application/pdf';
+    if (!isDocx && !isPdf) {
+      showError('סוג קובץ לא נתמך. יש להעלות קובץ Word (.docx) או PDF בלבד.');
+      return;
+    }
+
+    dropZone.style.display = 'none';
+    progressBox.style.display = 'flex';
+    setStep(stepExtract, 'active');
+    setStep(stepAnalyze, '');
+    resetBtn.style.display = 'none';
+    printBtn.style.display = 'none';
+
+    let text;
+    try {
+      text = isDocx ? await extractDocxText(file) : await extractPdfText(file);
+    } catch (err) {
+      console.error(err);
+      showError('לא הצלחנו לחלץ טקסט מהקובץ. ודאו שהוא לא פגום ושהוא אכן קובץ Word/PDF תקין.');
+      progressBox.style.display = 'none';
+      dropZone.style.display = 'flex';
+      resetBtn.style.display = 'inline-flex';
+      return;
+    }
+
+    if (!text || text.trim().length < 40) {
+      showError('לא נמצא מספיק טקסט בקובץ. אם מדובר ב-PDF סרוק (תמונה), חילוץ טקסט אוטומטי אינו אפשרי כרגע.');
+      progressBox.style.display = 'none';
+      dropZone.style.display = 'flex';
+      resetBtn.style.display = 'inline-flex';
+      return;
+    }
+
+    setStep(stepExtract, 'done');
+    setStep(stepAnalyze, 'active');
+
+    try {
+      const { client } = await loadSupabase();
+      const { data, error } = await client.functions.invoke('tpack-analyze', {
+        body: { text, filename: file.name },
+      });
+      if (error) {
+        let message = error.message || 'שגיאה בניתוח.';
+        try {
+          const body = await error.context.json();
+          if (body && body.error) message = body.error;
+        } catch { /* keep default message */ }
+        throw new Error(message);
+      }
+      setStep(stepAnalyze, 'done');
+      progressBox.style.display = 'none';
+      resetBtn.style.display = 'inline-flex';
+      renderResults(data.analysis, data.truncated);
+    } catch (err) {
+      console.error(err);
+      showError(err.message || 'קרתה שגיאה בעת הניתוח. נסו שוב בעוד רגע.');
+      progressBox.style.display = 'none';
+      dropZone.style.display = 'flex';
+      resetBtn.style.display = 'inline-flex';
+    }
+  }
+
+  if (!isConfigured) {
+    document.getElementById('notConfigured').style.display = 'block';
+    dropZone.style.pointerEvents = 'none';
+    dropZone.style.opacity = '.5';
+  }
+</script>
+</body>
+</html>

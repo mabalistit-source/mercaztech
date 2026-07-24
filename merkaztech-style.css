@@ -193,6 +193,52 @@ textarea { resize: vertical; min-height: 60px; }
 .room-activity-time { font-weight: 700; direction: ltr; display: inline-block; }
 .room-activity-school { color: var(--text-secondary); display: block; }
 
+/* ─── TPACK UPLOAD + ANALYSIS ─── */
+.upload-drop {
+  border: 2px dashed var(--border); border-radius: var(--radius); background: var(--surface2);
+  padding: 2rem 1rem; text-align: center; cursor: pointer; transition: border-color .15s, background .15s;
+}
+.upload-drop:hover, .upload-drop.dragover { border-color: var(--accent-light); background: var(--accent-bg); }
+.upload-drop .icon { font-size: 30px; margin-bottom: .5rem; }
+.upload-drop .fname { font-weight: 700; margin-top: .5rem; }
+.upload-drop input[type="file"] { display: none; }
+
+.progress-steps { display: flex; flex-direction: column; gap: 6px; margin: 1rem 0; }
+.progress-step { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-muted); }
+.progress-step.active { color: var(--accent-text); font-weight: 700; }
+.progress-step.done { color: var(--success-text); }
+.progress-step .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); flex-shrink: 0; }
+.progress-step.active .dot { background: var(--accent-light); }
+.progress-step.done .dot { background: #4ade80; }
+
+.tpack-summary-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.2rem 1.35rem; margin-bottom: 1.25rem; box-shadow: var(--shadow-sm); }
+.tpack-summary-card .activity-title { font-size: 17px; }
+
+.tpack-domain-grid { display: grid; gap: 10px; grid-template-columns: 1fr; margin-bottom: 1.5rem; }
+.tpack-domain-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.2rem; box-shadow: var(--shadow-sm); }
+.tpack-domain-card.core { border: 2px solid var(--accent-light); background: var(--accent-bg); }
+.tpack-domain-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: .5rem; }
+.tpack-domain-name { font-size: 14px; font-weight: 800; }
+.tpack-domain-code { font-size: 11px; color: var(--text-muted); font-weight: 700; }
+.tpack-score-bar { display: flex; gap: 3px; margin-bottom: .6rem; direction: ltr; }
+.tpack-score-seg { flex: 1; height: 7px; border-radius: 4px; background: var(--muted-bg); }
+.tpack-score-seg.filled { background: var(--accent-light); }
+.tpack-domain-card.core .tpack-score-seg.filled { background: var(--accent); }
+.tpack-domain-assessment { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: .5rem; }
+.tpack-evidence { font-size: 12px; color: var(--text-muted); border-right: 3px solid var(--border); padding-right: 10px; margin-top: 4px; line-height: 1.6; }
+.tpack-evidence + .tpack-evidence { margin-top: 6px; }
+
+.tpack-list-card ul { list-style: none; padding: 0; }
+.tpack-list-card li { font-size: 13px; line-height: 1.7; padding: 6px 0 6px 0; border-bottom: 1px solid var(--border); }
+.tpack-list-card li:last-child { border-bottom: none; }
+.tpack-list-card li::before { content: '•'; color: var(--accent-light); font-weight: 900; margin-left: 8px; }
+
+@media print {
+  .hero, .upload-drop, .btn, .card-actions, #resetBtn { display: none !important; }
+  body { background: #fff; }
+  .main { margin-top: 0; }
+}
+
 @media (max-width: 480px) {
   .filter-bar, .form-grid { grid-template-columns: 1fr; }
   .summary-strip { grid-template-columns: repeat(3, 1fr); }
