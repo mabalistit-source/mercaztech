@@ -65,9 +65,22 @@ export function formatDateShort(dateStr) {
   return `${d}.${m}.${y}`;
 }
 
+// Local "YYYY-MM-DD" for a Date — never use toISOString() for this, it converts to UTC
+// first and silently shifts the date by a day in timezones ahead of UTC (e.g. Israel).
+export function toLocalDateStr(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+export function todayStr() {
+  return toLocalDateStr(new Date());
+}
+
 export function getActivityStatus(dateStr) {
   if (!dateStr) return 'upcoming';
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayStr();
   if (dateStr < today) return 'past';
   if (dateStr === today) return 'today';
   return 'upcoming';
@@ -138,7 +151,7 @@ export function generateWeeklyDates(startDate, endDateInclusive) {
   let d = new Date(startDate + 'T00:00:00');
   const end = new Date(endDateInclusive + 'T00:00:00');
   while (d <= end) {
-    dates.push(d.toISOString().slice(0, 10));
+    dates.push(toLocalDateStr(d));
     d.setDate(d.getDate() + 7);
   }
   return dates;
