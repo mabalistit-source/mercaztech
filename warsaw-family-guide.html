@@ -1,0 +1,2219 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ורשה למשפחות - המדריך המלא והאינטראקטיבי 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Assistant', sans-serif; 
+            background-color: #f4f6f9; 
+            color: #2d3748; 
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .sub-tab-content { display: none; }
+        .sub-tab-content.active { display: block; }
+        .card { 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+        .card:hover { 
+            transform: translateY(-4px); 
+            box-shadow: 0 12px 24px rgba(0,0,0,0.06);
+        }
+        .glass-morphism { 
+            background: rgba(255, 255, 255, 0.9); 
+            backdrop-filter: blur(12px); 
+            border: 1px solid rgba(255, 255, 255, 0.5); 
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        html, body { overflow-x: hidden; }
+        .btn-nav, .day-btn { min-height: 48px; }
+        .fav-star { -webkit-tap-highlight-color: transparent; }
+        @media print {
+            nav, .no-print, .btn-nav { display: none !important; }
+            .tab-content { display: block !important; page-break-before: always; }
+            .sub-tab-content { display: block !important; }
+            body { background: #ffffff !important; }
+            .card { break-inside: avoid; box-shadow: none !important; transform: none !important; }
+            a { color: #1f2937 !important; text-decoration: none; }
+            header { page-break-after: avoid; }
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-16">
+
+<button onclick="window.print()" class="no-print fixed bottom-4 left-4 z-50 bg-amber-600 hover:bg-amber-700 text-white font-bold text-sm px-4 py-2.5 rounded-full shadow-lg flex items-center gap-2" title="הדפסה או שמירה כ-PDF">🖨️ הדפסה / PDF</button>
+
+<button onclick="toggleFavPanel()" class="no-print fixed bottom-4 right-4 z-50 bg-white border border-amber-200 text-amber-700 font-bold text-sm px-4 py-2.5 rounded-full shadow-lg flex items-center gap-2">⭐ מועדפים (<span id="fav-count">0</span>)</button>
+<div id="fav-panel" class="no-print hidden fixed bottom-20 right-4 z-50 w-72 max-h-96 overflow-y-auto bg-white rounded-2xl shadow-2xl border border-gray-200 p-4">
+    <div class="flex items-center justify-between mb-2">
+        <h3 class="font-bold text-gray-800">⭐ המועדפים שלי</h3>
+        <button onclick="toggleFavPanel()" class="text-gray-400 hover:text-gray-700 text-lg leading-none">✕</button>
+    </div>
+    <ul id="fav-list" class="text-sm text-gray-700"></ul>
+</div>
+
+<div class="max-w-5xl mx-auto px-4 py-6">
+    
+    <!-- Top Interactive Header Info Card -->
+    <header class="text-center mb-8 p-6 md:p-8 rounded-3xl glass-morphism shadow-md border border-amber-100 relative overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-amber-400 via-orange-400 to-emerald-500"></div>
+        <div class="inline-block bg-amber-100 text-amber-900 text-xs px-4 py-1.5 rounded-full font-bold mb-3 tracking-wide">
+            📅 15 - 20 באוגוסט 2026 | חופשת קיץ משפחתית מורחבת
+        </div>
+        <h1 class="text-3xl md:text-5xl font-extrabold text-gray-800 tracking-tight">ורשה: המדריך המשפחתי האולטימטיבי</h1>
+        <p class="text-gray-600 text-base md:text-lg mt-2 max-w-2xl mx-auto">
+            תוכנית 5 ימים מותאמת אישית ל-<b>3 מבוגרים ו-2 ילדים (בני 4)</b>
+        </p>
+        
+        <div class="mt-6 p-4 bg-amber-50/50 rounded-2xl border border-amber-100 inline-flex flex-wrap items-center justify-center gap-6 text-sm">
+            <div class="flex items-center gap-2">
+                <span class="text-lg">🏨</span>
+                <div class="text-right">
+                    <span class="block text-xs text-gray-400">מלון הבית שלכם</span>
+                    <a href="https://maps.google.com/?q=Apple+Inn+Chmielna+21+Warszawa" target="_blank" class="font-bold text-amber-800 hover:underline">Apple Inn (רח' Chmielna 21)</a>
+                </div>
+            </div>
+            <div class="w-px h-8 bg-amber-200 hidden sm:block"></div>
+            <div class="flex items-center gap-2">
+                <span class="text-lg">🚇</span>
+                <div class="text-right">
+                    <span class="block text-xs text-gray-400">התניידות בעיר</span>
+                    <span class="font-bold text-gray-700">תחבורה ציבורית (ילדים חינם!) / Uber XL</span>
+                </div>
+            </div>
+            <div class="w-px h-8 bg-amber-200 hidden sm:block"></div>
+            <div class="flex items-center gap-2">
+                <span class="text-lg">✈️</span>
+                <div class="text-right">
+                    <span class="block text-xs text-gray-400">טיסות (LOT · Z44T4R)</span>
+                    <span class="font-bold text-gray-700">הלוך 15/8 05:05 · חזור 20/8 15:00</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-5">
+            <div class="flex items-center justify-center gap-1.5 text-xs text-gray-400 mb-2"><span id="wx-note">⏳ טוען תחזית מזג אוויר…</span></div>
+            <div id="wx-strip" class="flex gap-2 overflow-x-auto pb-1 sm:justify-center">
+                <div class="flex-shrink-0 w-20 bg-white/70 rounded-xl border border-amber-100 p-2 text-center"><p class="text-[11px] font-bold text-gray-500">שבת 15/8</p><p class="text-2xl">☀️</p><p class="text-sm font-bold text-gray-700">32°</p><p class="text-[11px] text-gray-400">18°</p></div>
+                <div class="flex-shrink-0 w-20 bg-white/70 rounded-xl border border-amber-100 p-2 text-center"><p class="text-[11px] font-bold text-gray-500">ראשון 16/8</p><p class="text-2xl">⛅</p><p class="text-sm font-bold text-gray-700">31°</p><p class="text-[11px] text-gray-400">20°</p></div>
+                <div class="flex-shrink-0 w-20 bg-white/70 rounded-xl border border-amber-100 p-2 text-center"><p class="text-[11px] font-bold text-gray-500">שני 17/8</p><p class="text-2xl">☁️</p><p class="text-sm font-bold text-gray-700">30°</p><p class="text-[11px] text-gray-400">18°</p></div>
+                <div class="flex-shrink-0 w-20 bg-white/70 rounded-xl border border-amber-100 p-2 text-center"><p class="text-[11px] font-bold text-gray-500">שלישי 18/8</p><p class="text-2xl">🌦️</p><p class="text-sm font-bold text-gray-700">27°</p><p class="text-[11px] text-gray-400">17°</p></div>
+                <div class="flex-shrink-0 w-20 bg-white/70 rounded-xl border border-amber-100 p-2 text-center"><p class="text-[11px] font-bold text-gray-500">רביעי 19/8</p><p class="text-2xl">🌧️</p><p class="text-sm font-bold text-gray-700">27°</p><p class="text-[11px] text-gray-400">16°</p></div>
+                <div class="flex-shrink-0 w-20 bg-white/70 rounded-xl border border-amber-100 p-2 text-center"><p class="text-[11px] font-bold text-gray-500">חמישי 20/8</p><p class="text-2xl">🌦️</p><p class="text-sm font-bold text-gray-700">27°</p><p class="text-[11px] text-gray-400">17°</p></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Tabs -->
+    <nav class="grid grid-cols-2 md:grid-cols-7 gap-1.5 mb-8 bg-gray-100 p-1.5 rounded-2xl shadow-inner no-print">
+        <button onclick="showTab('itinerary')" class="btn-nav active py-3 px-2 rounded-xl text-xs md:text-sm font-bold transition-all text-center bg-white text-amber-900 shadow-sm" id="tab-btn-itinerary">
+            📅 תוכנית יומית
+        </button>
+        <button onclick="showTab('public_transport')" class="btn-nav py-3 px-2 rounded-xl text-xs md:text-sm font-bold text-gray-600 hover:text-gray-900 transition-all text-center" id="tab-btn-public_transport">
+            🚇 תחבורה ציבורית
+        </button>
+        <button onclick="showTab('logistics')" class="btn-nav py-3 px-2 rounded-xl text-xs md:text-sm font-bold text-gray-600 hover:text-gray-900 transition-all text-center" id="tab-btn-logistics">
+            💰 תקציב ומחשבון
+        </button>
+        <button onclick="showTab('shopping')" class="btn-nav py-3 px-2 rounded-xl text-xs md:text-sm font-bold text-gray-600 hover:text-gray-900 transition-all text-center" id="tab-btn-shopping">
+            🛍️ קניות ושווקים
+        </button>
+        <button onclick="showTab('tips')" class="btn-nav py-3 px-2 rounded-xl text-xs md:text-sm font-bold text-gray-600 hover:text-gray-900 transition-all text-center" id="tab-btn-tips">
+            💡 טיפים ואזהרות
+        </button>
+        <button onclick="showTab('flights')" class="btn-nav py-3 px-2 rounded-xl text-xs md:text-sm font-bold text-gray-600 hover:text-gray-900 transition-all text-center" id="tab-btn-flights">
+            ✈️ טיסות
+        </button>
+        <button onclick="showTab('checklist')" class="btn-nav py-3 px-2 rounded-xl text-xs md:text-sm font-bold text-gray-600 hover:text-gray-900 transition-all text-center" id="tab-btn-checklist">
+            🧳 צ'קליסט
+        </button>
+    </nav>
+
+    <!-- TAB 1: ITINERARY -->
+    <section id="itinerary" class="tab-content active space-y-6">
+        
+        <div id="filter-bar" class="flex flex-wrap items-center gap-2 mb-4 no-print">
+            <span class="text-xs text-gray-400 self-center ml-1">סינון מהיר:</span>
+            <button type="button" id="filter-btn-all" onclick="filterCards('all')" class="filter-btn text-xs font-bold px-3 py-2 rounded-lg bg-amber-500 text-white">הכל</button>
+            <button type="button" id="filter-btn-kids" onclick="filterCards('kids')" class="filter-btn text-xs font-bold px-3 py-2 rounded-lg bg-white text-gray-600 border border-gray-200">🧸 ילדים</button>
+            <button type="button" id="filter-btn-shopping" onclick="filterCards('shopping')" class="filter-btn text-xs font-bold px-3 py-2 rounded-lg bg-white text-gray-600 border border-gray-200">🛍️ קניות</button>
+            <button type="button" id="filter-btn-outdoors" onclick="filterCards('outdoors')" class="filter-btn text-xs font-bold px-3 py-2 rounded-lg bg-white text-gray-600 border border-gray-200">🌳 טבע</button>
+            <button type="button" id="filter-btn-rainy" onclick="filterCards('rainy')" class="filter-btn text-xs font-bold px-3 py-2 rounded-lg bg-white text-gray-600 border border-gray-200">🌧️ יום גשום</button>
+        </div>
+
+        <!-- Day Selector Sub-Tabs -->
+        <div class="flex flex-wrap md:flex-nowrap gap-2 bg-amber-50 p-2 rounded-2xl border border-amber-100/50 mb-6 no-print">
+            <button onclick="showDay(1)" class="day-btn flex-1 min-w-[100px] p-3 rounded-xl bg-amber-500 text-white font-bold text-center shadow-md transition-all duration-200" id="day-btn-1">
+                <span class="block text-xs opacity-90">יום 1</span>
+                <span class="text-sm">העיר העתיקה</span>
+            </button>
+            <button onclick="showDay(2)" class="day-btn flex-1 min-w-[100px] p-3 rounded-xl bg-white text-gray-700 font-bold text-center border border-gray-200 hover:bg-amber-100/50 transition-all duration-200" id="day-btn-2">
+                <span class="block text-xs opacity-70">יום 2</span>
+                <span class="text-sm">גן החיות והוויסלה</span>
+            </button>
+            <button onclick="showDay(3)" class="day-btn flex-1 min-w-[100px] p-3 rounded-xl bg-white text-gray-700 font-bold text-center border border-gray-200 hover:bg-amber-100/50 transition-all duration-200" id="day-btn-3">
+                <span class="block text-xs opacity-70">יום 3</span>
+                <span class="text-sm">קופרניקוס ונהר</span>
+            </button>
+            <button onclick="showDay(4)" class="day-btn flex-1 min-w-[100px] p-3 rounded-xl bg-white text-gray-700 font-bold text-center border border-gray-200 hover:bg-amber-100/50 transition-all duration-200" id="day-btn-4">
+                <span class="block text-xs opacity-70">יום 4</span>
+                <span class="text-sm">משחק וסטייל</span>
+            </button>
+            <button onclick="showDay(5)" class="day-btn flex-1 min-w-[100px] p-3 rounded-xl bg-white text-gray-700 font-bold text-center border border-gray-200 hover:bg-amber-100/50 transition-all duration-200" id="day-btn-5">
+                <span class="block text-xs opacity-70">יום 5</span>
+                <span class="text-sm">גנים וארמונות</span>
+            </button>
+            <button onclick="showDay(6)" class="day-btn flex-1 min-w-[100px] p-3 rounded-xl bg-white text-gray-700 font-bold text-center border border-gray-200 hover:bg-amber-100/50 transition-all duration-200" id="day-btn-6">
+                <span class="block text-xs opacity-70">יום 6</span>
+                <span class="text-sm">✈️ יציאה הביתה</span>
+            </button>
+        </div>
+
+        <!-- ==================== DAY 1 DETAILS ==================== -->
+        <div id="day-1-container" class="sub-tab-content active space-y-6">
+            <div class="bg-gradient-to-r from-amber-50 to-orange-50 p-5 rounded-2xl border border-amber-100">
+                <h3 class="text-lg font-bold text-amber-900 mb-1">📅 שבת 15/8 · תמצית יומית: מסע אל לב ההיסטוריה והיופי</h3>
+                <p class="text-sm text-gray-700 leading-relaxed">
+                    היום נצא לחוות את הקלאסיקה של ורשה. נתחיל ממש מחוץ לדלת המלון בארוחת בוקר פריזאית, נמשיך לגן סקסון המלכותי, נצעד לאורך הדרך המלכותית לעיר העתיקה (בטוחה לחלוטין לילדים ללא מכוניות), ובסיום נעשה קפיצה לקניות וקרפים מושלמים במרכז העיר המודרני.
+                </p>
+            </div>
+
+            <div class="p-4 bg-blue-50 rounded-2xl border border-blue-200">
+                <h4 class="font-bold text-blue-900 text-sm mb-1">✈️ יום הגעה — קראו לפני שיוצאים</h4>
+                <p class="text-sm text-gray-700 leading-relaxed">
+                    נוחתים ב-08:10. <b>קודם נוסעים למלון להניח את המזוודות</b> (מגיעים ~09:45), ורק אחר כך יוצאים לטייל. לכן זמני הבוקר של היום זזים: מתחילים בבראנץ' ב-Vincent (צמוד למלון) בסביבות <b>10:30</b>. אחרי טיסת ה-05:05 המוקדמת — קחו את היום בקלות, ואם הילדים עייפים דלגו על עצירת הקניות ב-Złote Tarasy.
+                </p>
+            </div>
+
+            <!-- CARD: Day 1 Breakfast -->
+            <div class="card bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex flex-wrap justify-between items-start gap-2 mb-4">
+                    <span class="bg-orange-100 text-orange-800 text-xs px-2.5 py-1 rounded-full font-bold">🍳 בראנץ' הגעה - 10:30 (מטר מהמלון!)</span>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-amber-500 font-bold text-sm">4.2 ⭐</span>
+                        <span class="text-xs text-gray-400">(1,450+ ביקורות בגוגל)</span>
+                    </div>
+                </div>
+                <h4 class="text-xl font-bold text-gray-800 flex flex-wrap items-center gap-2">
+                    <a href="https://vincentcafe.pl/" target="_blank" class="hover:text-amber-600 transition-colors">Vincent Café & Boulangerie</a>
+                    <span class="text-sm font-normal text-gray-400">| מאפייה ובית קפה צרפתי יוקרתי</span>
+                </h4>
+                <div class="mt-3 space-y-2 text-sm text-gray-600">
+                    <p>📍 <b>כתובת:</b> <a href="https://maps.google.com/?q=Vincent+Chmielna+21+Warszawa" target="_blank" class="text-blue-600 hover:underline">Chmielna 21, 00-021 Warszawa</a> <span class="text-xs text-amber-600 font-bold">(צמוד למלון Apple Inn!)</span></p>
+                    <p>🚶 <b>הגעה ברגל:</b> פחות מחצי דקה הליכה מהמלון.</p>
+                    <p>🕒 <b>שעות פתיחה באוגוסט:</b> 07:00 - 21:00</p>
+                    <p>💰 <b>מחירים:</b> כ-25 - 45 PLN לאדם.</p>
+                    <p class="text-gray-700 font-medium bg-gray-50 p-2.5 rounded-xl border-r-4 border-amber-400">
+                        💡 <b>טיפ למשפחה:</b> קרואסוני חמאה אגדיים לילדים, אומלטים צרפתיים מעולים למבוגרים. הכל נעשה במקום.
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-100 flex justify-end gap-3 text-xs">
+                    <a href="https://vincentcafe.pl/" target="_blank" class="text-amber-700 hover:underline font-bold">🌐 אתר רשמי</a>
+                    <span class="text-gray-300">|</span>
+                    <a href="https://www.tripadvisor.com/Restaurant_Review-g274856-d4757262-Reviews-Vincent-Warsaw_Mazovia_Province_Central_Poland.html" target="_blank" class="text-emerald-700 hover:underline font-bold">🦉 TripAdvisor</a>
+                </div>
+            </div>
+
+            <!-- CARD: Day 1 Attraction 1 -->
+            <div class="card bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex flex-wrap justify-between items-start gap-2 mb-4">
+                    <span class="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-1 rounded-full font-bold">🌳 אטרקציית בוקר - 11:30</span>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-amber-500 font-bold text-sm">4.7 ⭐</span>
+                        <span class="text-xs text-gray-400">(12,000+ ביקורות בגוגל)</span>
+                    </div>
+                </div>
+                <h4 class="text-xl font-bold text-gray-800 flex flex-wrap items-center gap-2">
+                    <a href="https://warsawtour.pl/" target="_blank" class="hover:text-amber-600 transition-colors">גני סקסון (Ogród Saski) וקבר החייל האלמוני</a>
+                </h4>
+                <div class="mt-3 space-y-2 text-sm text-gray-600">
+                    <p>📍 <b>כתובת:</b> <a href="https://maps.google.com/?q=Saxon+Garden+Warsaw" target="_blank" class="text-blue-600 hover:underline">Marszałkowska, 00-101 Warszawa</a></p>
+                    <p>🚶 <b>הגעה ברגל:</b> כ-12 דקות הליכה רגועה (950 מ') מהמלון.</p>
+                    <p>🚇 <b>תחבורה ציבורית:</b> אין צורך, אך ניתן לקחת חשמלית (Tram) קווים <b>4, 15, 18, 35</b> מתחנת <i>Krucza 06</i> לתחנת <i>Królewska 06</i> (כ-4 דקות נסיעה).</p>
+                    <p>🕒 <b>שעות פתיחה:</b> פתוח 24/7</p>
+                    <p>💰 <b>מחיר כניסה:</b> חינם לחלוטין!</p>
+                    <p class="text-gray-700 font-medium bg-gray-50 p-2.5 rounded-xl border-r-4 border-emerald-400">
+                        💡 <b>לילדים בני 4:</b> מזרקה ענקית מדהימה ומרהיבה, המון שטח דשא פתוח לרוץ, ומגרש משחקים מעוצב ועשיר לילדים בחלק המערבי של הגן.
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-100 flex justify-end gap-3 text-xs">
+                    <a href="https://warsawtour.pl/en/saxon-garden/" target="_blank" class="text-amber-700 hover:underline font-bold">🌐 מידע רשמי</a>
+                    <span class="text-gray-300">|</span>
+                    <a href="https://www.tripadvisor.com/Attraction_Review-g274856-d276180-Reviews-Saxon_Gardens-Warsaw_Mazovia_Province_Central_Poland.html" target="_blank" class="text-emerald-700 hover:underline font-bold">🦉 TripAdvisor</a>
+                </div>
+            </div>
+
+            <!-- CARD: Day 1 Lunch -->
+            <div class="card bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex flex-wrap justify-between items-start gap-2 mb-4">
+                    <span class="bg-orange-100 text-orange-800 text-xs px-2.5 py-1 rounded-full font-bold">🥟 ארוחת צהריים - 13:00 (בעיר העתיקה)</span>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-amber-500 font-bold text-sm">4.5 ⭐</span>
+                        <span class="text-xs text-gray-400">(14,800+ ביקורות בגוגל)</span>
+                    </div>
+                </div>
+                <h4 class="text-xl font-bold text-gray-800 flex flex-wrap items-center gap-2">
+                    <a href="https://www.zapiecek.eu/" target="_blank" class="hover:text-amber-600 transition-colors">Pierogarnia Zapiecek</a>
+                    <span class="text-sm font-normal text-gray-400">| חוויה פולנית מסורתית משפחתית</span>
+                </h4>
+                <div class="mt-3 space-y-2 text-sm text-gray-600">
+                    <p>📍 <b>כתובת:</b> <a href="https://maps.google.com/?q=Zapiecek+%C5%9Awi%C4%99toja%C5%84ska+13+Warszawa" target="_blank" class="text-blue-600 hover:underline">Świętojańska 13, 00-281 Warszawa</a></p>
+                    <p>🚇 <b>תחבורה ציבורית:</b> קחו אוטובוס קו <b>116, 178, 180, 503</b> מתחנת <i>Pl. Piłsudskiego 06</i> לתחנת <i>Pl. Zamkowy 01</i> (2 תחנות, כ-4 דקות נסיעה). משם הליכה של 2 דקות ברחוב ללא רכבים.</p>
+                    <p>🚕 <b>מונית/Uber:</b> כ-5 דקות (כ-15 PLN).</p>
+                    <p>🕒 <b>שעות פתיחה:</b> 11:00 - 22:00</p>
+                    <p>💰 <b>מחירים:</b> כ-30 - 55 PLN למנה עיקרית.</p>
+                    <p class="text-gray-700 font-medium bg-gray-50 p-2.5 rounded-xl border-r-4 border-amber-400">
+                        💡 <b>טיפ למשפחה:</b> המקום מפורסם בכיסונים פולניים (פירוגי). ילדים אוהבים מאוד את גרסת הגבינות והתפוחים המתוקה.
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-100 flex justify-end gap-3 text-xs">
+                    <a href="https://www.zapiecek.eu/" target="_blank" class="text-amber-700 hover:underline font-bold">🌐 אתר רשמי</a>
+                    <span class="text-gray-300">|</span>
+                    <a href="https://www.tripadvisor.com/Restaurant_Review-g274856-d1833446-Reviews-Pierogarnia_Zapiecek-Warsaw_Mazovia_Province_Central_Poland.html" target="_blank" class="text-emerald-700 hover:underline font-bold">🦉 TripAdvisor</a>
+                </div>
+            </div>
+
+            <!-- CARD: Day 1 Afternoon Attraction -->
+            <div class="card bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex flex-wrap justify-between items-start gap-2 mb-4">
+                    <span class="bg-blue-100 text-blue-800 text-xs px-2.5 py-1 rounded-full font-bold">🔮 אטרקציית צהריים - 14:30</span>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-amber-500 font-bold text-sm">4.6 ⭐</span>
+                        <span class="text-xs text-gray-400">(4,100+ ביקורות בגוגל)</span>
+                    </div>
+                </div>
+                <h4 class="text-xl font-bold text-gray-800 flex flex-wrap items-center gap-2">
+                    <a href="https://swiatiluzji.pl/en/" target="_blank" class="hover:text-amber-600 transition-colors">מוזיאון עולם האשליות (Muzeum Świat Iluzji)</a>
+                </h4>
+                <div class="mt-3 space-y-2 text-sm text-gray-600">
+                    <p>📍 <b>כתובת:</b> <a href="https://maps.google.com/?q=Museum+World+of+Illusion+Rynek+Starego+Miasta+21+Warszawa" target="_blank" class="text-blue-600 hover:underline">Rynek Starego Miasta 21, 00-272 Warszawa</a></p>
+                    <p>🚶 <b>הגעה ברגל:</b> צעידה של 2 דקות בלבד (150 מ') מפירוגרניה זאפיאצק בתוך כיכר השוק של העיר העתיקה.</p>
+                    <p>🕒 <b>שעות פתיחה באוגוסט:</b> 09:00 - 20:00 (ימי חול), 10:00 - 21:00 (סופ"ש)</p>
+                    <p>💰 <b>מחירי כניסה:</b> מבוגר: 55 PLN | ילדים בגיל 4: חינם! | כרטיס משפחתי (2+2 ומעלה): 140 PLN.</p>
+                    <p class="text-gray-700 font-medium bg-gray-50 p-2.5 rounded-xl border-r-4 border-blue-400">
+                        💡 <b>למה זה מעולה:</b> המקום אינטראקטיבי מאוד, מותר לגעת בהכל, להצטלם בפוזיציות מצחיקות ומטעות אופטית (כמו החדר ההפוך).
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-100 flex justify-end gap-3 text-xs">
+                    <a href="https://swiatiluzji.pl/en/" target="_blank" class="text-amber-700 hover:underline font-bold">🌐 אתר רשמי</a>
+                    <span class="text-gray-300">|</span>
+                    <a href="https://www.tripadvisor.com/Attraction_Review-g274856-d14101456-Reviews-Museum_of_Illusion-Warsaw_Mazovia_Province_Central_Poland.html" target="_blank" class="text-emerald-700 hover:underline font-bold">🦉 TripAdvisor</a>
+                </div>
+            </div>
+
+            <!-- CARD: Day 1 Dinner -->
+            <div class="card bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex flex-wrap justify-between items-start gap-2 mb-4">
+                    <span class="bg-orange-100 text-orange-800 text-xs px-2.5 py-1 rounded-full font-bold">🍕 ארוחת ערב - 18:30 (קרוב למלון)</span>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-amber-500 font-bold text-sm">4.6 ⭐</span>
+                        <span class="text-xs text-gray-400">(16,500+ ביקורות בגוגל)</span>
+                    </div>
+                </div>
+                <h4 class="text-xl font-bold text-gray-800 flex flex-wrap items-center gap-2">
+                    <a href="https://manekin.pl/" target="_blank" class="hover:text-amber-600 transition-colors">Manekin Creperie</a>
+                    <span class="text-sm font-normal text-gray-400">| מסעדת הקרפים והפנקייקים הטובה בעיר</span>
+                </h4>
+                <div class="mt-3 space-y-2 text-sm text-gray-600">
+                    <p>📍 <b>כתובת:</b> <a href="https://maps.google.com/?q=Manekin+Marsza%C5%82kowska+140+Warszawa" target="_blank" class="text-blue-600 hover:underline">Marszałkowska 140, 00-061 Warszawa</a></p>
+                    <p>🚇 <b>תחבורה ציבורית מהעיר העתיקה ל-Złote Tarasy (קניות) ומשם למסעדה:</b> לכו לתחנת <i>Miodowa 02</i>, קחו אוטובוס קו <b>160, 175</b> לתחנת <i>Dworzec Centralny 02</i> (כ-10 דקות נסיעה). משם 3 דקות הליכה לקניון. מהקניון למסעדה - הליכה של 8 דקות ברגל.</p>
+                    <p>🚕 <b>מונית/Uber מהעיר העתיקה:</b> כ-10 דקות (כ-20 PLN).</p>
+                    <p>🕒 <b>שעות פתיחה:</b> 10:00 - 22:00</p>
+                    <p>💰 <b>מחירים:</b> כ-20 - 40 PLN למנות קרפ עצומות ומשביעות.</p>
+                    <p class="text-gray-700 font-medium bg-gray-50 p-2.5 rounded-xl border-r-4 border-amber-400">
+                        💡 <b>חובה לטעום:</b> יש להם עשרות סוגי קרפים מלוחים ומתוקים. הילדים יתאהבו במנות המעוצבות.
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-100 flex justify-end gap-3 text-xs">
+                    <a href="https://manekin.pl/" target="_blank" class="text-amber-700 hover:underline font-bold">🌐 אתר רשמי</a>
+                    <span class="text-gray-300">|</span>
+                    <a href="https://www.tripadvisor.com/Restaurant_Review-g274856-d3683697-Reviews-Manekin-Warsaw_Mazovia_Province_Central_Poland.html" target="_blank" class="text-emerald-700 hover:underline font-bold">🦉 TripAdvisor</a>
+                </div>
+            </div>
+
+            <!-- DAY 1 MAP TIMELINE -->
+            <div class="p-6 bg-slate-100 rounded-3xl border border-gray-200">
+                <h4 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    🗺️ מפת מסלול מותאמת אישית - יום 1
+                </h4>
+                
+                <div class="relative pl-6 border-r-2 border-slate-300 space-y-6 mr-4">
+                    <div class="relative">
+                        <div class="absolute -right-8 top-1.5 bg-amber-500 w-4 h-4 rounded-full border-4 border-white"></div>
+                        <p class="font-bold text-sm text-amber-700">מלון Apple Inn</p>
+                        <p class="text-xs text-gray-500">נקודת יציאה (רח' Chmielna 21)</p>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -right-8 top-1.5 bg-orange-500 w-4 h-4 rounded-full border-4 border-white"></div>
+                        <p class="font-bold text-sm">Vincent Cafe (בוקר)</p>
+                        <p class="text-xs text-gray-500">במרחק 10 מטרים מהמלון • 1 דקה</p>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -right-8 top-1.5 bg-emerald-500 w-4 h-4 rounded-full border-4 border-white"></div>
+                        <p class="font-bold text-sm">גני סקסון (בוקר)</p>
+                        <p class="text-xs text-gray-500">🚶 הליכה רגועה של 12 דקות (950 מ')</p>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -right-8 top-1.5 bg-orange-500 w-4 h-4 rounded-full border-4 border-white"></div>
+                        <p class="font-bold text-sm">Zapiecek (צהריים)</p>
+                        <p class="text-xs text-gray-500">🚇 אוטובוס 116 / 180 (4 דקות) או Uber (5 דקות)</p>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -right-8 top-1.5 bg-blue-500 w-4 h-4 rounded-full border-4 border-white"></div>
+                        <p class="font-bold text-sm">מוזיאון עולם האשליות (צהריים/אחה"צ)</p>
+                        <p class="text-xs text-gray-500">🚶 צעידה של 2 דקות בתוך כיכר השוק</p>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -right-8 top-1.5 bg-purple-500 w-4 h-4 rounded-full border-4 border-white"></div>
+                        <p class="font-bold text-sm">קניון Złote Tarasy (אחה"צ לקניות)</p>
+                        <p class="text-xs text-gray-500">🚇 אוטובוס 160 / 175 (10 דקות) או Uber (10 דקות)</p>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -right-8 top-1.5 bg-orange-500 w-4 h-4 rounded-full border-4 border-white"></div>
+                        <p class="font-bold text-sm">Manekin Marszałkowska (ערב)</p>
+                        <p class="text-xs text-gray-500">🚶 הליכה קלילה של 8 דקות מהקניון • חוזרים למלון ברגל (7 דק')</p>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <a href="https://www.google.com/maps/dir/Apple+Inn,+Chmielna+21,+00-021+Warszawa/Vincent,+Chmielna+21,+00-021+Warszawa/Ogr%C3%B3d+Saski,+Warszawa/Zapiecek,+%C5%9Awi%C4%99toja%C5%84ska+13,+00-281+Warszawa/Muzeum+%C5%9Awiat+Iluzji,+Rynek+Starego+Miasta+21,+00-272+Warszawa/Z%C5%82ote+Tarasy,+Z%C5%82ota+59,+00-120+Warszawa/Manekin,+Marsza%C5%82kowska+140,+00-061+Warszawa/" target="_blank" class="w-full flex items-center justify-center gap-2 bg-amber-600 hover:bg-amber-700 text-white font-bold py-3.5 px-6 rounded-2xl shadow-lg transition-all text-center">
+                        🗺️ פתח מסלול ניווט יום 1 ב-Google Maps
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== DAY 2 DETAILS ==================== -->
+        <div id="day-2-container" class="sub-tab-content space-y-6">
+            <div class="bg-gradient-to-r from-blue-50 to-emerald-50 p-5 rounded-2xl border border-blue-100">
+                <h3 class="text-lg font-bold text-blue-900 mb-1">📅 ראשון 16/8 · תמצית יומית: טבע, מים וחיות קסומות</h3>
+                <p class="text-sm text-gray-700 leading-relaxed">
+                    היום נחצה את נהר הוויסלה לחלק ההיסטורי והאותנטי של פראגה. נבקר בגן חיות ענק ויפהפה, נאכל ארוחת צהריים במסעדה מדהימה שיש בה ג'ימבורי פנימי לילדים, נשתעשע בחוף פוניאטובקה החולי, ונסיים את הערב במסעדת דגים ובשרים יוקרתית עם משחקייה פנימית מאובזרת לחלוטין.
+                </p>
+            </div>
+
+            <!-- CARD: Day 2 Breakfast -->
+            <div class="card bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex flex-wrap justify-between items-start gap-2 mb-4">
+                    <span class="bg-orange-100 text-orange-800 text-xs px-2.5 py-1 rounded-full font-bold">🍳 ארוחת בוקר - 08:30 (קרוב למלון)</span>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-amber-500 font-bold text-sm">4.6 ⭐</span>
+                        <span class="text-xs text-gray-400">(4,300+ ביקורות בגוגל)</span>
+                    </div>
+                </div>
+                <h4 class="text-xl font-bold text-gray-800 flex flex-wrap items-center gap-2">
+                    <a href="https://bulkeprzezbibulke.pl/" target="_blank" class="hover:text-amber-600 transition-colors">Bułkę przez Bibułkę</a>
+                    <span class="text-sm font-normal text-gray-400">| מוסד ארוחות הבוקר המפורסם של ורשה</span>
+                </h4>
+                <div class="mt-3 space-y-2 text-sm text-gray-600">
+                    <p>📍 <b>כתובת:</b> <a href="https://maps.google.com/?q=Bu%C5%82k%C4%99+przez+Bibu%C5%82k%C4%99+Zgoda+3+Warszawa" target="_blank" class="text-blue-600 hover:underline">Zgoda 3, 00-018 Warszawa</a></p>
+                    <p>🚶 <b>הגעה ברגל:</b> רק 3 דקות הליכה (240 מ') מהמלון.</p>
+                    <p>🕒 <b>שעות פתיחה באוגוסט:</b> 07:30 - 22:00</p>
+                    <p>💰 <b>מחירים:</b> כ-30 - 45 PLN לאדם.</p>
+                    <p class="text-gray-700 font-medium bg-gray-50 p-2.5 rounded-xl border-r-4 border-amber-400">
+                        💡 <b>טיפ למשפחה:</b> יש להם בייגלים מדהימים, פנקייקים דקים וטעימים לילדים, וקפה מעולה.
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-100 flex justify-end gap-3 text-xs">
+                    <a href="https://bulkeprzezbibulke.pl/" target="_blank" class="text-amber-700 hover:underline font-bold">🌐 אתר רשמי</a>
+                    <span class="text-gray-300">|</span>
+                    <a href="https://www.tripadvisor.com/Restaurant_Review-g274856-d4468694-Reviews-Bulke_przez_Bibalke-Warsaw_Mazovia_Province_Central_Poland.html" target="_blank" class="text-emerald-700 hover:underline font-bold">🦉 TripAdvisor</a>
+                </div>
+            </div>
+
+            <!-- CARD: Day 2 Attraction 1 -->
+            <div class="card bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex flex-wrap justify-between items-start gap-2 mb-4">
+                    <span class="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-1 rounded-full font-bold">🦁 אטרקציית בוקר - 09:30</span>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-amber-500 font-bold text-sm">4.5 ⭐</span>
+                        <span class="text-xs text-gray-400">(13,000+ ביקורות בגוגל)</span>
+                    </div>
+                </div>
+                <h4 class="text-xl font-bold text-gray-800 flex flex-wrap items-center gap-2">
+                    <a href="https://zoo.waw.pl/" target="_blank" class="hover:text-amber-600 transition-colors">גן החיות של ורשה (Warszawskie ZOO)</a>
+                </h4>
+                <div class="mt-3 space-y-2 text-sm text-gray-600">
+                    <p>📍 <b>כתובת:</b> <a href="https://maps.google.com/?q=Warsaw+Zoo+Ratuszowa+1+Warszawa" target="_blank" class="text-blue-600 hover:underline">Ratuszowa 1/3, 03-461 Warszawa</a></p>
+                    <p>🚇 <b>תחבורה ציבורית:</b> לכו לתחנת המטרו <i>Świętokrzyska</i>, קחו את קו <b>M2</b> (לכיוון Bródno) ורדו בתחנת <i>Dworzec Wileński</i> (3 תחנות, כ-6 דקות). משם קחו חשמלית (Tram) קו <b>4, 23</b> לתחנת <i>Park Praski 01</i> (תחנה אחת) או לכו ברגל כ-10 דקות דרך הפארק הירוק.</p>
+                    <p>🚕 <b>מונית/Uber:</b> כ-10 דקות (כ-18 PLN).</p>
+                    <p>🕒 <b>שעות פתיחה באוגוסט:</b> 09:00 - 18:00</p>
+                    <p>💰 <b>מחירי כניסה:</b> מבוגר: 40 PLN | ילדים בגיל 4: חינם!</p>
+                    <p class="text-gray-700 font-medium bg-gray-50 p-2.5 rounded-xl border-r-4 border-emerald-400">
+                        💡 <b>לילדים בני 4:</b> כדאי לשכור בכניסה עגלת עץ קטנה (בעלות סמלית של כ-10 PLN) שבה הילדים יכולים לשבת בכיף.
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-100 flex justify-end gap-3 text-xs">
+                    <a href="https://zoo.waw.pl/" target="_blank" class="text-amber-700 hover:underline font-bold">🌐 אתר רשמי</a>
+                    <span class="text-gray-300">|</span>
+                    <a href="https://www.tripadvisor.com/Attraction_Review-g274856-d311261-Reviews-Warsaw_Zoo-Warsaw_Mazovia_Province_Central_Poland.html" target="_blank" class="text-emerald-700 hover:underline font-bold">🦉 TripAdvisor</a>
+                </div>
+            </div>
+
+            <!-- CARD: Day 2 Lunch -->
+            <div class="card bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex flex-wrap justify-between items-start gap-2 mb-4">
+                    <span class="bg-orange-100 text-orange-800 text-xs px-2.5 py-1 rounded-full font-bold">🍔 ארוחת צהריים - 13:00 (ליד גן החיות בפראגה)</span>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-amber-500 font-bold text-sm">4.4 ⭐</span>
+                        <span class="text-xs text-gray-400">(3,100+ ביקורות בגוגל)</span>
+                    </div>
+                </div>
+                <h4 class="text-xl font-bold text-gray-800 flex flex-wrap items-center gap-2">
+                    <a href="http://www.boskapraga.pl/" target="_blank" class="hover:text-amber-600 transition-colors">Boska! Praga Restaurant</a>
+                    <span class="text-sm font-normal text-gray-400">| מסעדה מעוצבת עם ג'ימבורי פנימי לילדים!</span>
+                </h4>
+                <div class="mt-3 space-y-2 text-sm text-gray-600">
+                    <p>📍 <b>כתובת:</b> <a href="https://maps.google.com/?q=Boska+Praga+Okrzei+23+Warszawa" target="_blank" class="text-blue-600 hover:underline">Stefana Okrzei 23, 03-715 Warszawa</a></p>
+                    <p>🚶 <b>הגעה ברגל:</b> כ-10 דקות הליכה רגועה (800 מ') מהשער האחורי של גן החיות.</p>
+                    <p>🚇 <b>תחבורה ציבורית:</b> חשמלית קו <b>4</b> מתחנת <i>Wybrzeże Helskie 01</i> לתחנת <i>Okrzei 01</i> (2 תחנות, 3 דקות).</p>
+                    <p>🕒 <b>שעות פתיחה:</b> 12:00 - 22:00</p>
+                    <p>💰 <b>מחירים:</b> כ-40 - 75 PLN למנה עיקרית גדולה. יש תפריט ילדים עשיר.</p>
+                    <p class="text-gray-700 font-medium bg-gray-50 p-2.5 rounded-xl border-r-4 border-amber-400">
+                        💡 <b>חוויה משפחתית:</b> גן עדן להורים. בזמן שאתם אוכלים, לילדים יש מתחם ג'ימבורי פנימי וחינמי ענק עם משחקים ומגלשה שקופה!
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-100 flex justify-end gap-3 text-xs">
+                    <a href="http://www.boskapraga.pl/" target="_blank" class="text-amber-700 hover:underline font-bold">🌐 אתר רשמי</a>
+                    <span class="text-gray-300">|</span>
+                    <a href="https://www.tripadvisor.com/Restaurant_Review-g274856-d8417933-Reviews-Boska_Praga-Warsaw_Mazovia_Province_Central_Poland.html" target="_blank" class="text-emerald-700 hover:underline font-bold">🦉 TripAdvisor</a>
+                </div>
+            </div>
+
+            <!-- CARD: Day 2 Afternoon River Activity -->
+            <div class="card bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex flex-wrap justify-between items-start gap-2 mb-4">
+                    <span class="bg-blue-100 text-blue-800 text-xs px-2.5 py-1 rounded-full font-bold">⛱️ אחה"צ - 15:30 (חוף פוניאטובקה והנהר)</span>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-amber-500 font-bold text-sm">4.6 ⭐</span>
+                        <span class="text-xs text-gray-400">(3,500+ ביקורות בגוגל)</span>
+                    </div>
+                </div>
+                <h4 class="text-xl font-bold text-gray-800 flex flex-wrap items-center gap-2">
+                    <span class="hover:text-amber-600 transition-colors">חוף פוניאטובקה (Plaża Poniatówka) וגדות הוויסלה</span>
+                </h4>
+                <div class="mt-3 space-y-2 text-sm text-gray-600">
+                    <p>📍 <b>כתובת:</b> <a href="https://maps.google.com/?q=Pla%C5%BCa+Poniat%C3%B3wka+Warszawa" target="_blank" class="text-blue-600 hover:underline">Wybrzeże Szczecińskie, 03-901 Warszawa</a></p>
+                    <p>🚇 <b>תחבורה ציבורית:</b> לכו לתחנת <i>Rondo Waszyngtona</i> (כ-10 דקות הליכה מפראגה), קחו חשמלית קווים <b>9, 24</b> לתחנת <i>Most Poniatowskiego</i> או לכו ישירות אל מתחת לגשר מהכיכר.</p>
+                    <p>🚕 <b>מונית/Uber:</b> כ-5 דקות (כ-12 PLN).</p>
+                    <p>🕒 <b>שעות פתיחה:</b> פתוח תמיד</p>
+                    <p>💰 <b>מחיר:</b> חינם!</p>
+                    <p class="text-gray-700 font-medium bg-gray-50 p-2.5 rounded-xl border-r-4 border-blue-400">
+                        💡 <b>לילדים בני 4:</b> זהו חוף חולי טבעי מדהים בלב העיר עם מגרשי משחקים ענקיים מעץ, נדנדות, ואזורי חול נקיים בהם הילדים יכולים לבנות ארמונות חול.
+                    </p>
+                </div>
+            </div>
+
+            <!-- CARD: Day 2 Dinner -->
+            <div class="card bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex flex-wrap justify-between items-start gap-2 mb-4">
+                    <span class="bg-orange-100 text-orange-800 text-xs px-2.5 py-1 rounded-full font-bold">🍕 ארוחת ערב חגיגית - 18:30 (עם שירות שמרטפות לילדים!)</span>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-amber-500 font-bold text-sm">4.6 ⭐</span>
+                        <span class="text-xs text-gray-400">(5,800+ ביקורות בגוגל)</span>
+                    </div>
+                </div>
+                <h4 class="text-xl font-bold text-gray-800 flex flex-wrap items-center gap-2">
+                    <a href="https://derelefant.com/" target="_blank" class="hover:text-amber-600 transition-colors">Der Elefant</a>
+                    <span class="text-sm font-normal text-gray-400">| מסעדת בשרים ודגים מעולה וידידותית למשפחות</span>
+                </h4>
+                <div class="mt-3 space-y-2 text-sm text-gray-600">
+                    <p>📍 <b>כתובת:</b> <a href="https://maps.google.com/?q=Der+Elefant+Plac+Bankowy+1+Warszawa" target="_blank" class="text-blue-600 hover:underline">Plac Bankowy 1, 00-139 Warszawa</a></p>
+                    <p>🚇 <b>תחבורה ציבורית מהחוף:</b> לכו לתחנת החשמלית <i>Most Poniatowskiego 04</i>, קחו קו <b>4</b> ישירות לתחנת <i>Plac Bankowy 04</i> (7 תחנות, כ-11 דקות נסיעה רצופה ללא החלפות!). המסעדה נמצאת ממש מול התחנה.</p>
+                    <p>🚕 <b>מונית/Uber:</b> כ-10 דקות (כ-20 PLN).</p>
+                    <p>🕒 <b>שעות פתיחה:</b> 12:00 - 23:00</p>
+                    <p>💰 <b>מחירים:</b> כ-50 - 130 PLN למנות עיקריות איכותיות מאוד.</p>
+                    <p class="text-gray-700 font-medium bg-gray-50 p-2.5 rounded-xl border-r-4 border-amber-400">
+                        💡 <b>סופר-ייחודי למשפחה:</b> יש להם חדר משחקים ענק עם שמרטפית מקצועית (בסופי שבוע וימי חול מסוימים בקיץ) שמשחקת עם הילדים, בזמן שהמבוגרים נהנים משקט מוחלט ואוכל מעולה.
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-100 flex justify-end gap-3 text-xs">
+                    <a href="https://derelefant.com/" target="_blank" class="text-amber-700 hover:underline font-bold">🌐 אתר רשמי</a>
+                    <span class="text-gray-300">|</span>
+                    <a href="https://www.tripadvisor.com/Restaurant_Review-g274856-d1078788-Reviews-Der_Elefant-Warsaw_Mazovia_Province_Central_Poland.html" target="_blank" class="text-emerald-700 hover:underline font-bold">🦉 TripAdvisor</a>
+                </div>
+            </div>
+
+            <!-- DAY 2 MAP TIMELINE -->
+            <div class="p-6 bg-slate-100 rounded-3xl border border-gray-200">
+                <h4 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    🗺️ מפת מסלול מותאמת אישית - יום 2
+                </h4>
+                
+                <div class="relative pl-6 border-r-2 border-slate-300 space-y-6 mr-4">
+                    <div class="relative">
+                        <div class="absolute -right-8 top-1.5 bg-amber-500 w-4 h-4 rounded-full border-4 border-white"></div>
+                        <p class="font-bold text-sm text-amber-700">מלון Apple Inn</p>
+                        <p class="text-xs text-gray-500">נקודת יציאה (רח' Chmielna 21)</p>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -right-8 top-1.5 bg-orange-500 w-4 h-4 rounded-full border-4 border-white"></div>
+                        <p class="font-bold text-sm">Bułkę przez Bibułkę (בוקר)</p>
+                        <p class="text-xs text-gray-500">🚶 רק 3 דקות הליכה רגועה מהמלון</p>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -right-8 top-1.5 bg-emerald-500 w-4 h-4 rounded-full border-4 border-white"></div>
+                        <p class="font-bold text-sm">גן החיות של ורשה (בוקר-צהריים)</p>
+                        <p class="text-xs text-gray-500">🚇 מטרו M2 ל-Dworzec Wileński (6 דקות) או Uber (10 דקות)</p>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -right-8 top-1.5 bg-orange-500 w-4 h-4 rounded-full border-4 border-white"></div>
+                        <p class="font-bold text-sm">Boska! Praga (צהריים ומנוחה)</p>
+                        <p class="text-xs text-gray-500">🚶 הליכה של 10 דקות או חשמלית קו 4</p>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -right-8 top-1.5 bg-blue-500 w-4 h-4 rounded-full border-4 border-white"></div>
+                        <p class="font-bold text-sm">חוף פוניאטובקה (אחר הצהריים)</p>
+                        <p class="text-xs text-gray-500">🚇 חשמלית 9 / 24 או Uber (5 דקות)</p>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -right-8 top-1.5 bg-orange-500 w-4 h-4 rounded-full border-4 border-white"></div>
+                        <p class="font-bold text-sm">Der Elefant (ארוחת ערב)</p>
+                        <p class="text-xs text-gray-500">🚇 חשמלית קו 4 ישירה מהחוף (11 דקות) או Uber (10 דקות)</p>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <a href="https://www.google.com/maps/dir/Apple+Inn,+Chmielna+21,+00-021+Warszawa/Bu%C5%82k%C4%99+przez+Bibu%C5%82k%C4%99,+Zgoda+3,+00-018+Warszawa/Warszawskie+ZOO,+Ratuszowa+1%2F3,+03-461+Warszawa/Boska!+Praga,+Stefana+Okrzei+23,+03-715+Warszawa/Pla%C5%BCa+Poniat%C3%B3wka,+Warszawa/Der+Elefant,+Plac+Bankowy+1,+00-139+Warszawa/" target="_blank" class="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-6 rounded-2xl shadow-lg transition-all text-center">
+                        🗺️ פתח מסלול ניווט יום 2 ב-Google Maps
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== DAY 3 DETAILS ==================== -->
+        <div id="day-3-container" class="sub-tab-content space-y-6">
+            <div class="bg-gradient-to-r from-emerald-50 to-teal-50 p-5 rounded-2xl border border-emerald-100">
+                <h3 class="text-lg font-bold text-emerald-950 mb-1">📅 שני 17/8 · תמצית יומית: מדע, נוף פנורמי וסטייל מודרני</h3>
+                <p class="text-sm text-gray-700 leading-relaxed">
+                    היום מוקדש למתחם פובישלה היפהפה והמודרני שעל שפת הנהר. נבקר במרכז המדע המפורסם קופרניקוס (מתחם מיוחד לילדים קטנים), נמשיך לארוחת צהריים חווייתית בתחנת כוח היסטורית משוחזרת, נעלה לגינה מדהימה ומבוך ירוק על גג הספרייה, ונסיים בארוחת ערב איטלקית/אירופאית תוססת ופופולרית.
+                </p>
+            </div>
+
+            <!-- CARD: Day 3 Breakfast -->
+            <div class="card bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex flex-wrap justify-between items-start gap-2 mb-4">
+                    <span class="bg-orange-100 text-orange-800 text-xs px-2.5 py-1 rounded-full font-bold">🍳 ארוחת בוקר - 08:30 (צמוד למלון)</span>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-amber-500 font-bold text-sm">4.5 ⭐</span>
+                        <span class="text-xs text-gray-400">(850+ ביקורות בגוגל)</span>
+                    </div>
+                </div>
+                <h4 class="text-xl font-bold text-gray-800 flex flex-wrap items-center gap-2">
+                    <a href="https://greencaffenero.pl/" target="_blank" class="hover:text-amber-600 transition-colors">Green Caffè Nero</a>
+                    <span class="text-sm font-normal text-gray-400">| בית קפה איכותי ורגוע</span>
+                </h4>
+                <div class="mt-3 space-y-2 text-sm text-gray-600">
+                    <p>📍 <b>כתובת:</b> <a href="https://maps.google.com/?q=Green+Caff%C3%A8+Nero+Chmielna+32+Warszawa" target="_blank" class="text-blue-600 hover:underline">Chmielna 32, 00-020 Warszawa</a> <span class="text-xs text-amber-600 font-bold">(כ-3 דקות הליכה מהמלון)</span></p>
+                    <p>🚶 <b>הגעה ברגל:</b> כ-3 דקות הליכה קלה מהמלון (כ-200 מ') לאורך רחוב Chmielna.</p>
+                    <p>🕒 <b>שעות פתיחה:</b> 07:00 - 23:00</p>
+                    <p>💰 <b>מחירים:</b> כ-20 - 35 PLN לאדם.</p>
+                    <p class="text-gray-700 font-medium bg-gray-50 p-2.5 rounded-xl border-r-4 border-amber-400">
+                        💡 <b>טיפ למשפחה:</b> יש להם מגוון כריכים חמים וקרים, קישים ומבחר מאפים וגביניות שילדים טורפים בשניות.
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-100 flex justify-end gap-3 text-xs">
+                    <a href="https://greencaffenero.pl/" target="_blank" class="text-amber-700 hover:underline font-bold">🌐 אתר רשמי</a>
+                    <span class="text-gray-300">|</span>
+                    <a href="https://www.tripadvisor.com/Restaurant_Review-g274856-d6674175-Reviews-Green_Caffe_Nero-Warsaw_Warsaw_District_Mazovia_Province_Central_Poland.html" target="_blank" class="text-emerald-700 hover:underline font-bold">🦉 TripAdvisor</a>
+                </div>
+            </div>
+
+            <!-- CARD: Day 3 Attraction 1 -->
+            <div class="card bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex flex-wrap justify-between items-start gap-2 mb-4">
+                    <span class="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-1 rounded-full font-bold">🧪 אטרקציית בוקר - 09:30</span>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-amber-500 font-bold text-sm">4.7 ⭐</span>
+                        <span class="text-xs text-gray-400">(27,000+ ביקורות בגוגל)</span>
+                    </div>
+                </div>
+                <h4 class="text-xl font-bold text-gray-800 flex flex-wrap items-center gap-2">
+                    <a href="https://www.kopernik.org.pl/en/" target="_blank" class="hover:text-amber-600 transition-colors">מרכז המדע קופרניקוס (Centrum Nauki Kopernik)</a>
+                </h4>
+                <div class="mt-3 space-y-2 text-sm text-gray-600">
+                    <p>📍 <b>כתובת:</b> <a href="https://maps.google.com/?q=Centrum+Nauki+Kopernik+Warszawa" target="_blank" class="text-blue-600 hover:underline">Wybrzeże Kościuszkowskie 20, 00-390 Warszawa</a></p>
+                    <p>🚇 <b>תחבורה ציבורית:</b> לכו ברגל לתחנת המטרו הקרובה למלון <i>Nowy Świat-Uniwersytet</i>, קחו את קו <b>M2</b> (לכיוון Bródno) ורדו תחנה אחת בלבד לאחר מכן בתחנת <i>Centrum Nauki Kopernik</i> (כ-2 דקות נסיעה במטרו!).</p>
+                    <p>🚕 <b>מונית/Uber:</b> כ-7 דקות (כ-14 PLN).</p>
+                    <p>🕒 <b>שעות פתיחה באוגוסט:</b> 09:00 - 19:00 <span class="text-xs text-red-600 font-bold">(חובה להזמין כרטיסים שבועיים מראש!)</span></p>
+                    <p>💰 <b>מחירי כניסה:</b> מבוגר: 48 PLN | ילדים בגיל 4: חינם!</p>
+                    <p class="text-gray-700 font-medium bg-gray-50 p-2.5 rounded-xl border-r-4 border-emerald-400">
+                        💡 <b>קריטי לילדים בני 4:</b> בתוך המוזיאון ישנו מתחם סגור שנקרא <b>"!Bzzz"</b> המיועד אך ורק לילדים בני 5 ומטה! זהו עולם משחקים מבוסס מים, חושים וצלילים מדהים ומבוקר.
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-100 flex justify-end gap-3 text-xs">
+                    <a href="https://www.kopernik.org.pl/en/" target="_blank" class="text-amber-700 hover:underline font-bold">🌐 אתר רשמי</a>
+                    <span class="text-gray-300">|</span>
+                    <a href="https://www.tripadvisor.com/Attraction_Review-g274856-d1911466-Reviews-Copernicus_Science_Centre-Warsaw_Mazovia_Province_Central_Poland.html" target="_blank" class="text-emerald-700 hover:underline font-bold">🦉 TripAdvisor</a>
+                </div>
+            </div>
+
+            <!-- CARD: Day 3 Lunch -->
+            <div class="card bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex flex-wrap justify-between items-start gap-2 mb-4">
+                    <span class="bg-orange-100 text-orange-800 text-xs px-2.5 py-1 rounded-full font-bold">🍔 ארוחת צהריים - 13:00 (במתחם יוקרתי ומעוצב)</span>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-amber-500 font-bold text-sm">4.5 ⭐</span>
+                        <span class="text-xs text-gray-400">(1,200+ ביקורות בגוגל)</span>
+                    </div>
+                </div>
+                <h4 class="text-xl font-bold text-gray-800 flex flex-wrap items-center gap-2">
+                    <a href="https://elektrowniapowisle.com/" target="_blank" class="hover:text-amber-600 transition-colors">Elektrownia Powiśle Food Hall</a>
+                    <span class="text-sm font-normal text-gray-400">| תחנת כוח היסטורית שהפכה להיכל קולינריה</span>
+                </h4>
+                <div class="mt-3 space-y-2 text-sm text-gray-600">
+                    <p>📍 <b>כתובת:</b> <a href="https://maps.google.com/?q=Elektrownia+Powi%C5%9Ble+Dobra+42+Warszawa" target="_blank" class="text-blue-600 hover:underline">Dobra 42, 00-312 Warszawa</a></p>
+                    <p>🚶 <b>הגעה ברגל:</b> הליכה קצרצרה של 4 דקות (300 מ') ממוזיאון המדע קופרניקוס.</p>
+                    <p>🕒 <b>שעות פתיחה:</b> 11:00 - 22:00</p>
+                    <p>💰 <b>מחירים:</b> כ-30 - 60 PLN לארוחה מלאה ומפנקת.</p>
+                    <p class="text-gray-700 font-medium bg-gray-50 p-2.5 rounded-xl border-r-4 border-amber-400">
+                        💡 <b>למה זה מושלם למשפחה:</b> מדובר בהיכל אוכל ענק וממוזג. לכל אחד מבני המשפחה יש בחירה חופשית: המבורגרים, פיצות, פסטות, אוכל אסייתי וקינוחים מטורפים.
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-100 flex justify-end gap-3 text-xs">
+                    <a href="https://elektrowniapowisle.com/" target="_blank" class="text-amber-700 hover:underline font-bold">🌐 אתר רשמי</a>
+                    <span class="text-gray-300">|</span>
+                    <a href="https://www.tripadvisor.com/Attraction_Review-g274856-d21105072-Reviews-Elektrownia_Powisle-Warsaw_Mazovia_Province_Central_Poland.html" target="_blank" class="text-emerald-700 hover:underline font-bold">🦉 TripAdvisor</a>
+                </div>
+            </div>
+
+            <!-- CARD: Day 3 Afternoon Garden -->
+            <div class="card bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex flex-wrap justify-between items-start gap-2 mb-4">
+                    <span class="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-1 rounded-full font-bold">🌱 אטרקציית אחה"צ - 15:00</span>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-amber-500 font-bold text-sm">4.8 ⭐</span>
+                        <span class="text-xs text-gray-400">(4,800+ ביקורות בגוגל)</span>
+                    </div>
+                </div>
+                <h4 class="text-xl font-bold text-gray-800 flex flex-wrap items-center gap-2">
+                    <a href="https://www.buw.uw.edu.pl/en/" target="_blank" class="hover:text-amber-600 transition-colors">גג הספרייה של אוניברסיטת ורשה (BUW Roof Garden)</a>
+                </h4>
+                <div class="mt-3 space-y-2 text-sm text-gray-600">
+                    <p>📍 <b>כתובת:</b> <a href="https://maps.google.com/?q=Ogrody+Biblioteki+Uniwersytecznej+Warszawa" target="_blank" class="text-blue-600 hover:underline">Dobra 56/66, 00-312 Warszawa</a></p>
+                    <p>🚶 <b>הגעה ברגל:</b> הליכה רגלית קלילה של 5 דקות בלבד (400 מ') ממתחם האוכל.</p>
+                    <p>🕒 <b>שעות פתיחה באוגוסט:</b> 08:00 - 20:00</p>
+                    <p>💰 <b>מחיר כניסה:</b> חינם לחלוטין!</p>
+                    <p class="text-gray-700 font-medium bg-gray-50 p-2.5 rounded-xl border-r-4 border-emerald-400">
+                        💡 <b>למה הילדים יאהבו את זה:</b> מדובר באחד הגנים הבוטניים התלויים הגדולים והיפים באירופה. הגישה אליו נעשית דרך גשרים, מעברים מעוצבים ומבוכי צמחייה ירוקה. הילדים מרגישים כמו בהרפתקה.
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-100 flex justify-end gap-3 text-xs">
+                    <a href="https://www.buw.uw.edu.pl/en/" target="_blank" class="text-amber-700 hover:underline font-bold">🌐 אתר רשמי</a>
+                    <span class="text-gray-300">|</span>
+                    <a href="https://www.tripadvisor.com/Attraction_Review-g274856-d2182060-Reviews-University_of_Warsaw_Library-Warsaw_Mazovia_Province_Central_Poland.html" target="_blank" class="text-emerald-700 hover:underline font-bold">🦉 TripAdvisor</a>
+                </div>
+            </div>
+
+            <!-- CARD: Day 3 Dinner -->
+            <div class="card bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex flex-wrap justify-between items-start gap-2 mb-4">
+                    <span class="bg-orange-100 text-orange-800 text-xs px-2.5 py-1 rounded-full font-bold">🍕 ארוחת ערב - 18:30 (בלב מרכז העיר)</span>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-amber-500 font-bold text-sm">4.4 ⭐</span>
+                        <span class="text-xs text-gray-400">(8,200+ ביקורות בגוגל)</span>
+                    </div>
+                </div>
+                <h4 class="text-xl font-bold text-gray-800 flex flex-wrap items-center gap-2">
+                    <a href="http://aioli.com.pl/" target="_blank" class="hover:text-amber-600 transition-colors">AiOLI Cantine</a>
+                    <span class="text-sm font-normal text-gray-400">| מסעדה אורבנית תוססת וידידותית ביותר למשפחות</span>
+                </h4>
+                <div class="mt-3 space-y-2 text-sm text-gray-600">
+                    <p>📍 <b>כתובת:</b> <a href="https://maps.google.com/?q=AiOLI+Cantine+Bar+Cafe+Deli+%C5%9Awi%C4%99tokrzyska+18+Warszawa" target="_blank" class="text-blue-600 hover:underline">Świętokrzyska 18, 00-052 Warszawa</a></p>
+                    <p>🚇 <b>תחבורה ציבורית מהספרייה למסעדה:</b> לכו לתחנת המטרו <i>Centrum Nauki Kopernik</i>, קחו את קו <b>M2</b> (לכיוון Bemowo) ורדו בתחנת <i>Świętokrzyska</i> (2 תחנות, כ-4 דקות). המסעדה נמצאת ממש מחוץ לתחנה.</p>
+                    <p>🚕 <b>מונית/Uber:</b> כ-6 דקות (כ-12 PLN).</p>
+                    <p>🕒 <b>שעות פתיחה:</b> 09:00 - 23:00</p>
+                    <p>💰 <b>מחירים:</b> כ-35 - 70 PLN למנות עיקריות גדולות.</p>
+                    <p class="text-gray-700 font-medium bg-gray-50 p-2.5 rounded-xl border-r-4 border-amber-400">
+                        💡 <b>טיפ למשפחה:</b> אווירה משוחררת מאוד שמתאימה מאוד לילדים. פיצות דקות וקריספיות מעולות, פסטות נהדרות והמבורגרים מצוינים.
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-100 flex justify-end gap-3 text-xs">
+                    <a href="http://aioli.com.pl/" target="_blank" class="text-amber-700 hover:underline font-bold">🌐 אתר רשמי</a>
+                    <span class="text-gray-300">|</span>
+                    <a href="https://www.tripadvisor.com/Restaurant_Review-g274856-d3683695-Reviews-Aioli_Cantine_Bar_Cafe_Deli-Warsaw_Mazovia_Province_Central_Poland.html" target="_blank" class="text-emerald-700 hover:underline font-bold">🦉 TripAdvisor</a>
+                </div>
+            </div>
+
+            <!-- DAY 3 MAP TIMELINE -->
+            <div class="p-6 bg-slate-100 rounded-3xl border border-gray-200">
+                <h4 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    🗺️ מפת מסלול מותאמת אישית - יום 3
+                </h4>
+                
+                <div class="relative pl-6 border-r-2 border-slate-300 space-y-6 mr-4">
+                    <div class="relative">
+                        <div class="absolute -right-8 top-1.5 bg-amber-500 w-4 h-4 rounded-full border-4 border-white"></div>
+                        <p class="font-bold text-sm text-amber-700">מלון Apple Inn</p>
+                        <p class="text-xs text-gray-500">נקודת יציאה (רח' Chmielna 21)</p>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -right-8 top-1.5 bg-orange-500 w-4 h-4 rounded-full border-4 border-white"></div>
+                        <p class="font-bold text-sm">Green Caffè Nero (בוקר)</p>
+                        <p class="text-xs text-gray-500">🚶 כ-3 דקות הליכה מהמלון (כ-200 מ')</p>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -right-8 top-1.5 bg-emerald-500 w-4 h-4 rounded-full border-4 border-white"></div>
+                        <p class="font-bold text-sm">מרכז המדע קופרניקוס (בוקר-צהריים)</p>
+                        <p class="text-xs text-gray-500">🚇 מטרו M2 תחנה אחת (2 דקות) או Uber (7 דקות)</p>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -right-8 top-1.5 bg-orange-500 w-4 h-4 rounded-full border-4 border-white"></div>
+                        <p class="font-bold text-sm">Elektrownia Powiśle Food Hall (צהריים)</p>
+                        <p class="text-xs text-gray-500">🚶 צעידה רגלית של 4 דקות בלבד (300 מ')</p>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -right-8 top-1.5 bg-emerald-500 w-4 h-4 rounded-full border-4 border-white"></div>
+                        <p class="font-bold text-sm">גג הספרייה של אוניברסיטת ורשה (אחה"צ)</p>
+                        <p class="text-xs text-gray-500">🚶 צעידה רגלית של 5 דקות בלבד (400 מ')</p>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -right-8 top-1.5 bg-orange-500 w-4 h-4 rounded-full border-4 border-white"></div>
+                        <p class="font-bold text-sm">AiOLI Cantine (ארוחת ערב)</p>
+                        <p class="text-xs text-gray-500">🚇 מטרו M2 שתי תחנות (4 דקות) או Uber (6 דקות)</p>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <a href="https://www.google.com/maps/dir/Apple+Inn,+Chmielna+21,+00-021+Warszawa/Green+Caff%C3%A8+Nero,+Chmielna+32,+00-020+Warszawa/Centrum+Nauki+Kopernik,+Wybrze%C5%BCe+Ko%C5%9Bciuszkowskie+20,+00-390+Warszawa/Elektrownia+Powi%C5%9Ble,+Dobra+42,+00-312+Warszawa/Ogrody+Biblioteki+Uniwersyteckiej,+Dobra+56%2F66,+00-312+Warszawa/AiOLI,+%C5%9Awi%C4%99tokrzyska+18,+00-052+Warszawa/" target="_blank" class="w-full flex items-center justify-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-3.5 px-6 rounded-2xl shadow-lg transition-all text-center">
+                        🗺️ פתח מסלול ניווט יום 3 ב-Google Maps
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== DAY 4 DETAILS ==================== -->
+        <div id="day-4-container" class="sub-tab-content space-y-6">
+            <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-5 rounded-2xl border border-purple-100">
+                <h3 class="text-lg font-bold text-purple-950 mb-1">📅 שלישי 18/8 · תמצית יומית: גן עדן לילדים, פארק סנאים וקניות בסטייל</h3>
+                <p class="text-sm text-gray-700 leading-relaxed">
+                    היום מוקדש למתחם פבריקה נורבלינה ופארק לז'נקי. נבקר באטרקציה הכי טובה בוורשה לילדים בגיל 4 (הטכנולוגית והמרתקת ביותר), נסעד באולם האוכל הכי טרנדי בעיר, נצא לפгוש ולהאכיל סנאים וטווסים בפארק לז'נקי האירופאי, ונסיים את הטיול בארוחת ערב חגיגית מדהימה.
+                </p>
+            </div>
+
+            <!-- CARD: Day 4 Breakfast -->
+            <div class="card bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex flex-wrap justify-between items-start gap-2 mb-4">
+                    <span class="bg-orange-100 text-orange-800 text-xs px-2.5 py-1 rounded-full font-bold">🍳 ארוחת בוקר - 08:30 (היסטורית ומלכותית ברגל)</span>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-amber-500 font-bold text-sm">4.2 ⭐</span>
+                        <span class="text-xs text-gray-400">(1,600+ ביקורות בגוגל)</span>
+                    </div>
+                </div>
+                <h4 class="text-xl font-bold text-gray-800 flex flex-wrap items-center gap-2">
+                    <a href="https://blikle.pl/" target="_blank" class="hover:text-amber-600 transition-colors">A.Blikle</a>
+                    <span class="text-sm font-normal text-gray-400">| קונדיטוריה ובית קפה היסטורי משנת 1869</span>
+                </h4>
+                <div class="mt-3 space-y-2 text-sm text-gray-600">
+                    <p>📍 <b>כתובת:</b> <a href="https://maps.google.com/?q=A.Blikle+Nowy+%C5%9Awiat+33+Warszawa" target="_blank" class="text-blue-600 hover:underline">Nowy Świat 33, 00-029 Warszawa</a></p>
+                    <p>🚶 <b>הגעה ברגל:</b> הליכה קצרצרה ונעימה של 5 דקות (400 מ') מהמלון.</p>
+                    <p>🕒 <b>שעות פתיחה:</b> 10:00 - 22:00 (א׳-ו׳) | 09:00 - 23:00 (שבת) <span class="text-red-600 font-bold">— שימו לב: בימי חול נפתח רק ב-10:00!</span></p>
+                    <p>💰 <b>מחירים:</b> כ-25 - 50 PLN לאדם. המקום המפורסם ביותר לסופגניות פולניות מסורתיות (Pączki).</p>
+                    <p class="text-gray-700 font-medium bg-gray-50 p-2.5 rounded-xl border-r-4 border-amber-400">
+                        💡 <b>טיפ למשפחה:</b> חובה להזמין את ה-Pączki המפורסמים שלהם עם מילוי ורדים וציפוי סוכר - הילדים ישתגעו מזה!
+                    </p>
+                    <p class="text-gray-700 font-medium bg-blue-50 p-2.5 rounded-xl border-r-4 border-blue-400">
+                        🔄 <b>אופציית גיבוי (חשוב!):</b> ל-A.Blikle יש אי-ודאות כלכלית (נכון ל-2026) והוא נפתח בימי חול רק ב-10:00. אם הוא סגור, או מאוחר מדי לארוחת בוקר ב-08:30 — במרחק 3 דקות הליכה נמצא <a href="https://maps.google.com/?q=Vincent+Boulangerie+Nowy+%C5%9Awiat+64+Warszawa" target="_blank" class="text-blue-600 hover:underline font-bold">Vincent Boulangerie (Nowy Świat 64)</a>: אותה מאפייה צרפתית מעולה מיום 1, שנפתחת כבר ב-07:30 עם קרואסונים וארוחות בוקר מושלמות לילדים.
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-100 flex justify-end gap-3 text-xs">
+                    <a href="https://blikle.pl/" target="_blank" class="text-amber-700 hover:underline font-bold">🌐 אתר רשמי</a>
+                    <span class="text-gray-300">|</span>
+                    <a href="https://www.tripadvisor.com/Restaurant_Review-g274856-d1101901-Reviews-A_Blikle-Warsaw_Mazovia_Province_Central_Poland.html" target="_blank" class="text-emerald-700 hover:underline font-bold">🦉 TripAdvisor</a>
+                </div>
+            </div>
+
+            <!-- CARD: Day 4 Attraction 1 -->
+            <div class="card bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex flex-wrap justify-between items-start gap-2 mb-4">
+                    <span class="bg-purple-100 text-purple-800 text-xs px-2.5 py-1 rounded-full font-bold">🎡 אטרקציית חובה לילדים - 09:30 (מושלם לגיל 4!)</span>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-amber-500 font-bold text-sm">4.8 ⭐</span>
+                        <span class="text-xs text-gray-400">(950+ ביקורות בגוגל)</span>
+                    </div>
+                </div>
+                <h4 class="text-xl font-bold text-gray-800 flex flex-wrap items-center gap-2">
+                    <a href="https://smartkidsplanet.pl/en/" target="_blank" class="hover:text-amber-600 transition-colors">Smart Kids Planet (במתחם פבריקה נורבלינה)</a>
+                </h4>
+                <div class="mt-3 space-y-2 text-sm text-gray-600">
+                    <p>📍 <b>כתובת:</b> <a href="https://maps.google.com/?q=Smart+Kids+Planet+Fabryka+Norblina+Warszawa" target="_blank" class="text-blue-600 hover:underline">Żelazna 51/53, 00-841 Warszawa</a></p>
+                    <p>🚇 <b>תחבורה ציבורית:</b> לכו לתחנת המטרו <i>Nowy Świat-Uniwersytet</i>, קחו את קו <b>M2</b> (לכיוון Bemowo) ורדו בתחנת <i>Rondo Daszyńskiego</i> (3 תחנות, כ-6 דקות). משם צעדו כ-5 דקות למתחם "פבריקה נורבלינה".</p>
+                    <p>🚕 <b>מונית/Uber:</b> כ-6 דקות (כ-12 PLN).</p>
+                    <p>🕒 <b>שעות פתיחה באוגוסט:</b> 09:00 - 20:00 <span class="text-xs text-red-600 font-bold">(חובה להזמין כרטיס מראש דרך האתר!)</span></p>
+                    <p>💰 <b>מחירים:</b> כ-40 - 65 PLN לכרטיס (תלוי ביום ושעה).</p>
+                    <p class="text-gray-700 font-medium bg-gray-50 p-2.5 rounded-xl border-r-4 border-purple-400">
+                        💡 <b>למה זה גן עדן לילדים בני 4:</b> זה לא סתם ג'ימבורי רגיל. זהו מתחם "אדטיינמנט" (חינוך דרך משחק) אינטראקטיבי עצום עם מתקנים חכמים: ילדים מעצבים חלליות דיגיטליות, בונים קירות תלת-ממדיים ומזיזים כדורים במסלולים פיזיקליים מרהיבים. בטוח ביותר, נקי, מרווח ומותאם במיוחד לגיל הזה.
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-100 flex justify-end gap-3 text-xs">
+                    <a href="https://smartkidsplanet.pl/en/" target="_blank" class="text-amber-700 hover:underline font-bold">🌐 אתר רשמי</a>
+                    <span class="text-gray-300">|</span>
+                    <a href="https://www.tripadvisor.com/Attraction_Review-g274856-d19918719-Reviews-Smart_Kids_Planet-Warsaw_Mazovia_Province_Central_Poland.html" target="_blank" class="text-emerald-700 hover:underline font-bold">🦉 TripAdvisor</a>
+                </div>
+            </div>
+
+            <!-- CARD: Day 4 Lunch -->
+            <div class="card bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex flex-wrap justify-between items-start gap-2 mb-4">
+                    <span class="bg-orange-100 text-orange-800 text-xs px-2.5 py-1 rounded-full font-bold">🍔 ארוחת צהריים - 12:30 (באותו המתחם של האטרקציה!)</span>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-amber-500 font-bold text-sm">4.6 ⭐</span>
+                        <span class="text-xs text-gray-400">(2,500+ ביקורות בגוגל)</span>
+                    </div>
+                </div>
+                <h4 class="text-xl font-bold text-gray-800 flex flex-wrap items-center gap-2">
+                    <a href="https://fabrykanorblina.pl/" target="_blank" class="hover:text-amber-600 transition-colors">Fabryka Norblina Food Town</a>
+                    <span class="text-sm font-normal text-gray-400">| היכל האוכל המודרני והטרנדי ביותר בפולין</span>
+                </h4>
+                <div class="mt-3 space-y-2 text-sm text-gray-600">
+                    <p>📍 <b>כתובת:</b> <a href="https://maps.google.com/?q=Fabryka+Norblina+Warszawa" target="_blank" class="text-blue-600 hover:underline">Żelazna 51/53, 00-841 Warszawa</a></p>
+                    <p>🚶 <b>הגעה ברגל:</b> 0 דקות הליכה! ממוקם באותו הבניין של ה-Smart Kids Planet.</p>
+                    <p>🕒 <b>שעות פתיחה:</b> 09:00 - 22:00</p>
+                    <p>💰 <b>מחירים:</b> כ-35 - 65 PLN למנה עיקרית מרהיבה.</p>
+                    <p class="text-gray-700 font-medium bg-gray-50 p-2.5 rounded-xl border-r-4 border-amber-400">
+                        💡 <b>למה זה מדהים גאוגרפית:</b> אתם לא צריכים לצאת מהבניין, לא צריכים לגרור ילדים עייפים בחוץ. יוצאים ממשחקי הילדים וישר נכנסים להיכל אוכל עצום עם עשרות דוכנים מכל קצוות תבל.
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-100 flex justify-end gap-3 text-xs">
+                    <a href="https://fabrykanorblina.pl/" target="_blank" class="text-amber-700 hover:underline font-bold">🌐 אתר רשמי</a>
+                    <span class="text-gray-300">|</span>
+                    <a href="https://www.tripadvisor.com/Attraction_Review-g274856-d23805445-Reviews-Fabryka_Norblina-Warsaw_Mazovia_Province_Central_Poland.html" target="_blank" class="text-emerald-700 hover:underline font-bold">🦉 TripAdvisor</a>
+                </div>
+            </div>
+
+            <!-- CARD: Day 4 Afternoon Park -->
+            <div class="card bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex flex-wrap justify-between items-start gap-2 mb-4">
+                    <span class="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-1 rounded-full font-bold">🐿️ פארק אחה"צ - 15:00 (חוויה קסומה לילדים!)</span>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-amber-500 font-bold text-sm">4.9 ⭐</span>
+                        <span class="text-xs text-gray-400">(29,000+ ביקורות בגוגל)</span>
+                    </div>
+                </div>
+                <h4 class="text-xl font-bold text-gray-800 flex flex-wrap items-center gap-2">
+                    <a href="https://www.lazienki-krolewskie.pl/en" target="_blank" class="hover:text-amber-600 transition-colors">פארק לז'נקי המלכותי (Łazienki Królewskie)</a>
+                </h4>
+                <div class="mt-3 space-y-2 text-sm text-gray-600">
+                    <p>📍 <b>כתובת:</b> <a href="https://maps.google.com/?q=Lazienki+Park+Warsaw" target="_blank" class="text-blue-600 hover:underline">Agrykola 1, 00-460 Warszawa</a></p>
+                    <p>🚇 <b>תחבורה ציבורית:</b> לכו לתחנת האוטובוס <i>Mennica 03</i> ליד פבריקה נורבלינה, קחו קו <b>159</b> לתחנת <i>Szwoleżerów 02</i> (כ-18 דקות נסיעה ישירה). משם כניסה מיידית לשערי הפארק.</p>
+                    <p>🚕 <b>מונית/Uber:</b> כ-10 דקות (כ-16 PLN).</p>
+                    <p>🕒 <b>שעות פתיחה באוגוסט:</b> 06:00 - 21:00</p>
+                    <p>💰 <b>מחיר כניסה לפארק:</b> חינם לחלוטין!</p>
+                    <p class="text-gray-700 font-medium bg-gray-50 p-2.5 rounded-xl border-r-4 border-emerald-400">
+                        💡 <b>לילדים בני 4 (אסור לפספס!):</b> רכשו שקית אגוזי מלך פשוטה מראש. הפארק מלא ב**סנאים אדומים קטנים וידידותיים להפליא** שרצים על הדשא, מגיעים ממש עד לרגלי הילדים ואוכלים להם אגוזים מהיד!
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-100 flex justify-end gap-3 text-xs">
+                    <a href="https://www.lazienki-krolewskie.pl/en" target="_blank" class="text-amber-700 hover:underline font-bold">🌐 אתר רשמי</a>
+                    <span class="text-gray-300">|</span>
+                    <a href="https://www.tripadvisor.com/Attraction_Review-g274856-d276179-Reviews-Lazienki_Park-Warsaw_Mazovia_Province_Central_Poland.html" target="_blank" class="text-emerald-700 hover:underline font-bold">🦉 TripAdvisor</a>
+                </div>
+            </div>
+
+            <!-- CARD: Day 4 Dinner (Grand Finale) -->
+            <div class="card bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex flex-wrap justify-between items-start gap-2 mb-4">
+                    <span class="bg-orange-100 text-orange-800 text-xs px-2.5 py-1 rounded-full font-bold">🍕 ארוחת ערב חגיגית לסיום - 18:30 (עם חדר משחקים לילדים!)</span>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-amber-500 font-bold text-sm">4.4 ⭐</span>
+                        <span class="text-xs text-gray-400">(380+ ביקורות · פרס Travelers' Choice)</span>
+                    </div>
+                </div>
+                <h4 class="text-xl font-bold text-gray-800 flex flex-wrap items-center gap-2">
+                    <a href="https://trattoriadaantonio.pl/" target="_blank" class="hover:text-amber-600 transition-colors">Trattoria da Antonio</a>
+                    <span class="text-sm font-normal text-gray-400">| טרטוריה סיציליאנית משפחתית עם חדר משחקים לילדים</span>
+                </h4>
+                <div class="mt-3 space-y-2 text-sm text-gray-600">
+                    <p>📍 <b>כתובת:</b> <a href="https://maps.google.com/?q=Trattoria+da+Antonio+%C5%BBurawia+18+Warszawa" target="_blank" class="text-blue-600 hover:underline">Żurawia 18, 00-515 Warszawa</a></p>
+                    <p>🚇 <b>תחבורה ציבורית מהפארק למסעדה:</b> מתחנת <i>Łazienki Królewskie</i> על שדרות אויאזדובסקי, קחו אוטובוס קו <b>116, 166, 180</b> לתחנת <i>Plac Trzech Krzyży</i> (כ-10 דקות לאורך הדרך המלכותית), ומשם כ-5 דקות הליכה לרחוב Żurawia. חזרה למלון: כ-13 דקות הליכה נעימה בלבד.</p>
+                    <p>🚕 <b>מונית/Uber:</b> כ-10 דקות (כ-18 PLN).</p>
+                    <p>🕒 <b>שעות פתיחה:</b> 11:00 - 23:00 (א׳-ו׳) | 12:00 - 23:00 (שבת-ראשון)</p>
+                    <p>💰 <b>מחירים:</b> כ-35 - 65 PLN לפיצה נאפוליטנית או פסטה טרייה. יש תפריט ילדים.</p>
+                    <p class="text-gray-700 font-medium bg-gray-50 p-2.5 rounded-xl border-r-4 border-amber-400">
+                        💡 <b>למה זה הסיום המושלם:</b> טרטוריה סיציליאנית אותנטית וחמה של השף אנטוניו. יש בה <b>חדר משחקים מאובזר לילדים</b> (בובות, מכוניות צעצוע ומשחקים דיגיטליים) — ההורים נהנים מפיצה ופסטה מעולות בזמן שהקטנטנים משחקים בכיף. סיום מושלם לטיול!
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-100 flex justify-end gap-3 text-xs">
+                    <a href="https://trattoriadaantonio.pl/" target="_blank" class="text-amber-700 hover:underline font-bold">🌐 אתר רשמי</a>
+                    <span class="text-gray-300">|</span>
+                    <a href="https://www.tripadvisor.com/Restaurant_Review-g274856-d5029929-Reviews-Trattoria_da_Antonio-Warsaw_Mazovia_Province_Central_Poland.html" target="_blank" class="text-emerald-700 hover:underline font-bold">🦉 TripAdvisor</a>
+                </div>
+            </div>
+
+            <!-- DAY 4 MAP TIMELINE -->
+            <div class="p-6 bg-slate-100 rounded-3xl border border-gray-200">
+                <h4 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    🗺️ מפת מסלול מותאמת אישית - יום 4
+                </h4>
+                
+                <div class="relative pl-6 border-r-2 border-slate-300 space-y-6 mr-4">
+                    <div class="relative">
+                        <div class="absolute -right-8 top-1.5 bg-amber-500 w-4 h-4 rounded-full border-4 border-white"></div>
+                        <p class="font-bold text-sm text-amber-700">מלון Apple Inn</p>
+                        <p class="text-xs text-gray-500">נקודת יציאה (רח' Chmielna 21)</p>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -right-8 top-1.5 bg-orange-500 w-4 h-4 rounded-full border-4 border-white"></div>
+                        <p class="font-bold text-sm">A.Blikle (בוקר)</p>
+                        <p class="text-xs text-gray-500">🚶 הליכה רגלית קצרצרה של 5 דקות מהמלון</p>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -right-8 top-1.5 bg-purple-500 w-4 h-4 rounded-full border-4 border-white"></div>
+                        <p class="font-bold text-sm">Smart Kids Planet (בוקר-צהריים)</p>
+                        <p class="text-xs text-gray-500">🚇 מטרו M2 שלוש תחנות (6 דקות) או Uber (6 דקות)</p>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -right-8 top-1.5 bg-orange-500 w-4 h-4 rounded-full border-4 border-white"></div>
+                        <p class="font-bold text-sm">Fabryka Norblina Food Town (צהריים ומנוחה)</p>
+                        <p class="text-xs text-gray-500">🚶 0 דקות! ממוקם בתוך אותו הבניין</p>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -right-8 top-1.5 bg-emerald-500 w-4 h-4 rounded-full border-4 border-white"></div>
+                        <p class="font-bold text-sm">פארק לז'נקי (אחר הצהריים)</p>
+                        <p class="text-xs text-gray-500">🚇 אוטובוס קו 159 ישיר (18 דקות) או Uber (10 דקות)</p>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -right-8 top-1.5 bg-orange-500 w-4 h-4 rounded-full border-4 border-white"></div>
+                        <p class="font-bold text-sm">Trattoria da Antonio (ארוחת ערב חגיגית)</p>
+                        <p class="text-xs text-gray-500">🚇 אוטובוס 116 / 166 לכיכר שלושת הצלבים (~10 דק') + 5 דק' הליכה, או Uber (10 דק')</p>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <a href="https://www.google.com/maps/dir/Apple+Inn,+Chmielna+21,+00-021+Warszawa/A.Blikle,+Nowy+%C5%9Awiat+33,+00-029+Warszawa/Smart+Kids+Planet,+%C5%BBelazna+51%2F53,+00-841+Warszawa/Fabryka+Norblina,+%C5%BBelazna+51%2F53,+00-841+Warszawa/Muzeum+%C5%81azienki+Kr%C3%B3lewskie,+Agrykola+1,+00-460+Warszawa/Trattoria+da+Antonio,+%C5%BBurawia+18,+00-515+Warszawa/" target="_blank" class="w-full flex items-center justify-center gap-2 bg-purple-700 hover:bg-purple-800 text-white font-bold py-3.5 px-6 rounded-2xl shadow-lg transition-all text-center">
+                        🗺️ פתח מסלול ניווט יום 4 ב-Google Maps
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== DAY 5 DETAILS ==================== -->
+        <div id="day-5-container" class="sub-tab-content space-y-6">
+            <div class="bg-gradient-to-r from-teal-50 to-emerald-50 p-5 rounded-2xl border border-teal-100">
+                <h3 class="text-lg font-bold text-teal-900 mb-1">📅 רביעי 19/8 · תמצית יומית: ארמון המלכים, מבוכי בארוק ירוקים ומשחקייה איטלקית</h3>
+                <p class="text-sm text-gray-700 leading-relaxed">
+                    היום נדרים מעט לביקור בארמון המלכותי וילאנוב ("ורסאי של פולין") – חוויה קסומה למבוגרים ומרחב פתוח מדהים לילדים. נתחיל בארוחת בוקר בכיכר מעוצבת, נטייל בגנים ובמבוכים הירוקים, נסעד צהריים מול הארמון, ובדרך חזרה למרכז נעצור במגרש המשחקים המפורסם והחדיש ביותר בוורשה בפארק אויאזדובסקי. נחתום את הטיול בארוחת ערב איטלקית עם משחקייה פנימית מושלמת.
+                </p>
+            </div>
+
+            <!-- CARD: Day 5 Breakfast -->
+            <div class="card bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex flex-wrap justify-between items-start gap-2 mb-4">
+                    <span class="bg-orange-100 text-orange-800 text-xs px-2.5 py-1 rounded-full font-bold">🍳 ארוחת בוקר - 08:30 (שיקית ומפנקת)</span>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-amber-500 font-bold text-sm">4.4 ⭐</span>
+                        <span class="text-xs text-gray-400">(4,500+ ביקורות בגוגל)</span>
+                    </div>
+                </div>
+                <h4 class="text-xl font-bold text-gray-800 flex flex-wrap items-center gap-2">
+                    <a href="https://bistrocharlotte.pl/" target="_blank" class="hover:text-amber-600 transition-colors">Charlotte Menora</a>
+                    <span class="text-sm font-normal text-gray-400">| בית מאפה ובסטרו צרפתי-יהודי מעולה</span>
+                </h4>
+                <div class="mt-3 space-y-2 text-sm text-gray-600">
+                    <p>📍 <b>כתובת:</b> <a href="https://maps.google.com/?q=Charlotte+Menora+Plac+Grzybowski+2+Warszawa" target="_blank" class="text-blue-600 hover:underline">Plac Grzybowski 2, 00-109 Warszawa</a></p>
+                    <p>🚶 <b>הגעה ברגל:</b> הליכה קלה של 12 דקות (900 מ') מהמלון דרך פארקים נעימים.</p>
+                    <p>🕒 <b>שעות פתיחה באוגוסט:</b> 07:00 - 22:00</p>
+                    <p>💰 <b>מחירים:</b> כ-25 - 45 PLN לאדם.</p>
+                    <p class="text-gray-700 font-medium bg-gray-50 p-2.5 rounded-xl border-r-4 border-amber-400">
+                        💡 <b>סופר-כיפי לילדים:</b> הזמינו את "ארוחת הבוקר של שרלוט" שמגיעה עם סלסלת לחמים ענקית, קרואסונים ומגוון צנצנות של שוקולד חלב ביתי, שוקולד לבן וריבות מעולות למריחה חופשית.
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-100 flex justify-end gap-3 text-xs">
+                    <a href="https://bistrocharlotte.pl/" target="_blank" class="text-amber-700 hover:underline font-bold">🌐 אתר רשמי</a>
+                    <span class="text-gray-300">|</span>
+                    <a href="https://www.tripadvisor.com/Restaurant_Review-g274856-d10237750-Reviews-Charlotte_Menora-Warsaw_Mazovia_Province_Central_Poland.html" target="_blank" class="text-emerald-700 hover:underline font-bold">🦉 TripAdvisor</a>
+                </div>
+            </div>
+
+            <!-- CARD: Day 5 Attraction 1 -->
+            <div class="card bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex flex-wrap justify-between items-start gap-2 mb-4">
+                    <span class="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-1 rounded-full font-bold">👑 אטרקציית בוקר - 09:30 (ורסאי של פולין)</span>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-amber-500 font-bold text-sm">4.7 ⭐</span>
+                        <span class="text-xs text-gray-400">(28,000+ ביקורות בגוגל)</span>
+                    </div>
+                </div>
+                <h4 class="text-xl font-bold text-gray-800 flex flex-wrap items-center gap-2">
+                    <a href="https://www.wilanow-palac.pl/" target="_blank" class="hover:text-amber-600 transition-colors">ארמון וילאנוב וגני הבארוק</a>
+                </h4>
+                <div class="mt-3 space-y-2 text-sm text-gray-600">
+                    <p>📍 <b>כתובת:</b> <a href="https://maps.google.com/?q=Wilanow+Palace+Warszawa" target="_blank" class="text-blue-600 hover:underline">Stanisława Kostki Potockiego 10/16, 02-958 Warszawa</a></p>
+                    <p>🚇 <b>תחבורה ציבורית:</b> לכו כ-5 דקות לתחנת <i>Królewska 02</i>, קחו את קו האוטובוס האגדי והישיר **116** (או קו **180, 519**) ישירות לתחנת *Wilanów 01* (כ-30 דקות נסיעה פסטורלית ללא החלפות). משם צעדו 5 דקות ברגל לשערי הארמון.</p>
+                    <p>🚕 <b>מונית/Uber:</b> כ-20 דקות (כ-35 PLN).</p>
+                    <p>🕒 <b>שעות פתיחה באוגוסט:</b> גנים: 09:00 - 21:00 | ארמון: 09:00 - 16:00 (סגור בימי שלישי)</p>
+                    <p>💰 <b>מחירי כניסה:</b> גנים בלבד: 10 PLN מבוגר | ארמון + גנים: 35 PLN מבוגר | ילדים בגיל 4: חינם לחלוטין!</p>
+                    <p class="text-gray-700 font-medium bg-gray-50 p-2.5 rounded-xl border-r-4 border-emerald-400">
+                        💡 <b>לילדים בני 4:</b> הגנים המרשימים כוללים מבוכי שיחים ירוקים, אגמים פסטורליים מלאי ברווזים, מזרקות מים קופצות והמון מקום בטוח וסגור לרוץ בו חופשי.
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-100 flex justify-end gap-3 text-xs">
+                    <a href="https://www.wilanow-palac.pl/" target="_blank" class="text-amber-700 hover:underline font-bold">🌐 אתר רשמי</a>
+                    <span class="text-gray-300">|</span>
+                    <a href="https://www.tripadvisor.com/Attraction_Review-g274856-d276185-Reviews-Museum_of_King_Jan_III_s_Palace_at_Wilanow-Warsaw_Mazovia_Province_Central_Polan.html" target="_blank" class="text-emerald-700 hover:underline font-bold">🦉 TripAdvisor</a>
+                </div>
+            </div>
+
+            <!-- CARD: Day 5 Lunch -->
+            <div class="card bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex flex-wrap justify-between items-start gap-2 mb-4">
+                    <span class="bg-orange-100 text-orange-800 text-xs px-2.5 py-1 rounded-full font-bold">🍲 ארוחת צהריים - 13:00 (מול הארמון)</span>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-amber-500 font-bold text-sm">4.4 ⭐</span>
+                        <span class="text-xs text-gray-400">(1,300+ ביקורות בגוגל)</span>
+                    </div>
+                </div>
+                <h4 class="text-xl font-bold text-gray-800 flex flex-wrap items-center gap-2">
+                    <a href="https://kuzniakulturalna.pl/" target="_blank" class="hover:text-amber-600 transition-colors">Kuźnia Kulturalna</a>
+                    <span class="text-sm font-normal text-gray-400">| מסעדה היסטורית פסטורלית</span>
+                </h4>
+                <div class="mt-3 space-y-2 text-sm text-gray-600">
+                    <p>📍 <b>כתובת:</b> <a href="https://maps.google.com/?q=Kuznia+Kulturalna+Stanis%C5%82awa+Kostki+Potockiego+12+Warszawa" target="_blank" class="text-blue-600 hover:underline">Stanisława Kostki Potockiego 12, 02-958 Warszawa</a></p>
+                    <p>🚶 <b>הגעה ברגל:</b> רק 2 דקות הליכה משערי הארמון.</p>
+                    <p>🕒 <b>שעות פתיחה:</b> 12:00 - 22:00</p>
+                    <p>💰 <b>מחירים:</b> כ-45 - 80 PLN למנה עיקרית גדולה. יש תפריט ילדים ייעודי ומצוין.</p>
+                    <p class="text-gray-700 font-medium bg-gray-50 p-2.5 rounded-xl border-r-4 border-amber-400">
+                        💡 <b>חוויה משפחתית:</b> מדובר במסעדה עם חצר פנימית פסטורלית ומזמינה במיוחד לימי הקיץ החמים.
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-100 flex justify-end gap-3 text-xs">
+                    <a href="https://kuzniakulturalna.pl/" target="_blank" class="text-amber-700 hover:underline font-bold">🌐 אתר רשמי</a>
+                    <span class="text-gray-300">|</span>
+                    <a href="https://www.tripadvisor.com/Restaurant_Review-g274856-d1084209-Reviews-Kuznia_Kulturalna-Warsaw_Mazovia_Province_Central_Poland.html" target="_blank" class="text-emerald-700 hover:underline font-bold">🦉 TripAdvisor</a>
+                </div>
+            </div>
+
+            <!-- CARD: Day 5 Afternoon Attraction -->
+            <div class="card bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex flex-wrap justify-between items-start gap-2 mb-4">
+                    <span class="bg-blue-100 text-blue-800 text-xs px-2.5 py-1 rounded-full font-bold">🛝 פארק ואחה"צ - 15:30 (מגרש המשחקים הטוב בעיר!)</span>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-amber-500 font-bold text-sm">4.7 ⭐</span>
+                        <span class="text-xs text-gray-400">(4,500+ ביקורות בגוגל)</span>
+                    </div>
+                </div>
+                <h4 class="text-xl font-bold text-gray-800 flex flex-wrap items-center gap-2">
+                    <a href="https://maps.google.com/?q=Park+Ujazdowski+Warszawa" target="_blank" class="hover:text-amber-600 transition-colors">פארק אויאזדובסקי (Park Ujazdowski) ומגרש המשחקים המודרני</a>
+                </h4>
+                <div class="mt-3 space-y-2 text-sm text-gray-600">
+                    <p>📍 <b>כתובת:</b> <a href="https://maps.google.com/?q=Park+Ujazdowski+Warszawa" target="_blank" class="text-blue-600 hover:underline">Al. Ujazdowskie, 00-478 Warszawa</a></p>
+                    <p>🚇 <b>תחבורה ציבורית מווילאנוב:</b> לכו לתחנת <i>Wilanów 01</i>, קחו אוטובוס קו **116** (או **180**) ישירות לתחנת *Plac Na Rozdrożu 01* (כ-17 דקות נסיעה מהירה). מגרש המשחקים נמצא ממש בתוך הפארק מול התחנה.</p>
+                    <p>🚕 <b>מונית/Uber:</b> כ-12 דקות (כ-22 PLN).</p>
+                    <p>🕒 <b>שעות פתיחה:</b> 06:00 - 21:00</p>
+                    <p>💰 <b>מחיר כניסה:</b> חינם לחלוטין!</p>
+                    <p class="text-gray-700 font-medium bg-gray-50 p-2.5 rounded-xl border-r-4 border-blue-400">
+                        💡 <b>מדוע זה מושלם לגיל 4:</b> מגרש המשחקים המפואר והייחודי של הפארק מעוצב כולו מעץ ומותאם בצורה מבוקרת ובטיחותית לילדים קטנים. יש בו גשרים תלויים נמוכים, נדנדות, מגלשות ורצפת גומי רכה.
+                    </p>
+                </div>
+            </div>
+
+            <!-- CARD: Day 5 Dinner -->
+            <div class="card bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex flex-wrap justify-between items-start gap-2 mb-4">
+                    <span class="bg-orange-100 text-orange-800 text-xs px-2.5 py-1 rounded-full font-bold">🍕 ארוחת ערב חגיגית - 18:30 (עם פינת משחקים לילדים!)</span>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-amber-500 font-bold text-sm">4.6 ⭐</span>
+                        <span class="text-xs text-gray-400">(5,200+ ביקורות בגוגל)</span>
+                    </div>
+                </div>
+                <h4 class="text-xl font-bold text-gray-800 flex flex-wrap items-center gap-2">
+                    <a href="https://ottopompieri.pl/" target="_blank" class="hover:text-amber-600 transition-colors">Otto Pompieri</a>
+                    <span class="text-sm font-normal text-gray-400">| איטלקית שמחה וחוויה משפחתית מדהימה</span>
+                </h4>
+                <div class="mt-3 space-y-2 text-sm text-gray-600">
+                    <p>📍 <b>כתובת:</b> <a href="https://maps.google.com/?q=Otto+Pompieri+Plac+Bankowy+1+Warszawa" target="_blank" class="text-blue-600 hover:underline">Plac Bankowy 1, 00-139 Warszawa</a></p>
+                    <p>🚇 <b>תחבורה ציבורית מהפארק למסעדה:</b> לכו לתחנת האוטובוס *Plac Na Rozdrożu 01*, קחו קו **222** או **520** ישירות לתחנת *Plac Bankowy 01* (כ-10 דקות נסיעה ללא החלפות!). המסעדה נמצאת דקה מהתחנה.</p>
+                    <p>🚕 <b>מונית/Uber:</b> כ-8 דקות (כ-16 PLN).</p>
+                    <p>🕒 <b>שעות פתיחה:</b> 12:00 - 23:00</p>
+                    <p>💰 <b>מחירים:</b> כ-35 - 65 PLN לפיצות נאפוליטניות ענקיות ופסטות טריות.</p>
+                    <p class="text-gray-700 font-medium bg-gray-50 p-2.5 rounded-xl border-r-4 border-amber-400">
+                        💡 <b>הבונוס הגדול להורים:</b> בתוך המסעדה ישנו **חדר משחקים מאובזר, נקי ומרווח לילדים** הכולל צעצועים, דפי צביעה וספרים. הילדים יוכלו לשחק בכיף וליצור חברים חדשים.
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-100 flex justify-end gap-3 text-xs">
+                    <a href="https://ottopompieri.pl/" target="_blank" class="text-amber-700 hover:underline font-bold">🌐 אתר רשמי</a>
+                    <span class="text-gray-300">|</span>
+                    <a href="https://www.tripadvisor.com/Restaurant_Review-g274856-d8437936-Reviews-Otto_Pompieri-Warsaw_Mazovia_Province_Central_Poland.html" target="_blank" class="text-emerald-700 hover:underline font-bold">🦉 TripAdvisor</a>
+                </div>
+            </div>
+
+            <!-- DAY 5 MAP TIMELINE -->
+            <div class="p-6 bg-slate-100 rounded-3xl border border-gray-200">
+                <h4 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    🗺️ מפת מסלול מותאמת אישית - יום 5
+                </h4>
+                
+                <div class="relative pl-6 border-r-2 border-slate-300 space-y-6 mr-4">
+                    <div class="relative">
+                        <div class="absolute -right-8 top-1.5 bg-amber-500 w-4 h-4 rounded-full border-4 border-white"></div>
+                        <p class="font-bold text-sm text-amber-700">מלון Apple Inn</p>
+                        <p class="text-xs text-gray-500">נקודת יציאה (רח' Chmielna 21)</p>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -right-8 top-1.5 bg-orange-500 w-4 h-4 rounded-full border-4 border-white"></div>
+                        <p class="font-bold text-sm">Charlotte Menora (בוקר)</p>
+                        <p class="text-xs text-gray-500">🚶 הליכה רגילה של 12 דקות (900 מ') או Uber של 4 דקות</p>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -right-8 top-1.5 bg-emerald-500 w-4 h-4 rounded-full border-4 border-white"></div>
+                        <p class="font-bold text-sm">ארמון וילאנוב וגני הבארוק (בוקר-צהריים)</p>
+                        <p class="text-xs text-gray-500">🚇 אוטובוס קו 116 ישיר (30 דקות) או Uber (20 דקות)</p>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -right-8 top-1.5 bg-orange-500 w-4 h-4 rounded-full border-4 border-white"></div>
+                        <p class="font-bold text-sm">Kuźnia Kulturalna (צהריים ומנוחה)</p>
+                        <p class="text-xs text-gray-500">🚶 צעידה רגלית של 2 דקות בלבד משערי הארמון</p>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -right-8 top-1.5 bg-blue-500 w-4 h-4 rounded-full border-4 border-white"></div>
+                        <p class="font-bold text-sm">פארק אויאזדובסקי ומגרש המשחקים (אחה"צ)</p>
+                        <p class="text-xs text-gray-500">🚇 אוטובוס קו 116 ישיר (17 דקות) או Uber (12 דקות)</p>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -right-8 top-1.5 bg-orange-500 w-4 h-4 rounded-full border-4 border-white"></div>
+                        <p class="font-bold text-sm">Otto Pompieri (ארוחת ערב משפחתית)</p>
+                        <p class="text-xs text-gray-500">🚇 אוטובוס קו 222 / 520 ישיר (10 דקות) או Uber (8 דקות)</p>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <a href="https://www.google.com/maps/dir/Apple+Inn,+Chmielna+21,+00-021+Warszawa/Charlotte+Menora,+Plac+Grzybowski+2,+00-109+Warszawa/Muzeum+Pa%C5%82acu+Kr%C3%B3la+Jana+III+w+Wilanowie,+Stanis%C5%82awa+Kostki+Potockiego+10%2F16,+02-958+Warszawa/Ku%C5%BAnia+Kulturalna,+Stanis%C5%82awa+Kostki+Potockiego+12,+02-958+Warszawa/Park+Ujazdowski,+Aleje+Ujazdowskie,+00-478+Warszawa/Otto+Pompieri,+Plac+Bankowy+1,+00-139+Warszawa/" target="_blank" class="w-full flex items-center justify-center gap-2 bg-teal-700 hover:bg-teal-800 text-white font-bold py-3.5 px-6 rounded-2xl shadow-lg transition-all text-center">
+                        🗺️ פתח מסלול ניווט יום 5 ב-Google Maps
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== DAY 6 DETAILS ==================== -->
+        <div id="day-6-container" class="sub-tab-content space-y-6">
+            <div class="bg-gradient-to-r from-slate-50 to-blue-50 p-5 rounded-2xl border border-blue-100">
+                <h3 class="text-lg font-bold text-blue-900 mb-1">📅 חמישי 20/8 · יום יציאה: בוקר רגוע ונסיעה הביתה</h3>
+                <p class="text-sm text-gray-700 leading-relaxed">
+                    היום האחרון קצר ורגוע. יש זמן לארוחת בוקר נחמדה ליד המלון, אריזה אחרונה וצ'ק-אאוט — ואז נסיעה לשדה התעופה. הטיסה ב-15:00, וצריך להיות בשדה 3 שעות מראש (עד 12:00), כך שיש לכם זמן <b>עד ~10:30</b> לאכול בנחת באזור המלון.
+                </p>
+            </div>
+
+            <!-- Departure timeline box -->
+            <div class="p-5 bg-amber-50 rounded-2xl border border-amber-200">
+                <h4 class="font-bold text-amber-900 text-base mb-3">⏰ לוח זמנים ליום היציאה</h4>
+                <ul class="space-y-2 text-sm text-gray-700 list-disc pr-4">
+                    <li><b>עד 10:30</b> — ארוחת בוקר נינוחה ליד המלון.</li>
+                    <li><b>~10:45</b> — חזרה למלון, אריזה אחרונה וצ'ק-אאוט.</li>
+                    <li><b>עד ~11:00</b> — יוצאים לשדה התעופה Chopin (רכבת ~20 דק' או מונית/Uber ~20–30 דק').</li>
+                    <li><b>12:00</b> — בשדה התעופה, 3 שעות לפני הטיסה: צ'ק-אין (מומלץ אונליין מראש) + ביטחון.</li>
+                    <li><b>15:00</b> — טיסה LO155 לתל אביב (נחיתה 19:50). 🛬</li>
+                </ul>
+            </div>
+
+            <!-- CARD: Day 6 Breakfast -->
+            <div class="card bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex flex-wrap justify-between items-start gap-2 mb-4">
+                    <span class="bg-orange-100 text-orange-800 text-xs px-2.5 py-1 rounded-full font-bold">🍳 ארוחת בוקר אחרונה - עד 10:30 (צמוד למלון)</span>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-amber-500 font-bold text-sm">4.2 ⭐</span>
+                        <span class="text-xs text-gray-400">(1,450+ ביקורות בגוגל)</span>
+                    </div>
+                </div>
+                <h4 class="text-xl font-bold text-gray-800 flex flex-wrap items-center gap-2">
+                    <a href="https://vincentcafe.pl/" target="_blank" class="hover:text-amber-600 transition-colors">Vincent Café & Boulangerie</a>
+                    <span class="text-sm font-normal text-gray-400">| הבחירה הכי נוחה — ממש בדלת המלון</span>
+                </h4>
+                <div class="mt-3 space-y-2 text-sm text-gray-600">
+                    <p>📍 <b>כתובת:</b> <a href="https://maps.google.com/?q=Vincent+Chmielna+21+Warszawa" target="_blank" class="text-blue-600 hover:underline">Chmielna 21, 00-021 Warszawa</a> <span class="text-xs text-amber-600 font-bold">(באותו בניין של המלון!)</span></p>
+                    <p>🕒 <b>שעות פתיחה:</b> 07:00 - 21:00 (פתוח מוקדם — מושלם ליום יציאה).</p>
+                    <p>💰 <b>מחירים:</b> כ-25 - 45 PLN לאדם.</p>
+                    <p class="text-gray-700 font-medium bg-gray-50 p-2.5 rounded-xl border-r-4 border-amber-400">
+                        💡 <b>למה זה הבוקר האידיאלי:</b> אתם לא צריכים לזוז — קרואסונים חמים ואומלטים ממש מתחת למלון, אז אפשר לאכול בנחת ולחזור לאסוף מזוודות בלי לחץ. חלופות קרובות: Green Caffè Nero (Chmielna 32) או Bułkę przez Bibułkę (Zgoda 3), שתיהן ~3 דקות הליכה.
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-100 flex justify-end gap-3 text-xs">
+                    <a href="https://vincentcafe.pl/" target="_blank" class="text-amber-700 hover:underline font-bold">🌐 אתר רשמי</a>
+                    <span class="text-gray-300">|</span>
+                    <a href="https://www.tripadvisor.com/Restaurant_Review-g274856-d4757262-Reviews-Vincent-Warsaw_Mazovia_Province_Central_Poland.html" target="_blank" class="text-emerald-700 hover:underline font-bold">🦉 TripAdvisor</a>
+                </div>
+            </div>
+
+            <!-- CARD: Day 6 To Airport -->
+            <div class="card bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex flex-wrap justify-between items-start gap-2 mb-4">
+                    <span class="bg-blue-100 text-blue-800 text-xs px-2.5 py-1 rounded-full font-bold">🚕 נסיעה לשדה התעופה - עד ~11:00</span>
+                </div>
+                <h4 class="text-xl font-bold text-gray-800 flex flex-wrap items-center gap-2">
+                    <a href="https://maps.google.com/?q=Lotnisko+Chopina+Warszawa" target="_blank" class="hover:text-amber-600 transition-colors">שדה התעופה ורשה — Chopin (WAW)</a>
+                </h4>
+                <div class="mt-3 space-y-2 text-sm text-gray-600">
+                    <p>🚆 <b>רכבת (הכי משתלם):</b> מ-<i>Warszawa Śródmieście</i> (~10 דק' הליכה מהמלון) קו S2/S3 או KM לשדה — כ-20 דק'. כרטיס ZTM רגיל, ילדים חינם.</p>
+                    <p>🚕 <b>מונית/Uber XL:</b> כ-20–30 דק', כ-45–60 PLN. הכי נוח עם 5 אנשים ומזוודות.</p>
+                    <p>🚌 <b>אוטובוס 175:</b> ממרכז העיר ישירות לשדה (~30–40 דק').</p>
+                    <p class="text-gray-700 font-medium bg-gray-50 p-2.5 rounded-xl border-r-4 border-blue-400">
+                        💡 <b>טיפ:</b> עשו צ'ק-אין אונליין ב-<a href="https://www.lot.com/" target="_blank" class="text-blue-600 hover:underline font-bold">LOT</a> 48 שעות מראש. עם 5 נוסעים ומזוודות — Uber XL היא האופציה הכי רגועה ליום היציאה.
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-100 flex justify-end gap-3 text-xs">
+                    <a href="https://www.wtp.waw.pl/en/maps-schemes/" target="_blank" class="text-amber-700 hover:underline font-bold">🌐 מפות תחבורה WTP</a>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- ==================== TAB 2: PUBLIC TRANSPORT GUIDE ==================== -->
+    <section id="public_transport" class="tab-content">
+        <div class="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 space-y-8">
+            <div>
+                <h2 class="text-3xl font-extrabold text-gray-800 mb-2">🚇 מדריך התחבורה הציבורית בוורשה</h2>
+                <p class="text-sm text-gray-500">ורשה מחזיקה באחת ממערכות התחבורה הציבורית המתקדמות, המדויקות והזולות באירופה. היא כוללת מטרו, חשמליות (Trams) ואוטובוסים – הכל תחת כרטיס אחיד!</p>
+            </div>
+
+            <!-- Child Policy & Core Rules -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="p-5 bg-emerald-50 rounded-2xl border border-emerald-100">
+                    <h3 class="font-bold text-emerald-900 text-lg flex items-center gap-2 mb-3">👶 חוקי חינם וילדים (קריטי עבורכם!)</h3>
+                    <ul class="space-y-3 text-sm text-gray-700 list-disc pr-4">
+                        <li><b>חינם לחלוטין:</b> ילדים זכאים לנסיעה חינם מיום לידתם **ועד ה-30 בספטמבר בשנה שבה הם חוגגים יום הולדת 7** (כלומר, שני בני ה-4 שלכם נוסעים בחינם לחלוטין לאורך כל הטיול!).</li>
+                        <li><b>הוכחת גיל:</b> מומלץ לשאת תעודה מזהה או צילום דרכון של הילדים בתיק, למרות שבגיל 4 נדיר מאוד שפקח יבקש זאת.</li>
+                        <li><b>מעבר עם עגלות:</b> כל האוטובוסים, החשמליות החדשות ותחנות המטרו מונגשים לחלוטין לעגלות ילדים ללא מדרגות. ישנם מעליות מרווחות בכל כניסה למטרו.</li>
+                        <li><b>מבוגרים מעל גיל 70:</b> נוסעים בחינם לחלוטין בהצגת דרכון.</li>
+                    </ul>
+                </div>
+
+                <div class="p-5 bg-blue-50 rounded-2xl border border-blue-100">
+                    <h3 class="font-bold text-blue-900 text-lg flex items-center gap-2 mb-3">🎫 סוגי כרטיסים ומחירון (Zone 1)</h3>
+                    <div class="space-y-2 text-sm text-gray-700">
+                        <div class="flex justify-between border-b border-blue-100 pb-1.5">
+                            <span>⏱️ <b>כרטיס 20 דקות:</b> (מתאים לנסיעות קצרות של 2-4 תחנות)</span>
+                            <span class="font-bold">3.40 PLN</span>
+                        </div>
+                        <div class="flex justify-between border-b border-blue-100 pb-1.5">
+                            <span>⏱️ <b>כרטיס 75 דקות:</b> (מעבר חופשי בין קווים)</span>
+                            <span class="font-bold">4.40 PLN</span>
+                        </div>
+                        <div class="flex justify-between border-b border-blue-100 pb-1.5">
+                            <span>⏱️ <b>כרטיס 90 דקות:</b> (נסיעות ארוכות)</span>
+                            <span class="font-bold">7.00 PLN</span>
+                        </div>
+                        <div class="flex justify-between border-b border-blue-100 pb-1.5">
+                            <span>📅 <b>כרטיס 24 שעות (חופשי יומי):</b></span>
+                            <span class="font-bold">15.00 PLN</span>
+                        </div>
+                        <div class="flex justify-between border-b border-blue-100 pb-1.5">
+                            <span>📅 <b>כרטיס 72 שעות (חופשי ל-3 ימים):</b> (המשתלם ביותר!)</span>
+                            <span class="font-bold">36.00 PLN</span>
+                        </div>
+                        <div class="flex justify-between pb-1">
+                            <span>🎉 <b>כרטיס סופ"ש קבוצתי (עד 5 אנשים):</b> (משישי 19:00 עד שני 08:00)</span>
+                            <span class="font-bold">40.00 PLN</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Apps to Download Section -->
+            <div class="p-6 bg-slate-50 rounded-2xl border border-gray-200">
+                <h3 class="font-bold text-gray-800 text-lg mb-4 flex items-center gap-2">📱 אפליקציות חובה להתקנה בטלפון</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="flex gap-4 p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
+                        <span class="text-3xl">🚌</span>
+                        <div>
+                            <p class="font-extrabold text-slate-800 text-base">Jakdojade (המלצת זהב!)</p>
+                            <p class="text-xs text-gray-500 mt-1 mb-2">האפליקציה המקומית הפופולרית ביותר בפולין. מציגה לוחות זמנים מדויקים ברמת השנייה, מסלולים מנקודה לנקודה ומאפשרת לרכוש כרטיסים דיגיטליים ישירות מהנייד.</p>
+                            <div class="flex gap-3 text-xs">
+                                <a href="https://play.google.com/store/apps/details?id=com.citynav.jakdojade.pl.android" target="_blank" class="text-amber-700 hover:underline font-bold">🤖 אנדרואיד</a>
+                                <span class="text-gray-300">|</span>
+                                <a href="https://apps.apple.com/pl/app/jakdojade-timetables/id506795511" target="_blank" class="text-amber-700 hover:underline font-bold">🍏 אייפון</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex gap-4 p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
+                        <span class="text-3xl">🗺️</span>
+                        <div>
+                            <p class="font-extrabold text-slate-800 text-base">Google Maps</p>
+                            <p class="text-xs text-gray-500 mt-1 mb-2">עובדת בצורה פנומנלית בוורשה ומסונכרנת עם מערכת האוטובוסים והמטרו. מעולה לניווט רגלי מהתחנות אל היעד המדויק.</p>
+                            <div class="flex gap-3 text-xs">
+                                <a href="https://www.google.com/maps" target="_blank" class="text-blue-600 hover:underline font-bold">🌐 כניסה לאתר</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Important Tips Area -->
+            <div class="p-6 bg-amber-50/50 rounded-2xl border border-amber-200/60">
+                <h3 class="font-bold text-amber-950 text-lg mb-3">💡 טיפים מעשיים לנסיעה קלה וחלקה:</h3>
+                <ul class="space-y-2.5 text-sm text-gray-700 pr-4 list-decimal">
+                    <li><b>חובה לתקף את הכרטיס מיד בכניסה!</b> ברגע שעולים לאוטובוס/חשמלית או בכניסה לשערי המטרו, יש להעביר את כרטיס הנייר במכונות הצהובות. כרטיס שלא תוקף נחשב לנסיעה ללא כרטיס והקנסות גבוהים מאוד. אם קניתם ב-Jakdojade, תיקוף הכרטיס הדיגיטלי נעשה על ידי סריקת קוד QR שנמצא בתוך האוטובוס/חשמלית או ליד שערי המטרו.</li>
+                    <li><b>איפה קונים כרטיסי נייר?</b> בכל תחנת מטרו, ברוב תחנות האוטובוס והחשמליות המרכזיות יש מכונות כרטיסים כחולות/אדומות התומכות בעברית/אנגלית ותשלום באשראי. כמו כן, ברוב האוטובוסים והחשמליות עצמן יש מכונה קטנה לקנייה בכרטיס אשראי בלבד.</li>
+                    <li><b>מפת המטרו של וורשה:</b> לוורשה שני קווי מטרו בלבד (M1 מצפון לדרום, M2 ממזרח למערב). הם נפגשים בתחנת <i>Świętokrzyska</i> שהיא ממש ליד המלון שלכם. מפה אינטראקטיבית ורשמית של התחבורה ניתן למצוא בקישור הרשמי: <a href="https://www.wtp.waw.pl/en/maps-schemes/" target="_blank" class="text-blue-600 font-bold hover:underline">אתר מפות התחבורה WTP Warszawa</a>.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== TAB 3: BUDGET & LOGISTICS ==================== -->
+    <section id="logistics" class="tab-content">
+        <div class="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 space-y-8">
+            <div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">💰 אומדן עלויות ומחשבון תקציב אינטראקטיבי</h2>
+                <p class="text-sm text-gray-500">ורשה היא אחת הערים המשתלמות והזולות ביותר באירופה למשפחות. התאימו את המחשבון למטה כדי לראות את האומדן המדויק לכם.</p>
+            </div>
+
+            <!-- Interactive Calculator Area -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-amber-50/50 rounded-2xl border border-amber-100">
+                <div class="space-y-4">
+                    <h3 class="font-bold text-amber-900 text-lg">⚙️ התאמת נתוני משפחה</h3>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-1">מספר מבוגרים</label>
+                            <input type="number" id="calc-adults" value="3" min="1" oninput="calculateBudget()" class="w-full p-2.5 rounded-xl border border-gray-200 focus:outline-amber-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-1">מספר ילדים בני 4</label>
+                            <input type="number" id="calc-kids" value="2" min="0" oninput="calculateBudget()" class="w-full p-2.5 rounded-xl border border-gray-200 focus:outline-amber-500 text-gray-400 bg-gray-50 cursor-not-allowed" readonly>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-500 mb-1">מספר ימי טיול פעילים</label>
+                        <input type="number" id="calc-days" value="5" min="1" oninput="calculateBudget()" class="w-full p-2.5 rounded-xl border border-gray-200 focus:outline-amber-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-500 mb-1">אופן התניידות מועדף</label>
+                        <select id="calc-transport-type" onchange="calculateBudget()" class="w-full p-2.5 rounded-xl border border-gray-200 focus:outline-amber-500 bg-white">
+                            <option value="public">🚇 תחבורה ציבורית (ילדים חינם, מבוגרים כרטיס תקופתי)</option>
+                            <option value="uber">🚕 נסיעות ב-Uber XL בלבד</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl border border-amber-200/50 flex flex-col justify-between">
+                    <div>
+                        <h4 class="font-bold text-gray-800 text-sm mb-3">💰 אומדן עלויות כולל</h4>
+                        <div class="flex gap-1.5 mb-3">
+                            <button id="ccy-btn-PLN" onclick="setBudgetCurrency('PLN')" class="ccy-btn flex-1 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-white shadow">🇵🇱 PLN</button>
+                            <button id="ccy-btn-ILS" onclick="setBudgetCurrency('ILS')" class="ccy-btn flex-1 py-1.5 rounded-lg text-xs font-bold bg-white text-gray-600 border border-gray-200">🇮🇱 ₪</button>
+                            <button id="ccy-btn-USD" onclick="setBudgetCurrency('USD')" class="ccy-btn flex-1 py-1.5 rounded-lg text-xs font-bold bg-white text-gray-600 border border-gray-200">🇺🇸 $</button>
+                            <button id="ccy-btn-EUR" onclick="setBudgetCurrency('EUR')" class="ccy-btn flex-1 py-1.5 rounded-lg text-xs font-bold bg-white text-gray-600 border border-gray-200">🇪🇺 €</button>
+                        </div>
+                        <div class="space-y-2 text-sm text-gray-600">
+                            <div class="flex justify-between"><span>🍕 ארוחות ומסעדות (3 ארוחות ביום):</span><span class="font-bold" id="res-food">0 zł</span></div>
+                            <div class="flex justify-between"><span>🎡 כרטיסי כניסה ואטרקציות:</span><span class="font-bold" id="res-attractions">0 zł</span></div>
+                            <div class="flex justify-between"><span>🚇 עלויות התניידות בעיר:</span><span class="font-bold" id="res-taxi">0 zł</span></div>
+                            <div class="flex justify-between"><span>🛍️ תקציב קניות ובזבוזים בסיסי:</span><span class="font-bold" id="res-shopping">0 zł</span></div>
+                        </div>
+                    </div>
+                    <div class="border-t border-gray-100 pt-3 mt-4">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-gray-800 text-base">סה"כ משוער:</span>
+                            <span class="text-2xl font-extrabold text-amber-700" id="res-total">0 zł</span>
+                        </div>
+                        <p id="res-total-multi" class="text-xs text-gray-500 text-left mt-1"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Currency Converter -->
+            <div class="p-5 md:p-6 bg-slate-50 rounded-2xl border border-gray-200">
+                <h3 class="font-bold text-gray-800 text-lg mb-3">💱 מחשבון המרת מטבע</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs text-gray-500 mb-1">סכום</label>
+                        <input type="number" id="conv-amount" value="100" min="0" oninput="convertCurrency()" class="w-full p-2.5 rounded-xl border border-gray-200 focus:outline-amber-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-500 mb-1">מטבע מקור</label>
+                        <select id="conv-from" onchange="convertCurrency()" class="w-full p-2.5 rounded-xl border border-gray-200 bg-white focus:outline-amber-500">
+                            <option value="PLN">🇵🇱 זלוטי (PLN)</option>
+                            <option value="ILS">🇮🇱 שקל (₪)</option>
+                            <option value="USD">🇺🇸 דולר ($)</option>
+                            <option value="EUR">🇪🇺 אירו (€)</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="conv-results" class="grid grid-cols-3 gap-3 mt-4 text-center"></div>
+                <p id="fx-note" class="text-xs text-gray-400 mt-3">⏳ טוען שערי חליפין עדכניים…</p>
+                <details class="mt-2 text-xs text-gray-500">
+                    <summary class="cursor-pointer font-bold text-gray-600">⚙️ שערי חליפין (1 PLN =) — נטענים אונליין, אפשר לעדכן ידנית</summary>
+                    <div class="grid grid-cols-3 gap-3 mt-2">
+                        <div><label class="block mb-1">₪ ILS</label><input type="number" step="0.0001" id="rate-ils" value="0.7970" oninput="updateRates()" class="w-full p-2 rounded-lg border border-gray-200"></div>
+                        <div><label class="block mb-1">$ USD</label><input type="number" step="0.0001" id="rate-usd" value="0.2649" oninput="updateRates()" class="w-full p-2 rounded-lg border border-gray-200"></div>
+                        <div><label class="block mb-1">€ EUR</label><input type="number" step="0.0001" id="rate-eur" value="0.2310" oninput="updateRates()" class="w-full p-2 rounded-lg border border-gray-200"></div>
+                    </div>
+                </details>
+            </div>
+
+            <!-- Chart Display -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center pt-4">
+                <div class="chart-container">
+                    <canvas id="budgetChart"></canvas>
+                </div>
+                <div class="space-y-4">
+                    <div class="p-4 border-r-4 border-amber-500 bg-amber-50 rounded-l-xl">
+                        <p class="font-bold text-amber-900">🚕 לוגיסטיקה ותחבורה נוחה לילדים</p>
+                        <p class="text-sm text-gray-700 mt-1 leading-relaxed">
+                            עבור משפחה של 5 נפשות, הדרך היעילה והזולה ביותר היא להשתמש בתוכנת **Uber XL** או **Bolt XL**. נסיעה ממוצעת בתוך העיר עולה בין 15 ל-25 PLN (כ-13-22 ש"ח בלבד!). זה חוסך המון הליכה ברגל לילדים בני 4 ומבטיח שהם לא יתעייפו לפני ההגעה לאטרקציות.
+                        </p>
+                    </div>
+                    <div class="p-4 border-r-4 border-blue-500 bg-blue-50 rounded-l-xl">
+                        <p class="font-bold text-blue-900">🎫 אזהרת כרטיסים מוקדמת!</p>
+                        <p class="text-sm text-gray-700 mt-1 leading-relaxed">
+                            <b>מרכז המדע קופרניקוס</b> ו-<b>Smart Kids Planet</b> מגבילים את כמות הנכנסים בכל שעה כדי לשמור על איכות החוויה. באוגוסט (עונת השיא) כרטיסים בקופות אוזלים לחלוטין. הזמינו לפחות שבועיים-שלושה מראש באתרי האינטרנט הרשמיים המקושרים במדריך זה!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== TAB 4: SHOPPING ==================== -->
+    <section id="shopping" class="tab-content">
+        <div class="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
+            <div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">🛍️ איפה לבזבז את הזלוטי? מדריך הקניות המלא</h2>
+                <p class="text-sm text-gray-500">ורשה היא גן עדן לחובבי קניות. המחירים זולים משמעותית מהארץ ויש מגוון רחב של מותגים מקומיים ובינלאומיים.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="p-5 bg-slate-50 rounded-2xl border border-gray-100">
+                    <p class="text-3xl mb-2">🏬</p>
+                    <p class="font-bold text-gray-800 mb-1">Westfield Arkadia</p>
+                    <p class="text-xs text-gray-500 mb-2">הקניון הגדול והעשיר ביותר בוורשה</p>
+                    <p class="text-sm text-gray-600">מתחם עצום עם כל רשתות האופנה, סניף ענק של רשת הילדים Smyk, חנות לגו רשמית, ומתחם אוכל מעולה. נסיעה קצרה של 10 דקות מהמרכז.</p>
+                    <div class="mt-3 text-xs">
+                        <a href="https://www.westfield.com/pl/poland/arkadia" target="_blank" class="text-amber-700 hover:underline font-bold">🌐 אתר רשמי</a>
+                        <span class="mx-1">|</span>
+                        <a href="https://maps.google.com/?q=Westfield+Arkadia+Warszawa" target="_blank" class="text-blue-600 hover:underline">📍 גוגל מפות</a>
+                    </div>
+                </div>
+
+                <div class="p-5 bg-slate-50 rounded-2xl border border-gray-100">
+                    <p class="text-3xl mb-2">👗</p>
+                    <p class="font-bold text-gray-800 mb-1">HalfPrice & Reserved</p>
+                    <p class="text-xs text-gray-500 mb-2">מותגים וסטייל במחירים מטורפים</p>
+                    <p class="text-sm text-gray-600"><b>HalfPrice:</b> רשת אאוטלט ענקית (יש סניף ענק בקניון Złote Tarasy) המציעה בגדי מותגים, נעליים ופריטי עיצוב לבית בהנחות של עד 80%. <b>Reserved:</b> מותג פולני איכותי ומעולה במחירים מצוינים.</p>
+                </div>
+
+                <div class="p-5 bg-slate-50 rounded-2xl border border-gray-100">
+                    <p class="text-3xl mb-2">🧸</p>
+                    <p class="font-bold text-gray-800 mb-1">Smyk (Megastore)</p>
+                    <p class="text-xs text-gray-500 mb-2">גן העדן לצעצועים ובגדי ילדים</p>
+                    <p class="text-sm text-gray-600">רשת חנויות הילדים הפולנית המפורסמת ביותר. מחירי צעצועים (לגו, פליימוביל, מותגי דיסני) ובגדי תינוקות וילדים זולים בעשרות אחוזים מאשר בישראל. מומלץ לבקר בסניף הכלבו הגדול.</p>
+                </div>
+            </div>
+
+            <div class="p-6 bg-amber-50 rounded-2xl border border-amber-100 mt-6">
+                <h3 class="font-bold text-amber-950 text-base mb-3">💝 מה חובה לקנות ולהביא הביתה?</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div class="flex gap-2">
+                        <span>🍫</span>
+                        <div>
+                            <p class="font-bold">שוקולד E. Wedel וסוכריות Krówki</p>
+                            <p class="text-xs text-gray-600">שוקולד הדגל ההיסטורי של פולין. סוכריות הטופי-חלב הנימוחות (קרובקי) הן פריט חובה בכל מזוודה חזרה לארץ.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <span>🧴</span>
+                        <div>
+                            <p class="font-bold">קוסמטיקה של חברת Ziaja</p>
+                            <p class="text-xs text-gray-600">רשת טיפוח וקוסמטיקה פולנית טבעית ואיכותית בטירוף. קרמים, סבונים ומוצרי טיפוח לילדים במחירים של שקלים בודדים לפריט.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== TAB 5: ESSENTIAL TIPS ==================== -->
+    <section id="tips" class="tab-content">
+        <div class="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
+            <div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">💡 טיפים זהב ואזהרות למשפחה המטיילת</h2>
+                <p class="text-sm text-gray-500">עצות מעשיות שימנעו הפתעות לא נעימות ויגרמו לטיול שלכם לזרום בצורה הכי חלקה שאפשר.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-4">
+                    <div class="p-5 bg-emerald-50 rounded-2xl border border-emerald-100">
+                        <h4 class="font-bold text-emerald-900 flex items-center gap-2 mb-2">✔️ מה לעשות (המלצות זהב)</h4>
+                        <ul class="space-y-2 text-sm text-gray-700 list-disc pr-4">
+                            <li><b>התקינו מראש את אפליקציית Uber / Bolt:</b> חברו כרטיס אשראי בינלאומי. הנסיעות בוורשה נוחות וזולות להפליא, וזה ימנע הליכה מיותרת ומעייפת לילדים בני 4.</li>
+                            <li><b>רכשו אגוזי מלך מראש:</b> החזיקו שקית קטנה בתיק כשאתם מגיעים לפארק לז'נקי ביום 4. הסנאים שם יאכלו לילדים ישירות מהיד!</li>
+                            <li><b>הזמינו אונליין ל-Smart Kids Planet:</b> לא רק שזה מבטיח את כניסתכם, זה גם חוסך כ-30-40% מעלות הכרטיס בהשוואה לקופות בכניסה.</li>
+                            <li><b>בקשו תפריט ילדים (Menu dla dzieci):</b> כמעט בכל מסעדה בוורשה יש תפריט מיוחד המבוסס על מנות שילדים אוהבים (שניצלונים פולניים איכותיים, פסטה פשוטה, פנקייקים) במחירים סמליים.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="p-5 bg-red-50 rounded-2xl border border-red-100">
+                        <h4 class="font-bold text-red-900 flex items-center gap-2 mb-2">❌ ממה להימנע (אזהרות חשובות)</h4>
+                        <ul class="space-y-2 text-sm text-gray-700 list-disc pr-4">
+                            <li><b>אל תסמכו על קניית כרטיסים בקופות של קופרניקוס:</b> תורים ארוכים מאוד וסיכוי גבוה מאוד שלפני הצהריים הכרטיסים לאותו יום ייגמרו לחלוטין.</li>
+                            <li><b>הימנעו ממוניות רחוב אקראיות:</b> השתמשו אך ורק באפליקציות מוכרות (Uber/Bolt) כדי למנוע הפקעת מחירים של נהגים לא מורשים במרכז העיר.</li>
+                            <li><b>אל תתכננו הליכות ארוכות ברגל בגשם:</b> באוגוסט יכולים להיות ימי גשם קצרים פתאומיים. תמיד החזיקו מטריות קומפקטיות בתיק הגב או שכמיות גשם דקות לילדים.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== TAB 6: FLIGHTS ==================== -->
+    <section id="flights" class="tab-content">
+        <div class="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 space-y-8">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-extrabold text-gray-800 mb-1">✈️ הטיסות שלכם</h2>
+                    <p class="text-sm text-gray-500">LOT Polish Airlines · 3 מבוגרים + 2 ילדים · כבודה: מזוודה אחת (עד 23 ק"ג) + טרולי יד לכל נוסע</p>
+                </div>
+                <div class="text-center bg-blue-50 border border-blue-100 rounded-2xl px-5 py-2.5">
+                    <span class="block text-xs text-gray-400">קוד הזמנה (PNR)</span>
+                    <span class="font-extrabold text-blue-800 text-xl tracking-widest">Z44T4R</span>
+                </div>
+            </div>
+
+            <!-- Flight cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Outbound -->
+                <div class="rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50 to-white p-5">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="bg-emerald-100 text-emerald-800 text-xs px-3 py-1 rounded-full font-bold">🛫 טיסת הלוך</span>
+                        <span class="text-sm font-bold text-gray-500">שבת · 15 באוגוסט 2026</span>
+                    </div>
+                    <div class="flex items-center justify-between text-center gap-2">
+                        <div>
+                            <p class="text-3xl font-extrabold text-gray-800">05:05</p>
+                            <p class="text-sm font-bold text-gray-600">TLV</p>
+                            <p class="text-xs text-gray-400">תל אביב (נתב"ג) · טרמינל 3</p>
+                        </div>
+                        <div class="flex-1 px-1">
+                            <p class="text-xs text-gray-400 mb-1">3 שעות 5 דק'</p>
+                            <div class="relative h-px bg-emerald-300"><span class="absolute -top-2.5 right-1/2 text-emerald-500">✈️</span></div>
+                            <p class="text-xs font-bold text-gray-500 mt-1.5">טיסה LO152</p>
+                        </div>
+                        <div>
+                            <p class="text-3xl font-extrabold text-gray-800">08:10</p>
+                            <p class="text-sm font-bold text-gray-600">WAW</p>
+                            <p class="text-xs text-gray-400">ורשה (Chopin)</p>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-4 pt-3 border-t border-emerald-100">מופעלת ע"י LOT Polish Airlines · מחלקה Standard</p>
+                </div>
+
+                <!-- Return -->
+                <div class="rounded-2xl border border-amber-100 bg-gradient-to-br from-amber-50 to-white p-5">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="bg-amber-100 text-amber-800 text-xs px-3 py-1 rounded-full font-bold">🛬 טיסת חזור</span>
+                        <span class="text-sm font-bold text-gray-500">חמישי · 20 באוגוסט 2026</span>
+                    </div>
+                    <div class="flex items-center justify-between text-center gap-2">
+                        <div>
+                            <p class="text-3xl font-extrabold text-gray-800">15:00</p>
+                            <p class="text-sm font-bold text-gray-600">WAW</p>
+                            <p class="text-xs text-gray-400">ורשה (Chopin)</p>
+                        </div>
+                        <div class="flex-1 px-1">
+                            <p class="text-xs text-gray-400 mb-1">3 שעות 50 דק'</p>
+                            <div class="relative h-px bg-amber-300"><span class="absolute -top-2.5 right-1/2 text-amber-500">✈️</span></div>
+                            <p class="text-xs font-bold text-gray-500 mt-1.5">טיסה LO155</p>
+                        </div>
+                        <div>
+                            <p class="text-3xl font-extrabold text-gray-800">19:50</p>
+                            <p class="text-sm font-bold text-gray-600">TLV</p>
+                            <p class="text-xs text-gray-400">תל אביב (נתב"ג) · טרמינל 3</p>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-4 pt-3 border-t border-amber-100">מופעלת ע"י Electra Airways (עבור LOT) · מחלקה Standard</p>
+                </div>
+            </div>
+
+            <!-- Seat table -->
+            <div>
+                <h3 class="font-bold text-gray-800 text-lg mb-3">💺 הנוסעים והמושבים</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-right border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 text-gray-600">
+                                <th class="p-2.5 rounded-r-xl font-bold">נוסע</th>
+                                <th class="p-2.5 font-bold text-center">סוג</th>
+                                <th class="p-2.5 font-bold text-center">מושב הלוך (LO152)</th>
+                                <th class="p-2.5 rounded-l-xl font-bold text-center">מושב חזור (LO155)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <tr><td class="p-2.5 font-medium">מיכאל (Michael Poroger)</td><td class="p-2.5 text-center text-gray-500">מבוגר</td><td class="p-2.5 text-center font-bold text-emerald-700">23D</td><td class="p-2.5 text-center font-bold text-amber-700">21F</td></tr>
+                            <tr><td class="p-2.5 font-medium">דורית (Dorit Wasserman)</td><td class="p-2.5 text-center text-gray-500">מבוגר</td><td class="p-2.5 text-center font-bold text-emerald-700">23E</td><td class="p-2.5 text-center font-bold text-amber-700">21E</td></tr>
+                            <tr><td class="p-2.5 font-medium">שרי (Sarai Hezi)</td><td class="p-2.5 text-center text-gray-500">מבוגר</td><td class="p-2.5 text-center font-bold text-emerald-700">23F</td><td class="p-2.5 text-center font-bold text-amber-700">21D</td></tr>
+                            <tr><td class="p-2.5 font-medium">גבע (Geva) 🧒</td><td class="p-2.5 text-center text-gray-500">ילד/ה (4)</td><td class="p-2.5 text-center font-bold text-emerald-700">23B</td><td class="p-2.5 text-center font-bold text-amber-700">21B</td></tr>
+                            <tr><td class="p-2.5 font-medium">אביתר (Evyatar) 🧒</td><td class="p-2.5 text-center text-gray-500">ילד (4)</td><td class="p-2.5 text-center font-bold text-emerald-700">23A</td><td class="p-2.5 text-center font-bold text-amber-700">21A</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-xs text-gray-400 mt-2">👨‍👩‍👧‍👦 המשפחה יושבת יחד: בהלוך שורה 23, בחזור שורה 21 (מושבים A–F).</p>
+            </div>
+
+            <!-- Logistics -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="p-5 bg-blue-50 rounded-2xl border border-blue-100">
+                    <h3 class="font-bold text-blue-900 text-base mb-3">🚕 משדה התעופה Chopin למלון</h3>
+                    <ul class="space-y-2 text-sm text-gray-700 list-disc pr-4">
+                        <li><b>רכבת (הכי משתלם):</b> תחנת הרכבת בשדה התעופה → <i>Warszawa Śródmieście</i> (כ-20 דק'), ומשם כ-10 דק' הליכה למלון. כרטיס ZTM רגיל (ילדים חינם!).</li>
+                        <li><b>אוטובוס 175:</b> ישיר ממסוף השדה למרכז העיר (כ-30 דק').</li>
+                        <li><b>מונית/Uber:</b> כ-20 דק' נסיעה, כ-45–60 PLN — נוח עם ילדים וכבודה אחרי טיסת בוקר מוקדמת.</li>
+                    </ul>
+                </div>
+                <div class="p-5 bg-amber-50 rounded-2xl border border-amber-100">
+                    <h3 class="font-bold text-amber-900 text-base mb-3">🧳 צ'ק-אין וזמנים</h3>
+                    <ul class="space-y-2 text-sm text-gray-700 list-disc pr-4">
+                        <li><b>צ'ק-אין אונליין</b> נפתח 48 שעות לפני הטיסה באתר <a href="https://www.lot.com/" target="_blank" class="text-blue-600 font-bold hover:underline">LOT</a> — חוסך זמן בדלפק.</li>
+                        <li><b>הלוך (05:05):</b> טיסה מוקדמת מאוד — הגיעו לנתב"ג עד <b>02:00–02:30</b> (3 שעות לפני, טיסה בינ"ל).</li>
+                        <li><b>חזור (15:00):</b> חובה להיות בשדה 3 שעות לפני = עד <b>12:00</b> — צאו מהמלון עד ~<b>11:00</b> (רכבת/מונית ~20–30 דק').</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Timing advisory -->
+            <div class="p-5 bg-red-50 rounded-2xl border border-red-100">
+                <h3 class="font-bold text-red-900 text-base mb-2">⏰ שימו לב — התאמת המסלול לזמני הטיסות</h3>
+                <ul class="space-y-2 text-sm text-gray-700 list-disc pr-4">
+                    <li><b>יום 1 (שבת 15/8) — יום הגעה:</b> נחיתה ב-08:10. <b>קודם נוסעים למלון להניח את המזוודות</b> (מגיעים ~09:45), ורק אז יוצאים לטייל — התחלה בפועל ~10:30 עם בראנץ' ב-Vincent (צמוד למלון). זמני הבוקר של יום 1 זזים בהתאם; קחו את היום בקלות אחרי טיסת ה-05:05.</li>
+                    <li><b>ימים 2–5 (16–19/8):</b> ימים מלאים כרגיל לפי המסלול. יום 5 (וילאנוב) הוא ב-<b>רביעי 19/8</b> — יום שלם, אין בעיה (הארמון פתוח, סגור רק בשלישי).</li>
+                    <li><b>יום היציאה (חמישי 20/8):</b> טיסה ב-15:00 — חובה להיות בשדה <b>3 שעות לפני = עד 12:00</b>, כלומר לצאת מהמלון עד ~<b>11:00</b>. נשאר רק בוקר קצר: בראנץ' רגוע ליד המלון, אריזה וצ'ק-אאוט — בלי אטרקציות גדולות.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== TAB 7: PACKING CHECKLIST ==================== -->
+    <section id="checklist" class="tab-content">
+        <div class="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-extrabold text-gray-800 mb-1">🧳 צ'קליסט אריזה</h2>
+                    <p class="text-sm text-gray-500">סמנו פריטים תוך כדי אריזה — הסימונים נשמרים אוטומטית במכשיר שלכם (גם אחרי רענון).</p>
+                </div>
+                <button onclick="resetChecklist()" class="no-print text-xs font-bold text-red-600 border border-red-200 rounded-xl px-3 py-2 hover:bg-red-50">↺ איפוס הכל</button>
+            </div>
+
+            <div class="no-print">
+                <div class="flex justify-between text-xs text-gray-500 mb-1"><span>התקדמות אריזה</span><span id="pk-progress">0 / 0</span></div>
+                <div class="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden"><div id="pk-bar" class="h-full bg-emerald-500 transition-all duration-300" style="width:0%"></div></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="p-5 bg-slate-50 rounded-2xl border border-gray-100">
+                    <h3 class="font-bold text-gray-800 mb-3">📄 מסמכים וכספים</h3>
+                    <ul class="space-y-2.5 text-sm">
+                        <li><label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" id="pk-passports" class="pk-item w-4 h-4 accent-emerald-500 peer" onchange="saveChecklist()"><span class="peer-checked:line-through peer-checked:text-gray-400 text-gray-700">5 דרכונים בתוקף (6+ חודשים)</span></label></li>
+                        <li><label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" id="pk-tickets" class="pk-item w-4 h-4 accent-emerald-500 peer" onchange="saveChecklist()"><span class="peer-checked:line-through peer-checked:text-gray-400 text-gray-700">כרטיסי טיסה (מודפס/נייד · קוד Z44T4R)</span></label></li>
+                        <li><label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" id="pk-insurance" class="pk-item w-4 h-4 accent-emerald-500 peer" onchange="saveChecklist()"><span class="peer-checked:line-through peer-checked:text-gray-400 text-gray-700">ביטוח נסיעות למשפחה</span></label></li>
+                        <li><label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" id="pk-hotel" class="pk-item w-4 h-4 accent-emerald-500 peer" onchange="saveChecklist()"><span class="peer-checked:line-through peer-checked:text-gray-400 text-gray-700">אישור הזמנת מלון (Apple Inn)</span></label></li>
+                        <li><label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" id="pk-cash" class="pk-item w-4 h-4 accent-emerald-500 peer" onchange="saveChecklist()"><span class="peer-checked:line-through peer-checked:text-gray-400 text-gray-700">מזומן (זלוטי) + כרטיס אשראי בינ"ל</span></label></li>
+                        <li><label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" id="pk-childid" class="pk-item w-4 h-4 accent-emerald-500 peer" onchange="saveChecklist()"><span class="peer-checked:line-through peer-checked:text-gray-400 text-gray-700">תעודות מזהות לילדים (לתחבורה)</span></label></li>
+                    </ul>
+                </div>
+
+                <div class="p-5 bg-slate-50 rounded-2xl border border-gray-100">
+                    <h3 class="font-bold text-gray-800 mb-3">🧒 ילדים (בני 4)</h3>
+                    <ul class="space-y-2.5 text-sm">
+                        <li><label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" id="pk-kidmeds" class="pk-item w-4 h-4 accent-emerald-500 peer" onchange="saveChecklist()"><span class="peer-checked:line-through peer-checked:text-gray-400 text-gray-700">תרופות ילדים (אקמול/נורופן, פלסטרים)</span></label></li>
+                        <li><label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" id="pk-sunscreen" class="pk-item w-4 h-4 accent-emerald-500 peer" onchange="saveChecklist()"><span class="peer-checked:line-through peer-checked:text-gray-400 text-gray-700">קרם הגנה + כובעים</span></label></li>
+                        <li><label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" id="pk-snacks" class="pk-item w-4 h-4 accent-emerald-500 peer" onchange="saveChecklist()"><span class="peer-checked:line-through peer-checked:text-gray-400 text-gray-700">חטיפים ומים לטיסה ולטיולים</span></label></li>
+                        <li><label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" id="pk-toy" class="pk-item w-4 h-4 accent-emerald-500 peer" onchange="saveChecklist()"><span class="peer-checked:line-through peer-checked:text-gray-400 text-gray-700">צעצוע/דמות מנחמת + פעילות לטיסה</span></label></li>
+                        <li><label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" id="pk-stroller" class="pk-item w-4 h-4 accent-emerald-500 peer" onchange="saveChecklist()"><span class="peer-checked:line-through peer-checked:text-gray-400 text-gray-700">עגלה קלה/מתקפלת</span></label></li>
+                        <li><label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" id="pk-wipes" class="pk-item w-4 h-4 accent-emerald-500 peer" onchange="saveChecklist()"><span class="peer-checked:line-through peer-checked:text-gray-400 text-gray-700">מגבונים לחים</span></label></li>
+                        <li><label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" id="pk-raincoat" class="pk-item w-4 h-4 accent-emerald-500 peer" onchange="saveChecklist()"><span class="peer-checked:line-through peer-checked:text-gray-400 text-gray-700">שכמיות גשם דקות לילדים</span></label></li>
+                    </ul>
+                </div>
+
+                <div class="p-5 bg-slate-50 rounded-2xl border border-gray-100">
+                    <h3 class="font-bold text-gray-800 mb-3">👕 ביגוד (קיץ)</h3>
+                    <ul class="space-y-2.5 text-sm">
+                        <li><label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" id="pk-summer" class="pk-item w-4 h-4 accent-emerald-500 peer" onchange="saveChecklist()"><span class="peer-checked:line-through peer-checked:text-gray-400 text-gray-700">בגדי קיץ קלים לכולם</span></label></li>
+                        <li><label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" id="pk-layer" class="pk-item w-4 h-4 accent-emerald-500 peer" onchange="saveChecklist()"><span class="peer-checked:line-through peer-checked:text-gray-400 text-gray-700">שכבה חמה לערב (ערבים קרירים)</span></label></li>
+                        <li><label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" id="pk-shoes" class="pk-item w-4 h-4 accent-emerald-500 peer" onchange="saveChecklist()"><span class="peer-checked:line-through peer-checked:text-gray-400 text-gray-700">נעלי הליכה נוחות</span></label></li>
+                        <li><label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" id="pk-swim" class="pk-item w-4 h-4 accent-emerald-500 peer" onchange="saveChecklist()"><span class="peer-checked:line-through peer-checked:text-gray-400 text-gray-700">בגדי ים (חוף פוניאטובקה)</span></label></li>
+                        <li><label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" id="pk-pajamas" class="pk-item w-4 h-4 accent-emerald-500 peer" onchange="saveChecklist()"><span class="peer-checked:line-through peer-checked:text-gray-400 text-gray-700">פיג'מות</span></label></li>
+                    </ul>
+                </div>
+
+                <div class="p-5 bg-slate-50 rounded-2xl border border-gray-100">
+                    <h3 class="font-bold text-gray-800 mb-3">🔌 אלקטרוניקה ושונות</h3>
+                    <ul class="space-y-2.5 text-sm">
+                        <li><label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" id="pk-charger" class="pk-item w-4 h-4 accent-emerald-500 peer" onchange="saveChecklist()"><span class="peer-checked:line-through peer-checked:text-gray-400 text-gray-700">מטענים + כבלים</span></label></li>
+                        <li><label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" id="pk-adapter" class="pk-item w-4 h-4 accent-emerald-500 peer" onchange="saveChecklist()"><span class="peer-checked:line-through peer-checked:text-gray-400 text-gray-700">מתאם תקע אירופאי (Type E)</span></label></li>
+                        <li><label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" id="pk-powerbank" class="pk-item w-4 h-4 accent-emerald-500 peer" onchange="saveChecklist()"><span class="peer-checked:line-through peer-checked:text-gray-400 text-gray-700">סוללת גיבוי (power bank)</span></label></li>
+                        <li><label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" id="pk-daybag" class="pk-item w-4 h-4 accent-emerald-500 peer" onchange="saveChecklist()"><span class="peer-checked:line-through peer-checked:text-gray-400 text-gray-700">תיק יום נוח + בקבוקי מים</span></label></li>
+                        <li><label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" id="pk-firstaid" class="pk-item w-4 h-4 accent-emerald-500 peer" onchange="saveChecklist()"><span class="peer-checked:line-through peer-checked:text-gray-400 text-gray-700">ערכת עזרה ראשונה קטנה</span></label></li>
+                        <li><label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" id="pk-umbrella" class="pk-item w-4 h-4 accent-emerald-500 peer" onchange="saveChecklist()"><span class="peer-checked:line-through peer-checked:text-gray-400 text-gray-700">מטרייה קומפקטית</span></label></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="mt-12 text-center text-gray-400 text-xs md:text-sm">
+        <p>© 2026 ורשה למשפחות - נבנה באהבה ובאופטימיזציה מלאה עבור חופשת הקיץ שלכם!</p>
+    </footer>
+
+</div>
+
+<script>
+    // Tab Management (Main navigation)
+    function showTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        document.getElementById(tabId).classList.add('active');
+        
+        document.querySelectorAll('.btn-nav').forEach(btn => {
+            btn.classList.remove('bg-white', 'text-amber-900', 'shadow-sm');
+            btn.classList.add('text-gray-600', 'hover:text-gray-900');
+        });
+        
+        const activeBtn = document.getElementById('tab-btn-' + tabId);
+        if (activeBtn) {
+            activeBtn.classList.add('bg-white', 'text-amber-900', 'shadow-sm');
+            activeBtn.classList.remove('text-gray-600', 'hover:text-gray-900');
+        }
+
+        if(tabId === 'logistics') {
+            setTimeout(initChart, 50); // Small timeout to ensure canvas is rendered
+        }
+    }
+
+    // Sub-Tab Management for Days Itinerary
+    function showDay(dayNum) {
+        CURRENT_DAY = dayNum;
+        // Hide all day containers
+        document.querySelectorAll('.sub-tab-content').forEach(container => {
+            container.classList.remove('active');
+        });
+        // Show selected day container
+        document.getElementById('day-' + dayNum + '-container').classList.add('active');
+
+        // Reset all day buttons
+        document.querySelectorAll('.day-btn').forEach(btn => {
+            btn.classList.remove('bg-amber-500', 'text-white', 'shadow-md');
+            btn.classList.add('bg-white', 'text-gray-700', 'border', 'border-gray-200');
+        });
+
+        // Set active style to selected day button
+        const activeBtn = document.getElementById('day-btn-' + dayNum);
+        activeBtn.classList.remove('bg-white', 'text-gray-700', 'border', 'border-gray-200');
+        activeBtn.classList.add('bg-amber-500', 'text-white', 'shadow-md');
+    }
+
+    // Chart.js configuration
+    let chartInstance = null;
+
+    // ===== Currency support (budget shown in PLN / ILS / USD / EUR) =====
+    const CCY_RATES = { PLN: 1, ILS: 0.7970, USD: 0.2649, EUR: 0.2310 }; // 1 PLN = X — fallback defaults (ECB, יולי 2026); loadRates() overwrites these with live values
+    const CCY_SYMBOL = { PLN: 'zł', ILS: '₪', USD: '$', EUR: '€' };
+    let CURRENT_CCY = 'PLN';
+    let BUDGET_PLN = { food: 0, attractions: 0, transport: 0, shopping: 0, total: 0 };
+
+    function fmtMoney(pln, ccy) {
+        const val = Math.round(pln * CCY_RATES[ccy]).toLocaleString('en-US');
+        return (ccy === 'PLN') ? (val + ' zł') : (CCY_SYMBOL[ccy] + ' ' + val);
+    }
+
+    function setBudgetCurrency(ccy) {
+        CURRENT_CCY = ccy;
+        document.querySelectorAll('.ccy-btn').forEach(b => {
+            b.classList.remove('bg-amber-500', 'text-white', 'shadow');
+            b.classList.add('bg-white', 'text-gray-600', 'border', 'border-gray-200');
+        });
+        const active = document.getElementById('ccy-btn-' + ccy);
+        if (active) {
+            active.classList.add('bg-amber-500', 'text-white', 'shadow');
+            active.classList.remove('bg-white', 'text-gray-600', 'border', 'border-gray-200');
+        }
+        renderBudgetCurrency();
+    }
+
+    function renderBudgetCurrency() {
+        document.getElementById('res-food').innerText = fmtMoney(BUDGET_PLN.food, CURRENT_CCY);
+        document.getElementById('res-attractions').innerText = fmtMoney(BUDGET_PLN.attractions, CURRENT_CCY);
+        document.getElementById('res-taxi').innerText = fmtMoney(BUDGET_PLN.transport, CURRENT_CCY);
+        document.getElementById('res-shopping').innerText = fmtMoney(BUDGET_PLN.shopping, CURRENT_CCY);
+        document.getElementById('res-total').innerText = fmtMoney(BUDGET_PLN.total, CURRENT_CCY);
+        const multi = document.getElementById('res-total-multi');
+        if (multi) {
+            multi.innerText = '≈ ' + fmtMoney(BUDGET_PLN.total, 'ILS') + '  ·  ' + fmtMoney(BUDGET_PLN.total, 'USD') + '  ·  ' + fmtMoney(BUDGET_PLN.total, 'EUR');
+        }
+        if (chartInstance) {
+            const r = CCY_RATES[CURRENT_CCY];
+            chartInstance.data.datasets[0].data = [BUDGET_PLN.food * r, BUDGET_PLN.attractions * r, BUDGET_PLN.transport * r, BUDGET_PLN.shopping * r];
+            chartInstance.update();
+        }
+    }
+
+    function updateRates() {
+        CCY_RATES.ILS = parseFloat(document.getElementById('rate-ils').value) || CCY_RATES.ILS;
+        CCY_RATES.USD = parseFloat(document.getElementById('rate-usd').value) || CCY_RATES.USD;
+        CCY_RATES.EUR = parseFloat(document.getElementById('rate-eur').value) || CCY_RATES.EUR;
+        renderBudgetCurrency();
+        convertCurrency();
+    }
+
+    function convertCurrency() {
+        const amt = parseFloat(document.getElementById('conv-amount').value) || 0;
+        const from = document.getElementById('conv-from').value;
+        const pln = amt / CCY_RATES[from];
+        const targets = ['PLN', 'ILS', 'USD', 'EUR'].filter(c => c !== from);
+        const box = document.getElementById('conv-results');
+        if (!box) return;
+        box.innerHTML = targets.map(c => {
+            const v = (Math.round(pln * CCY_RATES[c] * 100) / 100).toLocaleString('en-US');
+            return '<div class="bg-white rounded-xl border border-gray-100 p-3"><div class="text-xs text-gray-400">' + CCY_SYMBOL[c] + ' ' + c + '</div><div class="font-extrabold text-amber-700 text-lg">' + v + '</div></div>';
+        }).join('');
+    }
+    function initChart() {
+        const ctx = document.getElementById('budgetChart').getContext('2d');
+        if (chartInstance) { chartInstance.destroy(); }
+        
+        // Use base PLN values converted to the currently selected currency
+        const r = CCY_RATES[CURRENT_CCY];
+
+        chartInstance = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['🍽️ מסעדות ואוכל', '🎡 אטרקציות וכרטיסים', '🚇 התניידות בעיר', '🛍️ קניות ובזבוזים'],
+                datasets: [{
+                    data: [BUDGET_PLN.food * r, BUDGET_PLN.attractions * r, BUDGET_PLN.transport * r, BUDGET_PLN.shopping * r],
+                    backgroundColor: ['#f59e0b', '#3b82f6', '#10b981', '#a855f7'],
+                    borderWidth: 2,
+                    borderColor: '#ffffff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { 
+                        position: 'bottom', 
+                        labels: { 
+                            font: { family: 'Assistant', size: 12, weight: 'bold' },
+                            color: '#374151'
+                        } 
+                    },
+                    title: { 
+                        display: true, 
+                        text: 'חלוקת תקציב משוערת לכל הטיול', 
+                        font: { size: 15, family: 'Assistant', weight: 'bold' },
+                        color: '#1f2937'
+                    }
+                }
+            }
+        });
+    }
+
+    // Dynamic interactive budget calculator
+    function calculateBudget() {
+        const adults = parseInt(document.getElementById('calc-adults').value) || 0;
+        const kids = 2; // Fixed as user spec (kids travel free in public transport!)
+        const days = parseInt(document.getElementById('calc-days').value) || 0;
+        const transportType = document.getElementById('calc-transport-type').value;
+
+        // Cost constants per day / per person (PLN)
+        const breakfastPerPerson = 35; 
+        const lunchPerPerson = 50;
+        const dinnerPerPerson = 70;
+        
+        // Day 1: Illusions (Adults 55, Kids 4 free)
+        // Day 2: Zoo (Adults 40, Kids 4 free)
+        // Day 3: Copernicus (Adults 48, Kids 4 free)
+        // Day 4: Smart Kids (Approx 55 per ticket, everyone pays)
+        // Day 5: Wilanow Gardens (Adults 35, Kids 4 free)
+        const attractionCostPerAdult = 55 + 40 + 48 + 55 + 35; 
+        const attractionCostPerKid = 0 + 0 + 0 + 55 + 0; 
+
+        // Calculate transportation cost based on preference
+        let transportCost = 0;
+        if (transportType === 'uber') {
+            const uberCostPerDay = 60; // Estimated 3-4 rides of Uber XL daily (approx 15-20 PLN each)
+            transportCost = uberCostPerDay * days;
+        } else {
+            // Public transport: Adults buy cards, kids age 4 are 100% free!
+            // Standard ticket calculation: 3-day (72h) card is 36 PLN. 1-day (24h) is 15 PLN.
+            // Let's optimize: if days <= 3: days * 15 or 36. If days = 5: 36 (72h) + 2*15 (24h) per adult.
+            let costPerAdult = 0;
+            if (days <= 2) {
+                costPerAdult = days * 15;
+            } else if (days === 3) {
+                costPerAdult = 36;
+            } else if (days === 4) {
+                costPerAdult = 36 + 15;
+            } else {
+                costPerAdult = 36 + 15 + 15; // 5 days: one 72h pass + two 24h passes
+            }
+            transportCost = costPerAdult * adults; // Kids pay 0!
+        }
+
+        // Math Calculations
+        const foodCost = (adults + kids) * (breakfastPerPerson + lunchPerPerson + dinnerPerPerson) * days;
+        const attractionCost = (adults * attractionCostPerAdult) + (kids * attractionCostPerKid);
+        const shoppingCost = (adults * 150) + (kids * 100); // Standard basic shopping allocation
+
+        const totalCost = foodCost + attractionCost + transportCost + shoppingCost;
+
+        // Store base PLN values and render in the selected currency
+        BUDGET_PLN = { food: foodCost, attractions: attractionCost, transport: transportCost, shopping: shoppingCost, total: totalCost };
+        renderBudgetCurrency();
+    }
+
+    // Initialize budget calculation on window load
+    // ===== Packing checklist (saved in localStorage) =====
+    const CHECKLIST_KEY = 'warsawPackingChecklist2026';
+    function saveChecklist() {
+        const state = {};
+        document.querySelectorAll('.pk-item').forEach(cb => { state[cb.id] = cb.checked; });
+        try { localStorage.setItem(CHECKLIST_KEY, JSON.stringify(state)); } catch (e) {}
+        updateChecklistProgress();
+    }
+    function loadChecklist() {
+        let state = {};
+        try { state = JSON.parse(localStorage.getItem(CHECKLIST_KEY)) || {}; } catch (e) {}
+        document.querySelectorAll('.pk-item').forEach(cb => { if (state[cb.id]) cb.checked = true; });
+        updateChecklistProgress();
+    }
+    function updateChecklistProgress() {
+        const items = document.querySelectorAll('.pk-item');
+        const done = [...items].filter(cb => cb.checked).length;
+        const p = document.getElementById('pk-progress');
+        if (p) p.innerText = done + ' / ' + items.length;
+        const bar = document.getElementById('pk-bar');
+        if (bar) bar.style.width = items.length ? (100 * done / items.length) + '%' : '0%';
+    }
+    function resetChecklist() {
+        document.querySelectorAll('.pk-item').forEach(cb => { cb.checked = false; });
+        try { localStorage.removeItem(CHECKLIST_KEY); } catch (e) {}
+        updateChecklistProgress();
+    }
+
+    // ===== Favorites (saved in localStorage) =====
+    let CURRENT_DAY = 1;
+    const FAV_KEY = 'warsawFavorites2026';
+    function getFavs() { try { return JSON.parse(localStorage.getItem(FAV_KEY)) || []; } catch (e) { return []; } }
+    function setFavs(a) { try { localStorage.setItem(FAV_KEY, JSON.stringify(a)); } catch (e) {} }
+    function cardTitle(card) {
+        const h = card.querySelector('h4');
+        if (!h) return null;
+        const a = h.querySelector('a');
+        const t = ((a && a.innerText) || h.innerText || '').trim();
+        return t.split('|')[0].trim();
+    }
+    function initFavorites() {
+        document.querySelectorAll('#itinerary .card').forEach(card => {
+            const h = card.querySelector('h4');
+            if (!h || h.querySelector('.fav-star')) return;
+            const title = cardTitle(card);
+            if (!title) return;
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'fav-star no-print';
+            btn.dataset.favKey = title;
+            btn.style.cssText = 'font-size:18px;line-height:1;background:none;border:none;cursor:pointer;padding:0;';
+            btn.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); toggleFav(title); });
+            h.insertBefore(btn, h.firstChild);
+        });
+        refreshFavUI();
+    }
+    function toggleFav(title) {
+        let favs = getFavs();
+        favs = favs.includes(title) ? favs.filter(f => f !== title) : favs.concat([title]);
+        setFavs(favs);
+        refreshFavUI();
+    }
+    function refreshFavUI() {
+        const favs = getFavs();
+        document.querySelectorAll('.fav-star').forEach(b => {
+            const on = favs.includes(b.dataset.favKey);
+            b.textContent = on ? '⭐' : '☆';
+            b.style.opacity = on ? '1' : '0.5';
+        });
+        const cnt = document.getElementById('fav-count');
+        if (cnt) cnt.textContent = favs.length;
+        const list = document.getElementById('fav-list');
+        if (list) {
+            if (favs.length) {
+                list.innerHTML = favs.map(f => '<li class="flex items-center justify-between gap-2 py-1.5 border-b border-gray-100"><span>⭐ ' + f + '</span><button type="button" class="fav-remove text-xs text-red-500" data-fav="' + f.replace(/"/g, '&quot;') + '">הסר</button></li>').join('');
+                list.querySelectorAll('.fav-remove').forEach(b => b.addEventListener('click', () => toggleFav(b.dataset.fav)));
+            } else {
+                list.innerHTML = '<li class="text-gray-400 text-sm py-2">עדיין אין מועדפים. לחצו ☆ בפינת כרטיס מסעדה או אטרקציה.</li>';
+            }
+        }
+    }
+    function toggleFavPanel() {
+        const p = document.getElementById('fav-panel');
+        if (p) p.classList.toggle('hidden');
+    }
+
+    // ===== Quick filters (highlight matching cards) =====
+    const FILTERS = {
+        kids: ['גן החיות', 'אשליות', 'קופרניקוס', 'Smart Kids', 'סנאים', 'משחק', 'מגלשה', "לז'נקי", "ג'ימבורי", 'Bzzz'],
+        shopping: ['Tarasy', 'קניון', 'Norblina', 'Arkadia', 'קניות', 'Smyk', 'HalfPrice'],
+        outdoors: ['גן ', 'גני ', 'פארק', 'חוף', 'סקסון', 'וילאנוב', "לז'נקי", 'ספריי', 'אויאזדוב', 'פוניאטוב', 'גדות'],
+        rainy: ['מוזיאון', 'מרכז המדע', 'Smart Kids', 'אשליות', 'Food', 'היכל', 'מסעדה', 'קפה', 'קניון', 'Tarasy', 'Norblina', 'קרפ']
+    };
+    function filterCards(tag) {
+        document.querySelectorAll('#filter-bar .filter-btn').forEach(b => {
+            b.classList.remove('bg-amber-500', 'text-white');
+            b.classList.add('bg-white', 'text-gray-600', 'border', 'border-gray-200');
+        });
+        const ab = document.getElementById('filter-btn-' + tag);
+        if (ab) { ab.classList.add('bg-amber-500', 'text-white'); ab.classList.remove('bg-white', 'text-gray-600', 'border', 'border-gray-200'); }
+        const kws = FILTERS[tag];
+        document.querySelectorAll('#itinerary .card').forEach(card => {
+            if (tag === 'all' || !kws) { card.style.opacity = ''; card.classList.remove('ring-2', 'ring-amber-400'); return; }
+            const txt = card.innerText || '';
+            const match = kws.some(k => txt.indexOf(k) !== -1);
+            if (match) { card.style.opacity = ''; card.classList.add('ring-2', 'ring-amber-400'); }
+            else { card.style.opacity = '0.35'; card.classList.remove('ring-2', 'ring-amber-400'); }
+        });
+    }
+
+    // ===== Swipe between days (mobile) =====
+    function setupSwipe() {
+        const it = document.getElementById('itinerary');
+        if (!it) return;
+        let x0 = null, y0 = null;
+        it.addEventListener('touchstart', e => { x0 = e.changedTouches[0].clientX; y0 = e.changedTouches[0].clientY; }, { passive: true });
+        it.addEventListener('touchend', e => {
+            if (x0 === null) return;
+            const dx = e.changedTouches[0].clientX - x0;
+            const dy = e.changedTouches[0].clientY - y0;
+            x0 = null;
+            if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy)) return;
+            let nd = CURRENT_DAY + (dx < 0 ? 1 : -1);
+            if (nd < 1) nd = 1;
+            if (nd > 6) nd = 6;
+            if (nd !== CURRENT_DAY) showDay(nd);
+        }, { passive: true });
+    }
+
+    // ===== Live weather (Open-Meteo, no API key) =====
+    // Open-Meteo only forecasts ~16 days ahead. Until the trip is inside that window we show a
+    // real historical average for the same dates, then it flips to the live forecast by itself.
+    const TRIP_START = '2026-08-15', TRIP_END = '2026-08-20';
+    const WX_LAT = 52.2297, WX_LON = 21.0122, WX_TZ = 'Europe/Warsaw';
+    const WMO_ICON = { 0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️', 45: '🌫️', 48: '🌫️', 51: '🌦️', 53: '🌦️', 55: '🌦️', 56: '🌧️', 57: '🌧️', 61: '🌦️', 63: '🌧️', 65: '🌧️', 66: '🌧️', 67: '🌧️', 71: '🌨️', 73: '🌨️', 75: '❄️', 77: '❄️', 80: '🌦️', 81: '🌧️', 82: '⛈️', 85: '🌨️', 86: '❄️', 95: '⛈️', 96: '⛈️', 99: '⛈️' };
+    const HE_DAYS = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
+    function heLabel(iso) {
+        const d = new Date(iso + 'T12:00:00');
+        return HE_DAYS[d.getDay()] + ' ' + d.getDate() + '/' + (d.getMonth() + 1);
+    }
+    function renderWeather(times, codes, maxes, mins) {
+        const strip = document.getElementById('wx-strip');
+        if (!strip) return;
+        strip.innerHTML = times.map((t, i) =>
+            '<div class="flex-shrink-0 w-20 bg-white/70 rounded-xl border border-amber-100 p-2 text-center">' +
+            '<p class="text-[11px] font-bold text-gray-500">' + heLabel(t) + '</p>' +
+            '<p class="text-2xl">' + (WMO_ICON[codes[i]] || '🌤️') + '</p>' +
+            '<p class="text-sm font-bold text-gray-700">' + Math.round(maxes[i]) + '°</p>' +
+            '<p class="text-[11px] text-gray-400">' + Math.round(mins[i]) + '°</p></div>'
+        ).join('');
+    }
+    async function loadWeather() {
+        const note = document.getElementById('wx-note');
+        const tip = ' · מומלץ כובע, קרם הגנה ומטרייה קטנה';
+        const daily = 'daily=weather_code,temperature_2m_max,temperature_2m_min';
+        const geo = 'latitude=' + WX_LAT + '&longitude=' + WX_LON + '&timezone=' + encodeURIComponent(WX_TZ);
+        // 1) Live forecast, if the trip is already within the forecast window
+        try {
+            const r = await fetch('https://api.open-meteo.com/v1/forecast?' + geo + '&' + daily + '&start_date=' + TRIP_START + '&end_date=' + TRIP_END);
+            if (r.ok) {
+                const j = await r.json();
+                if (j.daily && j.daily.time && j.daily.temperature_2m_max.some(v => v !== null)) {
+                    renderWeather(j.daily.time, j.daily.weather_code, j.daily.temperature_2m_max, j.daily.temperature_2m_min);
+                    if (note) note.textContent = '🟢 תחזית חיה (Open-Meteo) · עודכן ' + new Date().toLocaleDateString('he-IL') + tip;
+                    return;
+                }
+            }
+        } catch (e) {}
+        // 2) Fallback: real historical average for the same dates over the last 3 years
+        try {
+            const years = [1, 2, 3].map(i => Number(TRIP_START.slice(0, 4)) - i);
+            const res = await Promise.all(years.map(y => {
+                const s = y + TRIP_START.slice(4), e = y + TRIP_END.slice(4);
+                return fetch('https://archive-api.open-meteo.com/v1/archive?' + geo + '&' + daily + '&start_date=' + s + '&end_date=' + e).then(x => x.json());
+            }));
+            const base = res[0].daily.time;
+            const times = [], codes = [], maxes = [], mins = [];
+            for (let i = 0; i < base.length; i++) {
+                const mx = res.map(r => r.daily.temperature_2m_max[i]).filter(v => v !== null);
+                const mn = res.map(r => r.daily.temperature_2m_min[i]).filter(v => v !== null);
+                const cs = res.map(r => r.daily.weather_code[i]).filter(v => v !== null);
+                if (!mx.length || !mn.length) continue;
+                times.push(TRIP_START.slice(0, 4) + base[i].slice(4));
+                maxes.push(mx.reduce((a, b) => a + b, 0) / mx.length);
+                mins.push(mn.reduce((a, b) => a + b, 0) / mn.length);
+                const freq = {};
+                cs.forEach(c => { freq[c] = (freq[c] || 0) + 1; });
+                codes.push(Number(Object.keys(freq).sort((a, b) => freq[b] - freq[a])[0]));
+            }
+            if (times.length) {
+                renderWeather(times, codes, maxes, mins);
+                if (note) note.textContent = '📊 ממוצע היסטורי לתאריכים אלה (3 שנים אחרונות) — תחזית חיה תופיע אוטומטית כ-16 יום לפני הטיול' + tip;
+                return;
+            }
+        } catch (e) {}
+        if (note) note.textContent = '🌤️ לא ניתן לטעון מזג אוויר כרגע — מוצגים ערכים אופייניים לאוגוסט' + tip;
+    }
+
+    // ===== Live FX rates (Frankfurter / ECB, no API key) =====
+    async function loadRates() {
+        const note = document.getElementById('fx-note');
+        try {
+            const r = await fetch('https://api.frankfurter.dev/v1/latest?base=PLN&symbols=ILS,USD,EUR');
+            if (!r.ok) throw new Error('bad status');
+            const j = await r.json();
+            if (j && j.rates) {
+                if (j.rates.ILS) CCY_RATES.ILS = j.rates.ILS;
+                if (j.rates.USD) CCY_RATES.USD = j.rates.USD;
+                if (j.rates.EUR) CCY_RATES.EUR = j.rates.EUR;
+                const put = (id, v) => { const el = document.getElementById(id); if (el) el.value = Number(v).toFixed(4); };
+                put('rate-ils', CCY_RATES.ILS);
+                put('rate-usd', CCY_RATES.USD);
+                put('rate-eur', CCY_RATES.EUR);
+                renderBudgetCurrency();
+                convertCurrency();
+                if (note) note.textContent = '🟢 שערים חיים לפי הבנק המרכזי האירופי (ECB) · עודכן ' + j.date;
+                return;
+            }
+        } catch (e) {}
+        if (note) note.textContent = '🔴 לא ניתן לטעון שערים חיים — מוצגים שערים מקורבים. אפשר לעדכן ידנית למטה.';
+    }
+
+    // Initialize on load
+    window.onload = () => {
+        calculateBudget();
+        convertCurrency();
+        loadChecklist();
+        initFavorites();
+        setupSwipe();
+        loadWeather();
+        loadRates();
+    }
+</script>
+
+</body>
+</html>
