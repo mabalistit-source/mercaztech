@@ -272,6 +272,7 @@
     .link-map { background: #e0f2fe; color: var(--sea-dark); }
     .link-site { background: #fef3c7; color: #92400e; }
     .link-phone { background: #dcfce7; color: #166534; }
+    .link-tickets { background: #ede9fe; color: #5b21b6; }
     .item-hours {
         font-size: 0.82rem;
         color: var(--sea-dark);
@@ -410,6 +411,7 @@ const itinerary = {
             desc: "סיור ראשוני בנמל העתיק – שילוב של אבנים עתיקות, גלריות ובתי קפה על המים.",
             map: "נמל קיסריה העתיקה",
             hours: "הגן הלאומי/הנמל: 08:00–18:00 (שעון קיץ)",
+            tickets: "https://www.parks.org.il/reserve-park/%D7%92%D7%9F-%D7%9C%D7%90%D7%95%D7%9E%D7%99-%D7%A7%D7%99%D7%A1%D7%A8%D7%99%D7%94/",
             note: "כניסה לנמל למבקרים הבאים לשבת בבית קפה/מסעדה: 18 ₪ לאדם (לתושבי קיסריה ואור עקיבא – חינם). בשעות הערב הכניסה לנמל חופשית."
         },
         {
@@ -439,7 +441,8 @@ const itinerary = {
             title: "ארוחת בוקר מפנקת",
             desc: "יציאה לאחד מבתי הקפה הפתוחים על המים בנמל קיסריה, או ירידה קצרה ליישובים הסמוכים (כמו בנימינה) לארוחת בוקר ירוקה וכפרית.",
             map: "נמל קיסריה",
-            hours: "הגן הלאומי/הנמל: 08:00–18:00 (שעון קיץ)"
+            hours: "הגן הלאומי/הנמל: 08:00–18:00 (שעון קיץ)",
+            tickets: "https://www.parks.org.il/reserve-park/%D7%92%D7%9F-%D7%9C%D7%90%D7%95%D7%9E%D7%99-%D7%A7%D7%99%D7%A1%D7%A8%D7%99%D7%94/"
         },
         {
             time: "11:00",
@@ -448,7 +451,8 @@ const itinerary = {
             desc: "טיול נינוח בין הגלריות לאמנות בנמל, ביקור במרכז המבקרים, והתרשמות מההיפודרום והתיאטרון העתיק.",
             map: "נמל קיסריה גלריות מרכז מבקרים",
             hours: "אתרי הגן הלאומי (תיאטרון, היפודרום, מרכז מבקרים): 08:00–18:00",
-            note: "כרטיס כניסה מלא לגן הלאומי (כולל התיאטרון וההיפודרום): כ-39 ₪ למבוגר / 24 ₪ לילד."
+            tickets: "https://www.parks.org.il/reserve-park/%D7%92%D7%9F-%D7%9C%D7%90%D7%95%D7%9E%D7%99-%D7%A7%D7%99%D7%A1%D7%A8%D7%99%D7%94/",
+            note: "כרטיס כניסה מלא לגן הלאומי (כולל התיאטרון וההיפודרום): כ-39 ₪ למבוגר / 24 ₪ לילד. מומלץ לרכוש/לתאם כניסה מראש באתר רשות הטבע והגנים."
         },
         {
             time: "13:30",
@@ -489,6 +493,9 @@ function buildTimeline(dayKey) {
         }
         if (it.phone) {
             links.push(`<a class="link-btn link-phone" href="tel:${it.phone.replace(/-/g, "")}">📞 ${it.phone}</a>`);
+        }
+        if (it.tickets) {
+            links.push(`<a class="link-btn link-tickets" target="_blank" rel="noopener" href="${it.tickets}">🎫 רכישת כרטיסים</a>`);
         }
 
         el.innerHTML = `
