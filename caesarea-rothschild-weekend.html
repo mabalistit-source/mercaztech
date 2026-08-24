@@ -273,6 +273,22 @@
     .link-site { background: #fef3c7; color: #92400e; }
     .link-phone { background: #dcfce7; color: #166534; }
     .link-tickets { background: #ede9fe; color: #5b21b6; }
+    .link-reserved { background: #dcfce7; color: #166534; }
+    .reserved-badge {
+        background: #dcfce7 !important;
+        color: #166534 !important;
+        margin-right: 0.4rem;
+    }
+    .item-reservation {
+        font-size: 0.85rem;
+        color: #166534;
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        border-radius: 10px;
+        padding: 0.6rem 0.8rem;
+        margin-bottom: 0.6rem;
+        line-height: 1.6;
+    }
     .item-hours {
         font-size: 0.82rem;
         color: var(--sea-dark);
@@ -431,7 +447,12 @@ const itinerary = {
             site: "https://www.hellena.co.il/",
             phone: "04-6101018",
             hours: "כל ימות השבוע (כולל שישי): 12:00–23:00",
-            note: "חובה להזמין מקום מראש! לתשומת לב: המסעדה אינה כשרה."
+            reservation: {
+                summary: "ההזמנה אושרה על שם שרי חזי: יום שישי, 4.9, 20:00–22:15, ל-3 סועדים באיזור פנים.",
+                details: "הכניסה לגן הלאומי מותנית בתשלום 18 ₪ לאורח לרשות הטבע והגנים, עד השעה 17:00. אין התחייבות להושבה בשולחן ספציפי.",
+                link: "https://tbit.be/jqIHbO"
+            },
+            note: "לתשומת לב: המסעדה אינה כשרה."
         }
     ],
     sat: [
@@ -497,11 +518,15 @@ function buildTimeline(dayKey) {
         if (it.tickets) {
             links.push(`<a class="link-btn link-tickets" target="_blank" rel="noopener" href="${it.tickets}">🎫 רכישת כרטיסים</a>`);
         }
+        if (it.reservation && it.reservation.link) {
+            links.push(`<a class="link-btn link-reserved" target="_blank" rel="noopener" href="${it.reservation.link}">📋 פרטי ההזמנה</a>`);
+        }
 
         el.innerHTML = `
             <div class="item-head" onclick="toggleItem('${id}')">
                 <div>
                     <span class="item-time">🕒 ${it.time}</span>
+                    ${it.reservation ? `<span class="item-time reserved-badge">✅ הוזמן</span>` : ""}
                     <p class="item-title">${it.title}</p>
                 </div>
                 <button class="check-btn" onclick="event.stopPropagation(); toggleDone('${id}')">✓</button>
@@ -509,6 +534,7 @@ function buildTimeline(dayKey) {
             <div class="item-body" id="body-${id}">
                 <p class="item-desc">${it.desc}</p>
                 ${it.hours ? `<div class="item-hours">🕐 שעות פעילות: ${it.hours}</div>` : ""}
+                ${it.reservation ? `<div class="item-reservation">✅ <b>${it.reservation.summary}</b><br>${it.reservation.details}</div>` : ""}
                 <div class="item-links">${links.join("")}</div>
                 ${it.note ? `<div class="item-note">📌 ${it.note}</div>` : ""}
             </div>
