@@ -8,23 +8,24 @@
   @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@500;700;800&family=Assistant:wght@400;600;700&display=swap');
 
   :root{
-    --bg: #14181b;
-    --bg-panel: #1c2226;
-    --bg-panel-2: #232a2f;
+    --bg: #faf6ec;
+    --bg-panel: #ffffff;
+    --bg-panel-2: #f2ecdd;
     --paper: #eee6d3;
-    --ink: #f2ede1;
-    --ink-dim: #a9b1b6;
-    --amber: #d9a441;
+    --ink: #241f17;
+    --ink-dim: #6d6455;
+    --amber: #b9750f;
     --amber-dim: #8a6a2f;
-    --electricity: #e0a13a;
-    --electricity-dim: #4a3a1a;
-    --machines: #4f8fb8;
-    --machines-dim: #1e3345;
-    --biotech: #59a373;
-    --biotech-dim: #1f3a2a;
-    --danger: #c1564a;
-    --good: #5fae6f;
-    --line: #333c41;
+    --amber-tint: #fbecc9;
+    --electricity: #c07f1c;
+    --electricity-dim: #fbe7c4;
+    --machines: #2f6d95;
+    --machines-dim: #dcedf7;
+    --biotech: #2f7a4c;
+    --biotech-dim: #dcf2e2;
+    --danger: #ac3629;
+    --good: #2f7a41;
+    --line: #e3dac4;
     --radius: 10px;
     font-size: 16px;
   }
@@ -33,20 +34,27 @@
   body{
     margin:0;
     background:
-      radial-gradient(circle at 20% 10%, #1b2226 0%, transparent 45%),
-      radial-gradient(circle at 85% 85%, #201a15 0%, transparent 40%),
+      radial-gradient(circle at 20% 8%, #fff9ea 0%, transparent 45%),
+      radial-gradient(circle at 85% 90%, #fbeed0 0%, transparent 40%),
       var(--bg);
     color:var(--ink);
     font-family:'Assistant', 'Segoe UI', sans-serif;
     min-height:100%;
   }
   .blueprint-grid{
-    position:fixed; inset:0; pointer-events:none; opacity:.06; z-index:0;
+    position:fixed; inset:0; pointer-events:none; opacity:.07; z-index:0;
     background-image:
       linear-gradient(var(--amber) 1px, transparent 1px),
       linear-gradient(90deg, var(--amber) 1px, transparent 1px);
     background-size:38px 38px;
   }
+  .site-header{
+    position:relative; z-index:2; display:flex; align-items:center; justify-content:center;
+    gap:12px; padding:12px 16px; background:#ffffff; border-bottom:1px solid var(--line);
+    box-shadow:0 1px 0 rgba(0,0,0,.02);
+  }
+  .site-header .muni-logo{height:40px; width:auto; flex:none;}
+  .site-header .site-header-title{font-family:'Rubik'; font-weight:700; color:var(--ink); font-size:1rem;}
   h1,h2,h3{font-family:'Rubik','Assistant',sans-serif; margin:0;}
   button{font-family:inherit; cursor:pointer;}
   .screen{position:relative; z-index:1; min-height:100vh; display:none; flex-direction:column; align-items:center; padding:28px 16px 60px;}
@@ -92,7 +100,7 @@
     flex:1; min-width:200px; border:1px solid var(--line); border-radius:8px; padding:12px 14px;
     background:var(--bg-panel-2); transition:.15s;
   }
-  .mode-opt.selected{border-color:var(--amber); background:#2a2310;}
+  .mode-opt.selected{border-color:var(--amber); background:var(--amber-tint);}
   .mode-opt b{display:block; font-size:.95rem; margin-bottom:3px;}
   .mode-opt span{font-size:.82rem; color:var(--ink-dim);}
   .player-total{font-size:.85rem; margin-top:10px; color:var(--ink-dim);}
@@ -142,7 +150,7 @@
   .hexcell.track-biotech{background:linear-gradient(160deg,#69b884,#2e6e46); color:#06170e;}
   .hexcell.logo{background:radial-gradient(circle,#f2d383,#d9a441 70%); color:#241905; cursor:default;}
   .hexcell.logo .inner b{font-size:.68rem; line-height:1.15; display:block;}
-  .hexcell.done{filter:grayscale(.55) brightness(.55); cursor:default;}
+  .hexcell.done{filter:grayscale(.5) brightness(.8); cursor:default;}
   .hexcell.done::after{
     content:"✓"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
     font-size:1.6rem; color:#fff; text-shadow:0 0 6px rgba(0,0,0,.6);
@@ -187,7 +195,7 @@
     font-size:.95rem; text-align:right;
   }
   .opt .letter{font-weight:800; color:var(--amber); margin-left:8px;}
-  .opt.correct{border-color:var(--good); background:#173322; color:#d9f5df;}
+  .opt.correct{border-color:var(--good); background:#e4f5e7; color:#1c5c2c; font-weight:700;}
   .answer-box{
     border:1px dashed var(--line); border-radius:8px; padding:12px 14px; font-size:.94rem;
     color:var(--ink-dim); margin-top:4px; display:none; line-height:1.5;
@@ -200,7 +208,7 @@
   .hint-box.show{display:block;}
   .reward-box{
     display:none; margin-top:14px; border:1px solid var(--amber); border-radius:8px; padding:12px 14px;
-    background:#2a2310; font-size:.9rem;
+    background:var(--amber-tint); font-size:.9rem;
   }
   .reward-box.show{display:block;}
   .reward-box b{color:var(--amber);}
@@ -230,7 +238,7 @@
   .prow .dot{width:12px; height:12px; border-radius:50%; flex:none;}
   .prow .name{flex:1; font-weight:700;}
   .prow .pts{font-family:'Rubik'; font-weight:800; color:var(--amber);}
-  .prow.first{border-color:var(--amber); background:#2a2310;}
+  .prow.first{border-color:var(--amber); background:var(--amber-tint);}
 
   .info-modal .modal-body{font-size:.88rem; line-height:1.6;}
   .info-table{width:100%; border-collapse:collapse; font-size:.83rem;}
@@ -249,6 +257,10 @@
 </style>
 </head>
 <body>
+<header class="site-header">
+  <img src="ashdod-logo.png" alt="עיריית אשדוד" class="muni-logo" onerror="this.style.display='none'">
+  <span class="site-header-title">המרכז הטכנולוגי אשדוד</span>
+</header>
 <div class="blueprint-grid"></div>
 
 <!-- ============ SETUP SCREEN ============ -->
