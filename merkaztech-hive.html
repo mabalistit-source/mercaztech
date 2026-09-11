@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>כוורת הידע — המרכז הטכנולוגי</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@500;700;800&family=Assistant:wght@400;600;700&display=swap');
+
+  :root{
+    --bg: #14181b;
+    --bg-panel: #1c2226;
+    --bg-panel-2: #232a2f;
+    --paper: #eee6d3;
+    --ink: #f2ede1;
+    --ink-dim: #a9b1b6;
+    --amber: #d9a441;
+    --amber-dim: #8a6a2f;
+    --electricity: #e0a13a;
+    --electricity-dim: #4a3a1a;
+    --machines: #4f8fb8;
+    --machines-dim: #1e3345;
+    --biotech: #59a373;
+    --biotech-dim: #1f3a2a;
+    --danger: #c1564a;
+    --good: #5fae6f;
+    --line: #333c41;
+    --radius: 10px;
+    font-size: 16px;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(circle at 20% 10%, #1b2226 0%, transparent 45%),
+      radial-gradient(circle at 85% 85%, #201a15 0%, transparent 40%),
+      var(--bg);
+    color:var(--ink);
+    font-family:'Assistant', 'Segoe UI', sans-serif;
+    min-height:100%;
+  }
+  .blueprint-grid{
+    position:fixed; inset:0; pointer-events:none; opacity:.06; z-index:0;
+    background-image:
+      linear-gradient(var(--amber) 1px, transparent 1px),
+      linear-gradient(90deg, var(--amber) 1px, transparent 1px);
+    background-size:38px 38px;
+  }
+  h1,h2,h3{font-family:'Rubik','Assistant',sans-serif; margin:0;}
+  button{font-family:inherit; cursor:pointer;}
+  .screen{position:relative; z-index:1; min-height:100vh; display:none; flex-direction:column; align-items:center; padding:28px 16px 60px;}
+  .screen.active{display:flex;}
+  .wrap{width:100%; max-width:980px;}
+
+  /* ---------- Header ---------- */
+  .hero{
+    display:flex; align-items:center; gap:16px; margin-bottom:26px; justify-content:center; text-align:center; flex-direction:column;
+  }
+  .hex-badge{
+    width:64px; height:56px;
+    background: conic-gradient(from 90deg, var(--electricity), var(--machines), var(--biotech), var(--electricity));
+    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow: 0 0 22px rgba(217,164,65,.35);
+  }
+  .hex-badge span{font-size:26px;}
+  .hero h1{font-size:1.9rem; font-weight:800; letter-spacing:.2px;}
+  .hero p{color:var(--ink-dim); margin-top:6px; font-size:1rem; max-width:560px;}
+
+  /* ---------- Setup screen ---------- */
+  .panel{
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    border-radius: var(--radius);
+    padding:22px;
+    margin-bottom:18px;
+  }
+  .panel h2{font-size:1.05rem; margin-bottom:14px; color:var(--amber); font-weight:700;}
+  .field-row{display:flex; gap:10px; align-items:center; margin-bottom:10px; flex-wrap:wrap;}
+  .field-row label{min-width:130px; color:var(--ink-dim); font-size:.92rem;}
+  input[type=text], input[type=number]{
+    background:var(--bg-panel-2); border:1px solid var(--line); color:var(--ink);
+    border-radius:6px; padding:8px 10px; font-size:.95rem; font-family:inherit;
+  }
+  input[type=number]{width:76px;}
+  .team-row{display:flex; gap:10px; align-items:center; margin-bottom:8px; flex-wrap:wrap;}
+  .team-swatch{width:14px; height:14px; border-radius:3px; flex:none;}
+  .team-row input[type=text]{flex:1; min-width:120px;}
+  .mode-toggle{display:flex; gap:10px; margin-top:6px; flex-wrap:wrap;}
+  .mode-opt{
+    flex:1; min-width:200px; border:1px solid var(--line); border-radius:8px; padding:12px 14px;
+    background:var(--bg-panel-2); transition:.15s;
+  }
+  .mode-opt.selected{border-color:var(--amber); background:#2a2310;}
+  .mode-opt b{display:block; font-size:.95rem; margin-bottom:3px;}
+  .mode-opt span{font-size:.82rem; color:var(--ink-dim);}
+  .player-total{font-size:.85rem; margin-top:10px; color:var(--ink-dim);}
+  .player-total.warn{color:var(--danger);}
+  .btn{
+    border:none; border-radius:8px; padding:12px 22px; font-size:1rem; font-weight:700;
+    background:var(--amber); color:#20180a; transition:.15s;
+  }
+  .btn:hover{filter:brightness(1.08);}
+  .btn.secondary{background:transparent; border:1px solid var(--line); color:var(--ink); font-weight:600;}
+  .btn.secondary:hover{border-color:var(--amber); color:var(--amber);}
+  .btn:disabled{opacity:.4; cursor:not-allowed;}
+  .btn-row{display:flex; gap:10px; justify-content:center; margin-top:8px; flex-wrap:wrap;}
+  .link-btn{background:none;border:none;color:var(--ink-dim);text-decoration:underline;font-size:.85rem;padding:4px;}
+  .link-btn:hover{color:var(--amber);}
+
+  /* ---------- Board screen ---------- */
+  .board-top{display:flex; justify-content:space-between; align-items:center; width:100%; max-width:980px; margin-bottom:14px; flex-wrap:wrap; gap:10px;}
+  .scoreboard{display:flex; gap:8px; flex-wrap:wrap;}
+  .score-chip{
+    display:flex; align-items:center; gap:7px; background:var(--bg-panel); border:1px solid var(--line);
+    border-radius:20px; padding:6px 12px; font-size:.86rem;
+  }
+  .score-chip.turn{border-color:var(--amber); box-shadow:0 0 0 1px var(--amber) inset;}
+  .score-chip .dot{width:9px; height:9px; border-radius:50%;}
+  .score-chip b{font-family:'Rubik'; font-size:.95rem;}
+  .turn-note{font-size:.82rem; color:var(--ink-dim); text-align:center; margin-bottom:14px;}
+
+  .hive{display:flex; flex-direction:column; align-items:center; overflow-x:auto; width:100%; padding:6px 0 10px;}
+  .hive-row{display:flex; justify-content:center;}
+  .hive-row:not(:first-child){margin-top:-27px;}
+  .hexcell{
+    position:relative; width:104px; height:120px; margin:0 3px; flex:none;
+    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; transition:transform .15s, filter .15s;
+    font-family:'Rubik'; font-weight:700;
+  }
+  .hexcell:hover:not(.done):not(.logo){transform:translateY(-4px) scale(1.04); filter:brightness(1.12);}
+  .hexcell .inner{
+    display:flex; flex-direction:column; align-items:center; gap:4px; text-align:center; padding:0 10px;
+  }
+  .hexcell .tname{font-size:.72rem; letter-spacing:.2px; opacity:.9;}
+  .hexcell .ticon{width:22px; height:22px; opacity:.85;}
+  .hexcell.track-electricity{background:linear-gradient(160deg,#e0a13a,#a9772a); color:#241905;}
+  .hexcell.track-machines{background:linear-gradient(160deg,#5fa3cc,#2f5978); color:#08151f;}
+  .hexcell.track-biotech{background:linear-gradient(160deg,#69b884,#2e6e46); color:#06170e;}
+  .hexcell.logo{background:radial-gradient(circle,#f2d383,#d9a441 70%); color:#241905; cursor:default;}
+  .hexcell.logo .inner b{font-size:.68rem; line-height:1.15; display:block;}
+  .hexcell.done{filter:grayscale(.55) brightness(.55); cursor:default;}
+  .hexcell.done::after{
+    content:"✓"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-size:1.6rem; color:#fff; text-shadow:0 0 6px rgba(0,0,0,.6);
+  }
+  .hexcell .wonchip{
+    position:absolute; bottom:14px; font-size:.62rem; background:rgba(0,0,0,.45); padding:2px 6px; border-radius:8px;
+  }
+
+  .board-actions{display:flex; gap:10px; margin-top:14px;}
+
+  /* ---------- Modal ---------- */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(8,10,11,.86); backdrop-filter: blur(2px);
+    display:none; align-items:center; justify-content:center; z-index:50; padding:16px;
+  }
+  .modal-overlay.active{display:flex;}
+  .modal{
+    background:var(--bg-panel); border:1px solid var(--line); border-radius:14px;
+    max-width:640px; width:100%; max-height:92vh; overflow-y:auto;
+    padding:0; position:relative;
+  }
+  .modal-head{
+    padding:18px 22px 14px; border-bottom:1px solid var(--line);
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+  }
+  .modal-head .tag{
+    display:flex; align-items:center; gap:8px; font-size:.85rem; color:var(--ink-dim);
+  }
+  .modal-head .tag .swatch{width:11px; height:11px; border-radius:3px;}
+  .timer-wrap{padding:0; height:6px; background:var(--bg-panel-2); position:relative; overflow:hidden;}
+  .timer-bar{height:100%; width:100%; background:var(--amber); transition:width 1s linear;}
+  .timer-bar.low{background:var(--danger);}
+  .timer-num{
+    position:absolute; top:10px; left:20px; font-family:'Rubik'; font-weight:800; font-size:1.3rem; color:var(--amber);
+  }
+  .modal-body{padding:20px 22px;}
+  .qtype{font-size:.78rem; color:var(--ink-dim); margin-bottom:6px;}
+  .qtext{font-size:1.15rem; line-height:1.55; font-weight:600; margin-bottom:16px;}
+  .options{display:flex; flex-direction:column; gap:8px; margin-bottom:6px;}
+  .opt{
+    border:1px solid var(--line); background:var(--bg-panel-2); border-radius:8px; padding:10px 14px;
+    font-size:.95rem; text-align:right;
+  }
+  .opt .letter{font-weight:800; color:var(--amber); margin-left:8px;}
+  .opt.correct{border-color:var(--good); background:#173322; color:#d9f5df;}
+  .answer-box{
+    border:1px dashed var(--line); border-radius:8px; padding:12px 14px; font-size:.94rem;
+    color:var(--ink-dim); margin-top:4px; display:none; line-height:1.5;
+  }
+  .answer-box.show{display:block; color:var(--ink); border-color:var(--amber-dim);}
+  .hint-box{
+    margin-top:10px; border-radius:8px; padding:10px 14px; font-size:.86rem; color:var(--ink-dim);
+    background:var(--bg-panel-2); display:none;
+  }
+  .hint-box.show{display:block;}
+  .reward-box{
+    display:none; margin-top:14px; border:1px solid var(--amber); border-radius:8px; padding:12px 14px;
+    background:#2a2310; font-size:.9rem;
+  }
+  .reward-box.show{display:block;}
+  .reward-box b{color:var(--amber);}
+  .modal-controls{display:flex; gap:8px; flex-wrap:wrap; margin-top:16px;}
+  .score-row{margin-top:18px; padding-top:16px; border-top:1px solid var(--line);}
+  .score-row h3{font-size:.85rem; color:var(--ink-dim); margin-bottom:10px; font-weight:600;}
+  .team-buttons{display:flex; flex-wrap:wrap; gap:8px;}
+  .team-btn{
+    border-radius:8px; padding:9px 14px; font-size:.9rem; border:1px solid var(--line);
+    background:var(--bg-panel-2); color:var(--ink); display:flex; align-items:center; gap:7px;
+  }
+  .team-btn:hover{border-color:var(--amber);}
+  .team-btn .dot{width:9px; height:9px; border-radius:50%;}
+  .bonus-note{font-size:.78rem; color:var(--ink-dim); margin-top:8px;}
+  .close-x{
+    background:none; border:none; color:var(--ink-dim); font-size:1.3rem; line-height:1; padding:4px 8px;
+  }
+  .close-x:hover{color:var(--ink);}
+
+  /* ---------- End screen ---------- */
+  .podium{display:flex; flex-direction:column; gap:10px; width:100%; max-width:520px; margin:20px 0;}
+  .prow{
+    display:flex; align-items:center; gap:12px; background:var(--bg-panel); border:1px solid var(--line);
+    border-radius:10px; padding:14px 18px;
+  }
+  .prow .rank{font-family:'Rubik'; font-weight:800; font-size:1.2rem; width:28px; color:var(--amber);}
+  .prow .dot{width:12px; height:12px; border-radius:50%; flex:none;}
+  .prow .name{flex:1; font-weight:700;}
+  .prow .pts{font-family:'Rubik'; font-weight:800; color:var(--amber);}
+  .prow.first{border-color:var(--amber); background:#2a2310;}
+
+  .info-modal .modal-body{font-size:.88rem; line-height:1.6;}
+  .info-table{width:100%; border-collapse:collapse; font-size:.83rem;}
+  .info-table th,.info-table td{border-bottom:1px solid var(--line); padding:7px 6px; text-align:right; vertical-align:top;}
+  .info-table th{color:var(--amber); font-weight:700;}
+  .track-tag{display:inline-block; padding:1px 7px; border-radius:6px; font-size:.72rem; font-weight:700;}
+  .track-tag.electricity{background:var(--electricity-dim); color:var(--electricity);}
+  .track-tag.machines{background:var(--machines-dim); color:var(--machines);}
+  .track-tag.biotech{background:var(--biotech-dim); color:var(--biotech);}
+
+  @media (max-width:600px){
+    .hexcell{width:82px; height:96px; margin:0 2px;}
+    .hive-row:not(:first-child){margin-top:-21px;}
+    .hero h1{font-size:1.45rem;}
+  }
+</style>
+</head>
+<body>
+<div class="blueprint-grid"></div>
+
+<!-- ============ SETUP SCREEN ============ -->
+<div class="screen active" id="screen-setup">
+  <div class="wrap">
+    <div class="hero">
+      <div class="hex-badge"><span>⬡</span></div>
+      <h1>כוורת הידע של המרכז הטכנולוגי</h1>
+      <p>שלוש מגמות, שש עשרה תאים, קבוצה אחת מנצחת. בחרו תא בכוורת, ענו לפני שהזמן אוזל, וצברו נקודות למגמה שלכם.</p>
+    </div>
+
+    <div class="panel">
+      <h2>קבוצות</h2>
+      <div class="field-row">
+        <label>מספר קבוצות</label>
+        <input type="number" id="numTeams" min="2" max="8" value="4">
+      </div>
+      <div id="teamsList"></div>
+      <div class="player-total" id="playerTotal"></div>
+    </div>
+
+    <div class="panel">
+      <h2>אופן המשחק</h2>
+      <div class="mode-toggle" id="modeToggle">
+        <button type="button" class="mode-opt selected" data-mode="team">
+          <b>לפי תורות</b>
+          <span>כל קבוצה בוחרת תא בתורה. הקבוצה שבתור עונה, אבל אפשר להעניק נקודה לכל קבוצה שהצליחה.</span>
+        </button>
+        <button type="button" class="mode-opt" data-mode="race">
+          <b>מרוץ פתוח</b>
+          <span>כל הקבוצות עונות במקביל על אותה שאלה. מי שהניחוד/מנחה קובע שענה נכון וראשון — מקבל את הנקודה.</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn" id="startBtn">התחילו משחק</button>
+      <button class="btn secondary" id="infoBtn">מדריך הכנה לכוורת הפיזית</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ BOARD SCREEN ============ -->
+<div class="screen" id="screen-board">
+  <div class="board-top">
+    <div class="scoreboard" id="scoreboard"></div>
+    <button class="btn secondary" id="endEarlyBtn">סיום וטבלת תוצאות</button>
+  </div>
+  <div class="turn-note" id="turnNote"></div>
+  <div class="hive" id="hive"></div>
+  <div class="board-actions">
+    <button class="btn secondary" id="restartBtn">משחק חדש</button>
+  </div>
+</div>
+
+<!-- ============ END SCREEN ============ -->
+<div class="screen" id="screen-end">
+  <div class="wrap" style="align-items:center; display:flex; flex-direction:column;">
+    <div class="hero"><h1 id="endTitle">תוצאות סופיות</h1></div>
+    <div class="podium" id="podium"></div>
+    <div class="btn-row">
+      <button class="btn" id="playAgainBtn">משחק חדש</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ QUESTION MODAL ============ -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="tag"><span class="swatch" id="mSwatch"></span><span id="mTrackName"></span> · <span id="mTypeName"></span></div>
+      <button class="close-x" id="closeModalX">✕</button>
+    </div>
+    <div class="timer-wrap"><div class="timer-bar" id="timerBar"></div></div>
+    <div class="modal-body">
+      <div class="timer-num" id="timerNum"></div>
+      <div class="qtext" id="qtext" style="margin-top:22px;"></div>
+      <div class="options" id="optionsWrap"></div>
+      <div class="answer-box" id="answerBox"></div>
+      <div class="hint-box" id="hintBox"></div>
+      <div class="reward-box" id="rewardBox"></div>
+
+      <div class="modal-controls">
+        <button class="btn secondary" id="pauseTimerBtn">עצירת טיימר</button>
+        <button class="btn secondary" id="revealHintBtn">הצג רמז</button>
+        <button class="btn" id="revealAnswerBtn">הצג תשובה</button>
+      </div>
+
+      <div class="score-row">
+        <h3>למי להעניק נקודה?</h3>
+        <div class="team-buttons" id="teamButtons"></div>
+        <div class="bonus-note" id="bonusNote"></div>
+        <div class="btn-row" style="justify-content:flex-start; margin-top:14px;">
+          <button class="btn secondary" id="skipPointBtn">סגירה בלי ניקוד</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PREP INFO MODAL ============ -->
+<div class="modal-overlay" id="infoOverlay">
+  <div class="modal info-modal">
+    <div class="modal-head">
+      <div class="tag"><b style="color:var(--ink)">מדריך הכנה — 16 התאים והרמזים המוצעים להדפסה</b></div>
+      <button class="close-x" id="closeInfoX">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="color:var(--ink-dim); margin-bottom:12px;">
+        לכל תא מוצע סמל פשוט וחד־קווי, מתאים לתבליט שטוח שקל למדל ולהדפיס בתלת מימד ולשבץ בתוך תא הכוורת הפיזי כרמז.
+        התא העליון (הלוגו) יכול להישאר ריק מרמז ולשמש סמל של המרכז עצמו.
+      </p>
+      <table class="info-table" id="infoTable"></table>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ================= DATA ================= */
+const TRACKS = {
+  electricity: { name:'הנדסת חשמל ואלקטרוניקה', color:'var(--electricity)', short:'חשמל' },
+  machines:    { name:'הנדסת מכונות',            color:'var(--machines)',    short:'מכונות' },
+  biotech:     { name:'ביוטכנולוגיה',             color:'var(--biotech)',     short:'ביוטק' },
+};
+const TYPES = {
+  knowledge: { name:'שאלת ידע',    seconds:20 },
+  logic:     { name:'שאלת היגיון', seconds:25 },
+  task:      { name:'שאלת משימה', seconds:90 },
+  surprise:  { name:'תא הפתעה',    seconds:30 },
+};
+
+function icon(type){
+  switch(type){
+    case 'knowledge': return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="10" r="6"/><path d="M9.5 16h5"/><path d="M10 19h4"/><path d="M12 4V2"/></svg>`;
+    case 'logic': return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="5" cy="12" r="2"/><circle cx="19" cy="6" r="2"/><circle cx="19" cy="18" r="2"/><path d="M7 12h5"/><path d="M12 12l5-5"/><path d="M12 12l5 5"/></svg>`;
+    case 'task': return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="3" width="16" height="18" rx="1.5"/><path d="M8 8h8"/><path d="M8 12l2 2 4-4"/><path d="M8 17h5"/></svg>`;
+    case 'surprise': return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="9" width="18" height="11" rx="1"/><path d="M3 13h18"/><path d="M12 9v11"/><path d="M12 9c-2-4-7-4-7-1 0 2 3 1 7 1Z"/><path d="M12 9c2-4 7-4 7-1 0 2-3 1-7 1Z"/></svg>`;
+  }
+}
+
+/* 15 content cells + 1 logo cell, arranged into hive rows [1,2,3,4,3,2,1] */
+const CELLS = [
+  { logo:true },
+
+  // row2 (2)
+  { track:'electricity', type:'knowledge', q:'למה ציפור שעומדת על חוט חשמל לא מתחשמלת?',
+    answer:'הציפור נוגעת בנקודה אחת בלבד על החוט, כך שכל גופה נמצא באותו פוטנציאל חשמלי. חשמל זורם רק כשיש הפרש מתח בין שתי נקודות — ולכן זרם לא עובר דרך גופה, אלא רק דרך החוט עצמו. אם הייתה נוגעת גם בקרקע או בחוט אחר בעל מתח שונה, היה נוצר הפרש פוטנציאלים והיא הייתה מתחשמלת.',
+    hint:'סמל מוצע: ציפור פשוטה על קו ישר (חוט).' },
+  { track:'machines', type:'knowledge', q:'במערכת מכטרונית, מהו התפקיד העיקרי של הבקר?',
+    options:['להפוך אנרגיה חשמלית לאנרגיה מכנית','לקבל מידע מחיישנים, לעבד אותו ולקבוע את פעולת המערכת','להגדיל את המתח שמגיע למנוע','לחבר את החלקים המכניים של המערכת'],
+    correct:1,
+    hint:'סמל מוצע: שבב/מעגל מודפס (מלבן עם רגליים קצרות).' },
+
+  // row3 (3)
+  { track:'biotech', type:'knowledge', q:'איזה מהבאים הוא יישום של ביוטכנולוגיה?',
+    options:['פיתוח תרופות','ייצור מזון','אבחון מחלות','כל התשובות נכונות'],
+    correct:3,
+    hint:'סמל מוצע: כמוסת תרופה פשוטה.' },
+  { track:'electricity', type:'knowledge', q:'מה הקשר בין נר לגנרטור?',
+    answer:'בשניהם מתרחשת המרת אנרגיה: בנר, אנרגיה כימית (מהשעווה) מומרת לאנרגיה תרמית ואור. בגנרטור, אנרגיה מכנית מומרת לאנרגיה חשמלית. שני המכשירים הם למעשה "ממירי אנרגיה" מסוג אחד לסוג אחר.',
+    hint:'סמל מוצע: להבת נר פשוטה לצד חץ.' },
+  { track:'machines', type:'knowledge', q:'מדוע במכונות משתמשים לעיתים קרובות בגלגלי שיניים בעלי גדלים שונים?',
+    options:['רק כדי לשנות את כיוון הסיבוב','כדי לשנות את מהירות הסיבוב והמומנט המועבר','כדי להפוך תנועה סיבובית לתנועה חשמלית','כדי למנוע לחלוטין חיכוך במערכת'],
+    correct:1,
+    hint:'סמל מוצע: שני גלגלי שיניים בגדלים שונים משולבים זה בזה.' },
+
+  // row4 (4)
+  { track:'biotech', type:'knowledge', q:'מה ניתן לעשות באמצעות אלקטרופורזה בג\'ל?',
+    options:['להפריד מקטעי DNA לפי גודלם','לייצר DNA חדש','לראות תאים חיים','למדוד את רמת החמצן במים'],
+    correct:0,
+    hint:'סמל מוצע: כמה פסים אופקיים במדרגות גובה (כמו סרגל).' },
+  { track:'electricity', type:'logic', q:'אם המקרר מקרר, למה החלק האחורי שלו חם?',
+    answer:'המקרר לא "מייצר קור" אלא מזיז חום מהפנים אל החוץ (מחזור קירור). חום זה משתחרר דרך הצינורות (המעבה) שבגב המקרר, ולכן הוא חם — בנוסף לחום שמייצר המדחס עצמו בפעולתו. זהו עיקרון "משאבת החום": אנרגיה לא נעלמת, היא רק עוברת ממקום למקום.',
+    hint:'סמל מוצע: פתית שלג לצד חץ המצביע החוצה.' },
+  { track:'machines', type:'logic', q:'רובוט נוסע בקו ישר באמצעות שני מנועים. המנוע הימני מסתובב מעט מהר יותר מהמנוע השמאלי. מה צפוי לקרות לרובוט, ומדוע?',
+    options:['הרובוט ימשיך ישר כי שני המנועים פועלים','הרובוט יסטה לכיוון הצד של המנוע האיטי יותר','הרובוט יסטה לכיוון הצד של המנוע המהיר יותר','הרובוט יעצור מיד'],
+    correct:2,
+    answer:'התשובה הנכונה: ב — כאשר המנוע הימני מהיר יותר, הצד הימני מתקדם יותר מהצד השמאלי, ולכן הרובוט יסטה שמאלה, לכיוון הצד האיטי יותר.',
+    hint:'סמל מוצע: רובוט קטן עם חץ עקום המצביע הצידה.' },
+  { track:'biotech', type:'logic', q:'במעבדה נבדקו שתי דגימות DNA. בשתי הדגימות נמצא אותו גן, אך רק בדגימה א\' נוצר החלבון שהגן מקודד לו. מה יכולה להיות הסיבה לכך?',
+    answer:'הגן קיים בשתי הדגימות, אך בדגימה א\' הוא פעיל ומתועתק ל-RNA, ולכן ניתן לייצר ממנו את החלבון. בדגימה ב\' הגן קיים אך אינו פעיל (לא מתבטא), או שתהליך התעתוק/התרגום נפגע — ולכן לא נוצר חלבון למרות שהגן עצמו נוכח.',
+    hint:'סמל מוצע: סליל DNA פשוט.' },
+
+  // row5 (3)
+  { track:'electricity', type:'task', q:'קיר עם מעגל חשמלי פתוח: חוטים, סוללה ונורה. איך אפשר להדליק את האור? מצאו את שתי הנקודות הנכונות ו"סִגרו" את המעגל.',
+    answer:'המעגל בין שתי הנקודות המסומנות פתוח. יש לגעת בו-זמנית בשתי הנקודות (בעזרת הגוף, או חוט/מוליך) כדי לסגור את המעגל דרך המוליך ולהדליק את הנורה. זו הדגמה חיה למושג "מעגל סגור" מול "מעגל פתוח".',
+    hint:'סמל מוצע: נורה עם קו מעגל שבור לצדה.' },
+  { track:'machines', type:'task', q:'בנו מנגנון גלגלי שיניים (בעזרת ערכת הרכבה כגון לגו טכניק או מאייקנו) שממחיש כיצד שינוי היחס בין גדלי הגלגלים משנה את מהירות הסיבוב ואת המומנט המועבר. הדגימו לפחות שני יחסי הילוכים שונים והסבירו מה קורה למהירות ולכוח בכל יחס.',
+    answer:'מנגנון תקין מראה שגלגל שיניים קטן המניע גלגל גדול מוריד מהירות אך מגדיל מומנט (כוח סיבוב), ולהפך — גלגל גדול המניע גלגל קטן מעלה מהירות אך מקטין מומנט. יחס ההילוכים = מספר השיניים של הגלגל המונע חלקי מספר השיניים של הגלגל המניע.',
+    hint:'סמל מוצע: שני גלגלי שיניים בגדלים שונים, משולבים.' },
+  { track:'biotech', type:'task', q:'בנו דגם של גדילי ה-DNA. הדגם חייב להציג: שני גדילים, ארבעה סוגי בסיסים, התאמה בין הבסיסים, מבנה של סליל כפול, וסימון סוג הקשר.',
+    answer:'דגם תקין יציג שני גדילים אנטי-מקבילים, ארבעת הבסיסים (A,T,C,G), התאמה נכונה (A-T, C-G), מבנה סליל כפול (double helix), וסימון שהקשר בין הבסיסים הוא קשר מימן.',
+    hint:'סמל מוצע: סליל כפול (שתי סרטים שזורים).' },
+
+  // row6 (2)
+  { track:'electricity', type:'surprise', q:'מעגל חשמלי מחובר למקור מתח של 12V. בו מחוברים בטור שני נגדים: נגד ראשון בעל התנגדות 4Ω, ונגד שני בעל התנגדות 8Ω. מהו הזרם הזורם במעגל, ומהי נפילת המתח על כל אחד מהנגדים?',
+    answer:'התנגדות כוללת בטור = 4+8 = 12Ω. לפי חוק אוהם: זרם = מתח/התנגדות = 12V/12Ω = 1A. נפילת המתח על הנגד הראשון = 1A×4Ω = 4V. נפילת המתח על הנגד השני = 1A×8Ω = 8V (ובסה"כ 12V, כמצופה).',
+    hint:'סמל מוצע: סמל נגד (זיגזג) בתוך מלבן.',
+    reward:'תג "מהנדס/ת חשמל מוסמך/ת" + בונוס נקודות' },
+  { track:'machines', type:'surprise', q:'מערכת הילוכים מורכבת משני גלגלי שיניים: גלגל מניע בעל 60 שיניים המסתובב במהירות 120 סל"ד, מחובר לגלגל מונע בעל 20 שיניים. מהי מהירות הסיבוב של הגלגל המונע, ומהו יחס ההילוכים?',
+    answer:'יחס ההילוכים = 60/20 = 3. מהירות הגלגל המונע = 120 × 3 = 360 סל"ד. ככל שהגלגל המונע קטן יותר מהמניע, כך הוא מסתובב מהר יותר — אך עם פחות מומנט.',
+    hint:'סמל מוצע: גלגל שיניים בודד עם מספר קטן לצדו.',
+    reward:'תג "מהנדס/ת מכונות מוסמך/ת" + בונוס נקודות' },
+
+  // row7 (1)
+  { track:'biotech', type:'surprise', q:'בתא מסוים התרחשה מוטציה בגן המקודד לאנזים מסוים, כך שבאמצע הרצף המקודד לחלבון נוצר קודון עצירה (Stop codon). מה צפוי לקרות לחלבון שייווצר, וכיצד הדבר עשוי להשפיע על פעילות האנזים?',
+    answer:'קודון עצירה באמצע הרצף גורם לעצירה מוקדמת של תהליך התרגום, כך שנוצר חלבון קצוע (מקוצר) מהצפוי. חלבון קצוע לרוב אינו מקפל את מבנהו התלת-ממדי כראוי, ולכן ברוב המקרים הוא לא יתפקד כאנזים תקין — האנזים עלול לאבד את פעילותו הביולוגית לחלוטין.',
+    hint:'סמל מוצע: סליל DNA עם תמרור "עצור".',
+    reward:'תג "ביוטכנולוג/ית מוסמך/ת" + בונוס נקודות' },
+];
+
+const ROW_SIZES = [1,2,3,4,3,2,1];
+const TEAM_PALETTE = ['#e0a13a','#4f8fb8','#59a373','#c1564a','#9b6fd1','#d1a85f','#4fb8a8','#c98fc9'];
+
+/* ================= STATE ================= */
+let state = {
+  teams: [],
+  mode: 'team',
+  turnIndex: 0,
+  cells: [],
+  activeCellIndex: null,
+  timer: { remaining:0, total:0, handle:null, paused:false },
+};
+
+/* ================= SETUP SCREEN ================= */
+const numTeamsInput = document.getElementById('numTeams');
+const teamsList = document.getElementById('teamsList');
+const playerTotalEl = document.getElementById('playerTotal');
+
+function renderTeamInputs(){
+  const n = Math.max(2, Math.min(8, parseInt(numTeamsInput.value)||4));
+  numTeamsInput.value = n;
+  const existing = Array.from(teamsList.querySelectorAll('.team-row')).map(row=>({
+    name: row.querySelector('.tname-input').value,
+    players: row.querySelector('.tplayers-input').value
+  }));
+  teamsList.innerHTML = '';
+  for(let i=0;i<n;i++){
+    const prev = existing[i];
+    const row = document.createElement('div');
+    row.className = 'team-row';
+    row.innerHTML = `
+      <span class="team-swatch" style="background:${TEAM_PALETTE[i%TEAM_PALETTE.length]}"></span>
+      <input type="text" class="tname-input" value="${prev?prev.name:'קבוצה '+(i+1)}">
+      <label style="min-width:auto;">שחקנים:</label>
+      <input type="number" class="tplayers-input" min="1" max="10" value="${prev?prev.players:3}">
+    `;
+    teamsList.appendChild(row);
+  }
+  updatePlayerTotal();
+}
+function updatePlayerTotal(){
+  const totals = Array.from(teamsList.querySelectorAll('.tplayers-input')).map(i=>parseInt(i.value)||0);
+  const sum = totals.reduce((a,b)=>a+b,0);
+  playerTotalEl.textContent = `סה"כ משתתפים: ${sum} (טווח מומלץ: 1–30)`;
+  playerTotalEl.classList.toggle('warn', sum<1 || sum>30);
+}
+numTeamsInput.addEventListener('change', renderTeamInputs);
+teamsList.addEventListener('input', (e)=>{ if(e.target.classList.contains('tplayers-input')) updatePlayerTotal(); });
+renderTeamInputs();
+
+document.getElementById('modeToggle').addEventListener('click', (e)=>{
+  const opt = e.target.closest('.mode-opt');
+  if(!opt) return;
+  document.querySelectorAll('.mode-opt').forEach(o=>o.classList.remove('selected'));
+  opt.classList.add('selected');
+  state.mode = opt.dataset.mode;
+});
+
+document.getElementById('startBtn').addEventListener('click', startGame);
+document.getElementById('infoBtn').addEventListener('click', ()=> openInfoModal());
+document.getElementById('closeInfoX').addEventListener('click', ()=> document.getElementById('infoOverlay').classList.remove('active'));
+
+function startGame(){
+  const names = Array.from(teamsList.querySelectorAll('.tname-input')).map(i=>i.value.trim()||'קבוצה');
+  state.teams = names.map((name,i)=>({ name, color: TEAM_PALETTE[i%TEAM_PALETTE.length], score:0 }));
+  state.turnIndex = 0;
+  state.cells = CELLS.map(c=>({ ...c, answered:false, wonBy:null }));
+  showScreen('screen-board');
+  renderScoreboard();
+  renderHive();
+  updateTurnNote();
+}
+
+/* ================= BOARD SCREEN ================= */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function renderScoreboard(){
+  const sb = document.getElementById('scoreboard');
+  sb.innerHTML = state.teams.map((t,i)=>`
+    <div class="score-chip ${state.mode==='team' && i===state.turnIndex ? 'turn':''}">
+      <span class="dot" style="background:${t.color}"></span>
+      <b>${t.score}</b><span>${t.name}</span>
+    </div>
+  `).join('');
+}
+
+function updateTurnNote(){
+  const note = document.getElementById('turnNote');
+  if(state.mode==='team'){
+    note.textContent = `בתור לבחור תא: ${state.teams[state.turnIndex].name}`;
+  } else {
+    note.textContent = 'מצב מרוץ פתוח — כל קבוצה יכולה לענות על כל תא שנבחר';
+  }
+}
+
+function renderHive(){
+  const hive = document.getElementById('hive');
+  hive.innerHTML = '';
+  let idx = 0;
+  ROW_SIZES.forEach(size=>{
+    const row = document.createElement('div');
+    row.className = 'hive-row';
+    for(let i=0;i<size;i++){
+      row.appendChild(makeHexEl(idx));
+      idx++;
+    }
+    hive.appendChild(row);
+  });
+}
+
+function makeHexEl(index){
+  const cell = state.cells[index];
+  const el = document.createElement('div');
+  el.className = 'hexcell';
+  if(cell.logo){
+    el.classList.add('logo');
+    el.innerHTML = `<div class="inner"><b>⬡<br>המרכז<br>הטכנולוגי</b></div>`;
+    return el;
+  }
+  el.classList.add('track-'+cell.track);
+  if(cell.answered) el.classList.add('done');
+  if(!cell.answered){
+    el.innerHTML = `<div class="inner"><span class="tname">${TRACKS[cell.track].short}</span></div>`;
+    el.addEventListener('click', ()=> openQuestion(index));
+  } else if(cell.wonBy!==null){
+    el.innerHTML = `<span class="wonchip">${state.teams[cell.wonBy].name}</span>`;
+  }
+  return el;
+}
+
+document.getElementById('restartBtn').addEventListener('click', ()=> showScreen('screen-setup'));
+document.getElementById('endEarlyBtn').addEventListener('click', ()=> showEndScreen());
+
+/* ================= QUESTION MODAL ================= */
+const overlay = document.getElementById('modalOverlay');
+const els = {
+  swatch: document.getElementById('mSwatch'),
+  trackName: document.getElementById('mTrackName'),
+  typeName: document.getElementById('mTypeName'),
+  qtext: document.getElementById('qtext'),
+  options: document.getElementById('optionsWrap'),
+  answerBox: document.getElementById('answerBox'),
+  hintBox: document.getElementById('hintBox'),
+  rewardBox: document.getElementById('rewardBox'),
+  timerBar: document.getElementById('timerBar'),
+  timerNum: document.getElementById('timerNum'),
+  teamButtons: document.getElementById('teamButtons'),
+  bonusNote: document.getElementById('bonusNote'),
+};
+
+function openQuestion(index){
+  state.activeCellIndex = index;
+  const cell = state.cells[index];
+  const track = TRACKS[cell.track];
+  const type = TYPES[cell.type];
+
+  els.swatch.style.background = track.color;
+  els.trackName.textContent = track.name;
+  els.typeName.textContent = type.name;
+  els.qtext.textContent = cell.q;
+  els.answerBox.classList.remove('show');
+  els.answerBox.textContent = cell.answer || '';
+  els.hintBox.classList.remove('show');
+  els.hintBox.textContent = cell.hint ? ('רמז: ' + cell.hint) : '';
+  els.rewardBox.classList.remove('show');
+  if(cell.reward){
+    els.rewardBox.innerHTML = `🎁 <b>פרס לתא ההפתעה:</b> ${cell.reward}`;
+  }
+
+  if(cell.options){
+    els.options.innerHTML = cell.options.map((opt,i)=>`
+      <div class="opt" data-i="${i}"><span class="letter">${['א','ב','ג','ד'][i]}.</span>${opt}</div>
+    `).join('');
+  } else {
+    els.options.innerHTML = '';
+  }
+
+  renderTeamButtons(cell);
+  els.bonusNote.textContent = cell.reward ? 'תא הפתעה: שקלו להעניק נקודה כפולה למי שפתר נכון.' : '';
+
+  overlay.classList.add('active');
+  startTimer(type.seconds);
+}
+
+function renderTeamButtons(cell){
+  els.teamButtons.innerHTML = state.teams.map((t,i)=>`
+    <button class="team-btn" data-i="${i}"><span class="dot" style="background:${t.color}"></span>${t.name} (+1)</button>
+  `).join('');
+}
+
+els.teamButtons.addEventListener('click', (e)=>{
+  const btn = e.target.closest('.team-btn');
+  if(!btn) return;
+  const i = parseInt(btn.dataset.i);
+  const bonus = state.cells[state.activeCellIndex].reward ? 1 : 0;
+  state.teams[i].score += 1 + bonus;
+  closeQuestion(i);
+});
+
+document.getElementById('skipPointBtn').addEventListener('click', ()=> closeQuestion(null));
+document.getElementById('closeModalX').addEventListener('click', ()=> closeQuestion(null));
+
+document.getElementById('revealAnswerBtn').addEventListener('click', ()=>{
+  const cell = state.cells[state.activeCellIndex];
+  stopTimer();
+  if(cell.options){
+    els.options.querySelectorAll('.opt').forEach(o=>{
+      if(parseInt(o.dataset.i)===cell.correct) o.classList.add('correct');
+    });
+  }
+  if(cell.answer){ els.answerBox.classList.add('show'); }
+  if(cell.reward){ els.rewardBox.classList.add('show'); }
+});
+
+document.getElementById('revealHintBtn').addEventListener('click', ()=>{
+  els.hintBox.classList.toggle('show');
+});
+
+document.getElementById('pauseTimerBtn').addEventListener('click', (e)=>{
+  state.timer.paused = !state.timer.paused;
+  e.target.textContent = state.timer.paused ? 'המשך טיימר' : 'עצירת טיימר';
+});
+
+function closeQuestion(wonByIndex){
+  stopTimer();
+  const cell = state.cells[state.activeCellIndex];
+  cell.answered = true;
+  cell.wonBy = wonByIndex;
+  overlay.classList.remove('active');
+  if(state.mode==='team'){
+    state.turnIndex = (state.turnIndex+1) % state.teams.length;
+  }
+  renderScoreboard();
+  renderHive();
+  updateTurnNote();
+  if(state.cells.every(c=>c.logo || c.answered)){
+    setTimeout(()=> showEndScreen(), 300);
+  }
+}
+
+/* ---- timer ---- */
+function startTimer(seconds){
+  stopTimer();
+  state.timer.total = seconds;
+  state.timer.remaining = seconds;
+  state.timer.paused = false;
+  document.getElementById('pauseTimerBtn').textContent = 'עצירת טיימר';
+  tickTimer();
+  state.timer.handle = setInterval(()=>{
+    if(state.timer.paused) return;
+    state.timer.remaining -= 1;
+    tickTimer();
+    if(state.timer.remaining<=0){ stopTimer(); }
+  }, 1000);
+}
+function tickTimer(){
+  const pct = Math.max(0, state.timer.remaining/state.timer.total*100);
+  els.timerBar.style.width = pct+'%';
+  els.timerBar.classList.toggle('low', state.timer.remaining<=5);
+  els.timerNum.textContent = Math.max(0,state.timer.remaining);
+}
+function stopTimer(){
+  if(state.timer.handle){ clearInterval(state.timer.handle); state.timer.handle=null; }
+}
+
+/* ================= END SCREEN ================= */
+function showEndScreen(){
+  stopTimer();
+  overlay.classList.remove('active');
+  const sorted = [...state.teams].sort((a,b)=>b.score-a.score);
+  const medals = ['🥇','🥈','🥉'];
+  document.getElementById('podium').innerHTML = sorted.map((t,i)=>`
+    <div class="prow ${i===0?'first':''}">
+      <span class="rank">${medals[i]||(i+1)}</span>
+      <span class="dot" style="background:${t.color}"></span>
+      <span class="name">${t.name}</span>
+      <span class="pts">${t.score} נק'</span>
+    </div>
+  `).join('');
+  showScreen('screen-end');
+}
+document.getElementById('playAgainBtn').addEventListener('click', ()=> showScreen('screen-setup'));
+
+/* ================= INFO / PREP MODAL ================= */
+function openInfoModal(){
+  const table = document.getElementById('infoTable');
+  let rows = `<tr><th>מגמה</th><th>סוג</th><th>שאלה (תמצית)</th><th>רמז מוצע להדפסה</th></tr>`;
+  CELLS.forEach(c=>{
+    if(c.logo) return;
+    const t = TRACKS[c.track];
+    rows += `<tr>
+      <td><span class="track-tag ${c.track}">${t.short}</span></td>
+      <td>${TYPES[c.type].name}</td>
+      <td>${c.q.slice(0,42)}${c.q.length>42?'…':''}</td>
+      <td>${c.hint || ''}</td>
+    </tr>`;
+  });
+  table.innerHTML = rows;
+  document.getElementById('infoOverlay').classList.add('active');
+}
+</script>
+</body>
+</html>
