@@ -284,20 +284,6 @@
       <div class="player-total" id="playerTotal"></div>
     </div>
 
-    <div class="panel">
-      <h2>אופן המשחק</h2>
-      <div class="mode-toggle" id="modeToggle">
-        <button type="button" class="mode-opt selected" data-mode="team">
-          <b>לפי תורות</b>
-          <span>כל קבוצה בוחרת תא בתורה. הקבוצה שבתור עונה, אבל אפשר להעניק נקודה לכל קבוצה שהצליחה.</span>
-        </button>
-        <button type="button" class="mode-opt" data-mode="race">
-          <b>מרוץ פתוח</b>
-          <span>כל הקבוצות עונות במקביל על אותה שאלה. מי שהמנחה קובע שענה נכון וראשון — מקבל את הנקודה.</span>
-        </button>
-      </div>
-    </div>
-
     <div class="btn-row">
       <button class="btn" id="startBtn">התחילו משחק</button>
       <button class="btn secondary" id="infoBtn">מדריך הכנה לכוורת הפיזית</button>
@@ -312,7 +298,6 @@
     <div class="scoreboard" id="scoreboard"></div>
     <button class="btn secondary" id="endEarlyBtn">סיום וטבלת תוצאות</button>
   </div>
-  <div class="turn-note" id="turnNote"></div>
   <div class="hive" id="hive"></div>
   <div class="board-actions">
     <button class="btn secondary" id="restartBtn">משחק חדש</button>
@@ -479,8 +464,6 @@ const TEAM_PALETTE = ['#e0a13a','#4f8fb8','#59a373','#c1564a','#9b6fd1','#d1a85f
 /* ================= STATE ================= */
 let state = {
   teams: [],
-  mode: 'team',
-  turnIndex: 0,
   cells: [],
   activeCellIndex: null,
   timer: { remaining:0, total:0, handle:null, paused:false },
@@ -523,14 +506,6 @@ numTeamsInput.addEventListener('change', renderTeamInputs);
 teamsList.addEventListener('input', (e)=>{ if(e.target.classList.contains('tplayers-input')) updatePlayerTotal(); });
 renderTeamInputs();
 
-document.getElementById('modeToggle').addEventListener('click', (e)=>{
-  const opt = e.target.closest('.mode-opt');
-  if(!opt) return;
-  document.querySelectorAll('.mode-opt').forEach(o=>o.classList.remove('selected'));
-  opt.classList.add('selected');
-  state.mode = opt.dataset.mode;
-});
-
 document.getElementById('startBtn').addEventListener('click', startGame);
 document.getElementById('infoBtn').addEventListener('click', ()=> openInfoModal());
 document.getElementById('closeInfoX').addEventListener('click', ()=> document.getElementById('infoOverlay').classList.remove('active'));
@@ -540,12 +515,10 @@ document.getElementById('closeAnswerKeyX').addEventListener('click', ()=> docume
 function startGame(){
   const names = Array.from(teamsList.querySelectorAll('.tname-input')).map(i=>i.value.trim()||'קבוצה');
   state.teams = names.map((name,i)=>({ name, color: TEAM_PALETTE[i%TEAM_PALETTE.length], score:0 }));
-  state.turnIndex = 0;
   state.cells = CELLS.map(c=>({ ...c, answered:false, wonBy:null }));
   showScreen('screen-board');
   renderScoreboard();
   renderHive();
-  updateTurnNote();
 }
 
 /* ================= BOARD SCREEN ================= */
@@ -557,20 +530,11 @@ function showScreen(id){
 function renderScoreboard(){
   const sb = document.getElementById('scoreboard');
   sb.innerHTML = state.teams.map((t,i)=>`
-    <div class="score-chip ${state.mode==='team' && i===state.turnIndex ? 'turn':''}">
+    <div class="score-chip">
       <span class="dot" style="background:${t.color}"></span>
       <b>${t.score}</b><span>${t.name}</span>
     </div>
   `).join('');
-}
-
-function updateTurnNote(){
-  const note = document.getElementById('turnNote');
-  if(state.mode==='team'){
-    note.textContent = `בתור לבחור תא: ${state.teams[state.turnIndex].name}`;
-  } else {
-    note.textContent = 'מצב מרוץ פתוח — כל קבוצה יכולה לענות על כל תא שנבחר';
-  }
 }
 
 function renderHive(){
@@ -694,12 +658,8 @@ function closeQuestion(wonByIndex){
   cell.answered = true;
   cell.wonBy = wonByIndex;
   overlay.classList.remove('active');
-  if(state.mode==='team'){
-    state.turnIndex = (state.turnIndex+1) % state.teams.length;
-  }
   renderScoreboard();
   renderHive();
-  updateTurnNote();
   if(state.cells.every(c=>c.logo || c.answered)){
     setTimeout(()=> showEndScreen(), 300);
   }
