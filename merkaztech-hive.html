@@ -336,11 +336,8 @@
       </div>
 
       <div class="score-row">
-        <h3>למי להעניק נקודה?</h3>
-        <div class="team-buttons" id="teamButtons"></div>
-        <div class="bonus-note" id="bonusNote"></div>
-        <div class="btn-row" style="justify-content:flex-start; margin-top:14px;">
-          <button class="btn secondary" id="skipPointBtn">סגירה בלי ניקוד</button>
+        <div class="btn-row" style="justify-content:flex-start;">
+          <button class="btn" id="closeCellBtn">סגירת התא</button>
         </div>
       </div>
     </div>
@@ -587,8 +584,6 @@ const els = {
   rewardBox: document.getElementById('rewardBox'),
   timerBar: document.getElementById('timerBar'),
   timerNum: document.getElementById('timerNum'),
-  teamButtons: document.getElementById('teamButtons'),
-  bonusNote: document.getElementById('bonusNote'),
 };
 
 function openQuestion(index){
@@ -618,30 +613,12 @@ function openQuestion(index){
     els.options.innerHTML = '';
   }
 
-  renderTeamButtons(cell);
-  els.bonusNote.textContent = cell.reward ? 'תא הפתעה: שקלו להעניק נקודה כפולה למי שפתר נכון.' : '';
-
   overlay.classList.add('active');
   startTimer(type.seconds);
 }
 
-function renderTeamButtons(cell){
-  els.teamButtons.innerHTML = state.teams.map((t,i)=>`
-    <button class="team-btn" data-i="${i}"><span class="dot" style="background:${t.color}"></span>${t.name} (+1)</button>
-  `).join('');
-}
-
-els.teamButtons.addEventListener('click', (e)=>{
-  const btn = e.target.closest('.team-btn');
-  if(!btn) return;
-  const i = parseInt(btn.dataset.i);
-  const bonus = state.cells[state.activeCellIndex].reward ? 1 : 0;
-  state.teams[i].score += 1 + bonus;
-  closeQuestion(i);
-});
-
-document.getElementById('skipPointBtn').addEventListener('click', ()=> closeQuestion(null));
-document.getElementById('closeModalX').addEventListener('click', ()=> closeQuestion(null));
+document.getElementById('closeCellBtn').addEventListener('click', ()=> closeQuestion());
+document.getElementById('closeModalX').addEventListener('click', ()=> closeQuestion());
 
 document.getElementById('revealHintBtn').addEventListener('click', ()=>{
   els.hintBox.classList.toggle('show');
@@ -656,7 +633,7 @@ function closeQuestion(wonByIndex){
   stopTimer();
   const cell = state.cells[state.activeCellIndex];
   cell.answered = true;
-  cell.wonBy = wonByIndex;
+  cell.wonBy = (wonByIndex===undefined) ? null : wonByIndex;
   overlay.classList.remove('active');
   renderScoreboard();
   renderHive();
