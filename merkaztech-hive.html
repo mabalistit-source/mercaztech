@@ -265,53 +265,22 @@
 </header>
 <div class="blueprint-grid"></div>
 
-<!-- ============ SETUP SCREEN ============ -->
-<div class="screen active" id="screen-setup">
+<!-- ============ GAME SCREEN ============ -->
+<div class="screen active" id="screen-board">
   <div class="wrap">
     <div class="hero">
       <div class="hex-badge"><span>⬡</span></div>
       <h1>כוורת הידע של המרכז הטכנולוגי</h1>
-      <p>שלוש מגמות, כוורת שלמה, קבוצה אחת מנצחת. בחרו תא בכוורת, ענו לפני שהזמן אוזל, וצברו נקודות למגמה שלכם.</p>
-    </div>
-
-    <div class="panel">
-      <h2>קבוצות</h2>
-      <div class="field-row">
-        <label>מספר קבוצות</label>
-        <input type="number" id="numTeams" min="2" max="8" value="4">
-      </div>
-      <div id="teamsList"></div>
-      <div class="player-total" id="playerTotal"></div>
-    </div>
-
-    <div class="btn-row">
-      <button class="btn" id="startBtn">התחילו משחק</button>
-      <button class="btn secondary" id="infoBtn">מדריך הכנה לכוורת הפיזית</button>
-      <button class="btn secondary" id="answerKeyBtn">מחוון תשובות (למנחה בלבד)</button>
+      <p>שלוש מגמות, כוורת שלמה. בחרו תא בכוורת, ענו בעל פה לפני שהזמן אוזל.</p>
     </div>
   </div>
-</div>
-
-<!-- ============ BOARD SCREEN ============ -->
-<div class="screen" id="screen-board">
   <div class="board-top">
-    <div class="scoreboard" id="scoreboard"></div>
-    <button class="btn secondary" id="endEarlyBtn">סיום וטבלת תוצאות</button>
+    <button class="btn secondary" id="infoBtn">מדריך הכנה לכוורת הפיזית</button>
+    <button class="btn secondary" id="answerKeyBtn">מחוון תשובות (למנחה בלבד)</button>
   </div>
   <div class="hive" id="hive"></div>
   <div class="board-actions">
-    <button class="btn secondary" id="restartBtn">משחק חדש</button>
-  </div>
-</div>
-
-<!-- ============ END SCREEN ============ -->
-<div class="screen" id="screen-end">
-  <div class="wrap" style="align-items:center; display:flex; flex-direction:column;">
-    <div class="hero"><h1 id="endTitle">תוצאות סופיות</h1></div>
-    <div class="podium" id="podium"></div>
-    <div class="btn-row">
-      <button class="btn" id="playAgainBtn">משחק חדש</button>
-    </div>
+    <button class="btn secondary" id="restartBtn">איפוס הכוורת</button>
   </div>
 </div>
 
@@ -456,82 +425,24 @@ const CELLS = [
 ];
 
 const ROW_SIZES = [1,2,3,4,3];
-const TEAM_PALETTE = ['#e0a13a','#4f8fb8','#59a373','#c1564a','#9b6fd1','#d1a85f','#4fb8a8','#c98fc9'];
 
 /* ================= STATE ================= */
 let state = {
-  teams: [],
   cells: [],
   activeCellIndex: null,
   timer: { remaining:0, total:0, handle:null, paused:false },
 };
 
-/* ================= SETUP SCREEN ================= */
-const numTeamsInput = document.getElementById('numTeams');
-const teamsList = document.getElementById('teamsList');
-const playerTotalEl = document.getElementById('playerTotal');
-
-function renderTeamInputs(){
-  const n = Math.max(2, Math.min(8, parseInt(numTeamsInput.value)||4));
-  numTeamsInput.value = n;
-  const existing = Array.from(teamsList.querySelectorAll('.team-row')).map(row=>({
-    name: row.querySelector('.tname-input').value,
-    players: row.querySelector('.tplayers-input').value
-  }));
-  teamsList.innerHTML = '';
-  for(let i=0;i<n;i++){
-    const prev = existing[i];
-    const row = document.createElement('div');
-    row.className = 'team-row';
-    row.innerHTML = `
-      <span class="team-swatch" style="background:${TEAM_PALETTE[i%TEAM_PALETTE.length]}"></span>
-      <input type="text" class="tname-input" value="${prev?prev.name:'קבוצה '+(i+1)}">
-      <label style="min-width:auto;">שחקנים:</label>
-      <input type="number" class="tplayers-input" min="1" max="10" value="${prev?prev.players:3}">
-    `;
-    teamsList.appendChild(row);
-  }
-  updatePlayerTotal();
-}
-function updatePlayerTotal(){
-  const totals = Array.from(teamsList.querySelectorAll('.tplayers-input')).map(i=>parseInt(i.value)||0);
-  const sum = totals.reduce((a,b)=>a+b,0);
-  playerTotalEl.textContent = `סה"כ משתתפים: ${sum} (טווח מומלץ: 1–30)`;
-  playerTotalEl.classList.toggle('warn', sum<1 || sum>30);
-}
-numTeamsInput.addEventListener('change', renderTeamInputs);
-teamsList.addEventListener('input', (e)=>{ if(e.target.classList.contains('tplayers-input')) updatePlayerTotal(); });
-renderTeamInputs();
-
-document.getElementById('startBtn').addEventListener('click', startGame);
+/* ================= GAME SCREEN ================= */
 document.getElementById('infoBtn').addEventListener('click', ()=> openInfoModal());
 document.getElementById('closeInfoX').addEventListener('click', ()=> document.getElementById('infoOverlay').classList.remove('active'));
 document.getElementById('answerKeyBtn').addEventListener('click', ()=> openAnswerKeyModal());
 document.getElementById('closeAnswerKeyX').addEventListener('click', ()=> document.getElementById('answerKeyOverlay').classList.remove('active'));
+document.getElementById('restartBtn').addEventListener('click', startGame);
 
 function startGame(){
-  const names = Array.from(teamsList.querySelectorAll('.tname-input')).map(i=>i.value.trim()||'קבוצה');
-  state.teams = names.map((name,i)=>({ name, color: TEAM_PALETTE[i%TEAM_PALETTE.length], score:0 }));
   state.cells = CELLS.map(c=>({ ...c, answered:false, wonBy:null }));
-  showScreen('screen-board');
-  renderScoreboard();
   renderHive();
-}
-
-/* ================= BOARD SCREEN ================= */
-function showScreen(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
-
-function renderScoreboard(){
-  const sb = document.getElementById('scoreboard');
-  sb.innerHTML = state.teams.map((t,i)=>`
-    <div class="score-chip">
-      <span class="dot" style="background:${t.color}"></span>
-      <b>${t.score}</b><span>${t.name}</span>
-    </div>
-  `).join('');
 }
 
 function renderHive(){
@@ -563,14 +474,9 @@ function makeHexEl(index){
   if(!cell.answered){
     el.innerHTML = `<div class="inner"><span class="ticon">${icon(cell.type)}</span><span class="tname">${TRACKS[cell.track].short}</span><span class="ttype">${TYPES[cell.type].name}</span></div>`;
     el.addEventListener('click', ()=> openQuestion(index));
-  } else if(cell.wonBy!==null){
-    el.innerHTML = `<span class="wonchip">${state.teams[cell.wonBy].name}</span>`;
   }
   return el;
 }
-
-document.getElementById('restartBtn').addEventListener('click', ()=> showScreen('screen-setup'));
-document.getElementById('endEarlyBtn').addEventListener('click', ()=> showEndScreen());
 
 /* ================= QUESTION MODAL ================= */
 const overlay = document.getElementById('modalOverlay');
@@ -629,17 +535,12 @@ document.getElementById('pauseTimerBtn').addEventListener('click', (e)=>{
   e.target.textContent = state.timer.paused ? 'המשך טיימר' : 'עצירת טיימר';
 });
 
-function closeQuestion(wonByIndex){
+function closeQuestion(){
   stopTimer();
   const cell = state.cells[state.activeCellIndex];
   cell.answered = true;
-  cell.wonBy = (wonByIndex===undefined) ? null : wonByIndex;
   overlay.classList.remove('active');
-  renderScoreboard();
   renderHive();
-  if(state.cells.every(c=>c.logo || c.answered)){
-    setTimeout(()=> showEndScreen(), 300);
-  }
 }
 
 /* ---- timer ---- */
@@ -667,24 +568,7 @@ function stopTimer(){
   if(state.timer.handle){ clearInterval(state.timer.handle); state.timer.handle=null; }
 }
 
-/* ================= END SCREEN ================= */
-function showEndScreen(){
-  stopTimer();
-  overlay.classList.remove('active');
-  const sorted = [...state.teams].sort((a,b)=>b.score-a.score);
-  const medals = ['🥇','🥈','🥉'];
-  document.getElementById('podium').innerHTML = sorted.map((t,i)=>`
-    <div class="prow ${i===0?'first':''}">
-      <span class="rank">${medals[i]||(i+1)}</span>
-      <span class="dot" style="background:${t.color}"></span>
-      <span class="name">${t.name}</span>
-      <span class="pts">${t.score} נק'</span>
-    </div>
-  `).join('');
-  showScreen('screen-end');
-}
-document.getElementById('playAgainBtn').addEventListener('click', ()=> showScreen('screen-setup'));
-
+startGame();
 /* ================= INFO / PREP MODAL ================= */
 function openInfoModal(){
   const table = document.getElementById('infoTable');
