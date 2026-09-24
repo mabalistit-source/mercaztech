@@ -299,6 +299,7 @@
     <div class="btn-row">
       <button class="btn" id="startBtn">התחילו משחק</button>
       <button class="btn secondary" id="infoBtn">מדריך הכנה לכוורת הפיזית</button>
+      <button class="btn secondary" id="answerKeyBtn">מחוון תשובות (למנחה בלבד)</button>
     </div>
   </div>
 </div>
@@ -339,14 +340,12 @@
       <div class="timer-num" id="timerNum"></div>
       <div class="qtext" id="qtext" style="margin-top:22px;"></div>
       <div class="options" id="optionsWrap"></div>
-      <div class="answer-box" id="answerBox"></div>
       <div class="hint-box" id="hintBox"></div>
       <div class="reward-box" id="rewardBox"></div>
 
       <div class="modal-controls">
         <button class="btn secondary" id="pauseTimerBtn">עצירת טיימר</button>
         <button class="btn secondary" id="revealHintBtn">הצג רמז</button>
-        <button class="btn" id="revealAnswerBtn">הצג תשובה</button>
       </div>
 
       <div class="score-row">
@@ -374,6 +373,22 @@
         התא העליון (הלוגו) יכול להישאר ריק מרמז ולשמש סמל של המרכז עצמו.
       </p>
       <table class="info-table" id="infoTable"></table>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ANSWER KEY MODAL (host/moderator only — never shown during live play) ============ -->
+<div class="modal-overlay" id="answerKeyOverlay">
+  <div class="modal info-modal">
+    <div class="modal-head">
+      <div class="tag"><b style="color:var(--ink)">מחוון תשובות — למנחה בלבד</b></div>
+      <button class="close-x" id="closeAnswerKeyX">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="color:var(--ink-dim); margin-bottom:12px;">
+        רשימה זו מיועדת למנחה/ה בלבד לצורך שיפוט תשובות. אין להציג מסך זה למשתתפים — התשובות אינן מופיעות במהלך המשחק עצמו.
+      </p>
+      <div id="answerKeyList"></div>
     </div>
   </div>
 </div>
@@ -517,6 +532,8 @@ document.getElementById('modeToggle').addEventListener('click', (e)=>{
 document.getElementById('startBtn').addEventListener('click', startGame);
 document.getElementById('infoBtn').addEventListener('click', ()=> openInfoModal());
 document.getElementById('closeInfoX').addEventListener('click', ()=> document.getElementById('infoOverlay').classList.remove('active'));
+document.getElementById('answerKeyBtn').addEventListener('click', ()=> openAnswerKeyModal());
+document.getElementById('closeAnswerKeyX').addEventListener('click', ()=> document.getElementById('answerKeyOverlay').classList.remove('active'));
 
 function startGame(){
   const names = Array.from(teamsList.querySelectorAll('.tname-input')).map(i=>i.value.trim()||'קבוצה');
@@ -600,7 +617,6 @@ const els = {
   typeName: document.getElementById('mTypeName'),
   qtext: document.getElementById('qtext'),
   options: document.getElementById('optionsWrap'),
-  answerBox: document.getElementById('answerBox'),
   hintBox: document.getElementById('hintBox'),
   rewardBox: document.getElementById('rewardBox'),
   timerBar: document.getElementById('timerBar'),
@@ -619,14 +635,13 @@ function openQuestion(index){
   els.trackName.textContent = track.name;
   els.typeName.textContent = type.name;
   els.qtext.textContent = cell.q;
-  els.answerBox.classList.remove('show');
-  els.answerBox.textContent = cell.answer || '';
   els.hintBox.classList.remove('show');
   els.hintBox.textContent = cell.hint ? ('רמז: ' + cell.hint) : '';
   document.getElementById('revealHintBtn').style.display = cell.hint ? '' : 'none';
   els.rewardBox.classList.remove('show');
   if(cell.reward){
     els.rewardBox.innerHTML = `🎁 <b>פרס לתא ההפתעה:</b> ${cell.reward}`;
+    els.rewardBox.classList.add('show');
   }
 
   if(cell.options){
@@ -661,18 +676,6 @@ els.teamButtons.addEventListener('click', (e)=>{
 
 document.getElementById('skipPointBtn').addEventListener('click', ()=> closeQuestion(null));
 document.getElementById('closeModalX').addEventListener('click', ()=> closeQuestion(null));
-
-document.getElementById('revealAnswerBtn').addEventListener('click', ()=>{
-  const cell = state.cells[state.activeCellIndex];
-  stopTimer();
-  if(cell.options){
-    els.options.querySelectorAll('.opt').forEach(o=>{
-      if(parseInt(o.dataset.i)===cell.correct) o.classList.add('correct');
-    });
-  }
-  if(cell.answer){ els.answerBox.classList.add('show'); }
-  if(cell.reward){ els.rewardBox.classList.add('show'); }
-});
 
 document.getElementById('revealHintBtn').addEventListener('click', ()=>{
   els.hintBox.classList.toggle('show');
@@ -759,6 +762,32 @@ function openInfoModal(){
   });
   table.innerHTML = rows;
   document.getElementById('infoOverlay').classList.add('active');
+}
+
+function openAnswerKeyModal(){
+  const list = document.getElementById('answerKeyList');
+  const letters = ['א','ב','ג','ד'];
+  let html = '';
+  CELLS.forEach(c=>{
+    if(c.logo) return;
+    const t = TRACKS[c.track];
+    const typeLabel = TYPES[c.type].name;
+    let answerHtml = '';
+    if(c.options){
+      answerHtml = `<b>תשובה נכונה: ${letters[c.correct]}.</b> ${c.options[c.correct]}`;
+    }
+    if(c.answer){
+      answerHtml += (answerHtml ? '<br>' : '') + c.answer;
+    }
+    html += `
+      <div style="border-bottom:1px solid var(--line); padding:12px 0;">
+        <div style="margin-bottom:4px;"><span class="track-tag ${c.track}">${t.short}</span> <span style="color:var(--ink-dim); font-size:.82rem;">${typeLabel}</span></div>
+        <div style="font-weight:600; margin-bottom:6px;">${c.q}</div>
+        <div style="font-size:.9rem; color:var(--ink);">${answerHtml}</div>
+      </div>`;
+  });
+  list.innerHTML = html;
+  document.getElementById('answerKeyOverlay').classList.add('active');
 }
 </script>
 </body>
