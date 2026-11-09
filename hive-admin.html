@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>כוורת הידע — קונסולת מנחה</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@500;700;800&family=Assistant:wght@400;600;700&display=swap');
+  :root{--bg:#fbf8f1;--ink:#1d2433;--muted:#556070;--line:#e6dfcf;--card:#fff;--b-blue:#3090d8;--b-green:#78a830;--b-amber:#f0a818;--b-red:#d84830;--danger:#b3261e;--ok:#2f6b0f;font-size:16px;}
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Assistant','Segoe UI',Arial,sans-serif;line-height:1.45;}
+  h1,h2,h3{font-family:'Rubik','Assistant',sans-serif;margin:0;}
+  button,input,select{font-family:inherit;font-size:1rem;}
+  :focus-visible{outline:3px solid var(--b-blue);outline-offset:2px;}
+  .top{display:flex;align-items:center;gap:12px;padding:10px 20px;background:#fff;box-shadow:0 2px 10px rgba(29,36,51,.06);}
+  .top img{height:38px;} .top h1{font-size:1.2rem;flex:1;}
+  .stripe{height:4px;background:linear-gradient(90deg,var(--b-blue) 0 25%,var(--b-green) 25% 50%,var(--b-amber) 50% 75%,var(--b-red) 75%);}
+  main{max-width:1100px;margin:0 auto;padding:18px;display:grid;gap:16px;}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 4px 18px rgba(29,36,51,.05);}
+  .panel h2{font-size:1.1rem;margin-bottom:10px;}
+  .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;}
+  label{font-weight:700;display:block;margin:10px 0 4px;}
+  input[type=text],input[type=password],select{width:100%;padding:11px 12px;border:2px solid #c9c2b0;border-radius:10px;background:#fff;color:var(--ink);}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:8px 16px;border-radius:10px;border:2px solid var(--ink);background:#fff;color:var(--ink);font-weight:700;cursor:pointer;}
+  .btn.pri{background:var(--ink);color:#fff;} .btn.danger{border-color:var(--danger);color:var(--danger);} .btn.danger.arm{background:var(--danger);color:#fff;}
+  .btn.sm{min-height:36px;padding:4px 10px;font-size:.9rem;} .btn:disabled{opacity:.5;cursor:default;}
+  .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+  .err{color:var(--danger);font-weight:700;min-height:1.3em;margin-top:8px;}
+  .muted{color:var(--muted);}
+  .code{font-family:'Rubik',sans-serif;font-weight:800;font-size:clamp(2.6rem,8vw,4.4rem);letter-spacing:.18em;direction:ltr;line-height:1;}
+  .big{display:flex;gap:22px;flex-wrap:wrap;align-items:center;}
+  #qr{width:150px;height:150px;background:#fff;border:1px solid var(--line);border-radius:10px;display:grid;place-items:center;padding:6px;}
+  #qr svg,#qr img{width:100%;height:100%;}
+  .url{direction:ltr;text-align:left;font-size:.9rem;word-break:break-all;background:#f4efe2;border-radius:8px;padding:6px 8px;margin:6px 0;}
+  .stat{font-family:'Rubik',sans-serif;font-weight:800;font-size:2rem;}
+  table{width:100%;border-collapse:collapse;} th,td{text-align:start;padding:7px 6px;border-bottom:1px solid var(--line);}
+  th{font-size:.85rem;color:var(--muted);}
+  .dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#bbb;margin-inline-end:6px;} .dot.on{background:var(--b-green);}
+  .tablewrap{max-height:340px;overflow:auto;}
+  .cells{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;}
+  .cell{border:2px solid var(--line);border-radius:12px;padding:8px;font-size:.9rem;}
+  .cell.open{background:#efece2;} .cell b{display:block;}
+  .tg{font-weight:700;} .t-electricity{color:#8a5000;} .t-machines{color:#16599a;} .t-biotech{color:#386a12;}
+  .ans{margin-top:4px;padding:4px 6px;background:#fff;border-radius:6px;border:1px solid var(--line);font-size:.85rem;}
+  [hidden]{display:none!important;}
+</style>
+</head>
+<body>
+<div class="top"><img src="ashdod-logo.png" alt="" onerror="this.remove()"><h1>כוורת הידע — קונסולת מנחה</h1><button class="btn sm" id="exitBtn" hidden>יציאה מהחדר</button></div>
+<div class="stripe"></div>
+<main>
+  <!-- כניסה -->
+  <section class="cols" id="entry">
+    <div class="panel">
+      <h2>חדר חדש</h2>
+      <p class="muted">בוחרים קוד מנחה (PIN) שרק את/ה מכיר/ה. הוא נחוץ לניהול החדר.</p>
+      <form id="newForm" novalidate>
+        <label for="pin1">קוד מנחה (לפחות 4 תווים)</label>
+        <input type="password" id="pin1" autocomplete="new-password" aria-describedby="err">
+        <div class="err" id="err" role="alert"></div>
+        <button class="btn pri" type="submit" id="newBtn">יצירת חדר</button>
+      </form>
+    </div>
+    <div class="panel">
+      <h2>חזרה לחדר קיים</h2>
+      <form id="oldForm" novalidate>
+        <label for="code2">קוד החדר</label>
+        <input type="text" id="code2" maxlength="5" style="text-transform:uppercase;direction:ltr" autocomplete="off">
+        <label for="pin2">קוד מנחה</label>
+        <input type="password" id="pin2" autocomplete="current-password">
+        <div class="err" id="err2" role="alert"></div>
+        <button class="btn" type="submit">כניסה</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- קונסולה -->
+  <div id="console" hidden>
+    <section class="panel">
+      <div class="big">
+        <div><div class="muted">קוד החדר</div><div class="code" id="roomCode"></div></div>
+        <div id="qr" aria-label="קוד QR להצטרפות" role="img"></div>
+        <div style="flex:1;min-width:240px">
+          <div><b>קישור הצטרפות לטלפונים</b></div><div class="url" id="joinLink"></div>
+          <div class="row"><button class="btn sm" id="copyJoin">העתקה</button><a class="btn sm" id="openProj" target="_blank" rel="noopener">פתיחת המסך המקרן ↗</a></div>
+        </div>
+        <div><div class="muted">מחוברים עכשיו</div><div class="stat" id="onl">0</div><div class="muted" id="tot"></div></div>
+      </div>
+    </section>
+
+    <div class="cols" style="margin-top:16px">
+      <section class="panel">
+        <h2>הגדרות משחק</h2>
+        <label for="gn">מספר קבוצות</label>
+        <div class="row"><select id="gn" style="max-width:140px"></select>
+          <button class="btn" id="split">חלוקה אקראית</button></div>
+        <p class="muted" style="margin:6px 0 0;font-size:.9rem">0 = בלי קבוצות (כולם יחד). אפשר להעביר משתתף בין קבוצות בטבלה.</p>
+        <label for="mode">מי פותח תאים?</label>
+        <select id="mode"><option value="teams">כל קבוצה מהטלפון שלה</option><option value="admin">המנחה בלבד</option></select>
+        <div class="row" style="margin-top:14px">
+          <button class="btn" id="closeBtn">סיום המשחק</button>
+          <button class="btn danger" id="resetBtn">איפוס הכוורת</button>
+          <button class="btn danger" id="delBtn">מחיקת החדר</button>
+        </div>
+        <div class="err" id="err3" role="alert"></div>
+      </section>
+      <section class="panel">
+        <h2>משתתפים</h2>
+        <div class="tablewrap"><table><thead><tr><th>שם</th><th>קבוצה</th><th></th></tr></thead><tbody id="plist"></tbody></table></div>
+        <p class="muted" id="pempty">עוד אין משתתפים. שתפו את הקוד או את ה-QR.</p>
+      </section>
+    </div>
+
+    <section class="panel" style="margin-top:16px">
+      <h2>תאי הכוורת</h2>
+      <div class="row" style="margin-bottom:8px"><label for="openTeam" style="margin:0">לפתיחה על ידי המנחה, עבור קבוצה:</label><select id="openTeam" style="max-width:130px"></select></div>
+      <div class="cells" id="cells"></div>
+    </section>
+  </div>
+</main>
+
+<script src="hive-data.js"></script>
+<script type="module">
+import * as L from './hive-live.js';
+const $ = id => document.getElementById(id);
+const KEY = 'hive.admin';
+const get = () => { try{ return JSON.parse(sessionStorage.getItem(KEY) || 'null'); }catch(e){ return null; } };
+const put = v => { try{ v ? sessionStorage.setItem(KEY, JSON.stringify(v)) : sessionStorage.removeItem(KEY); }catch(e){} };
+
+let A = null, api = null, S = null, unwatch = null, busy = false;
+
+/* ---------- כניסה ---------- */
+$('newForm').addEventListener('submit', async e => {
+  e.preventDefault(); $('err').textContent = '';
+  const pin = $('pin1').value;
+  if(pin.length < 4){ $('err').textContent = 'קוד המנחה חייב להכיל לפחות 4 תווים'; return; }
+  if(!L.isConfigured){ $('err').textContent = 'השרת עדיין לא הוגדר'; return; }
+  $('newBtn').disabled = true;
+  try{ const code = await L.createRoom(pin); await enter(code, pin); }
+  catch(err){ $('err').textContent = L.hebError(err); }
+  finally{ $('newBtn').disabled = false; }
+});
+$('oldForm').addEventListener('submit', async e => {
+  e.preventDefault(); $('err2').textContent = '';
+  const code = $('code2').value.trim().toUpperCase(), pin = $('pin2').value;
+  try{ await enter(code, pin); }catch(err){ $('err2').textContent = L.hebError(err); }
+});
+
+async function enter(code, pin){
+  const a = L.admin(code, pin);
+  S = await a.state();                         // זורק bad_pin אם שגוי
+  A = { code, pin }; api = a; put(A);
+  $('entry').hidden = true; $('console').hidden = false; $('exitBtn').hidden = false;
+  $('roomCode').textContent = code;
+  const jl = L.joinUrl(code); $('joinLink').textContent = jl; $('openProj').href = L.projectorUrl(code);
+  drawQr(jl);
+  const gn = $('gn'); gn.textContent = '';
+  for(let k=0;k<=10;k++){ const o = document.createElement('option'); o.value = k; o.textContent = k === 0 ? 'בלי קבוצות' : k; gn.appendChild(o); }
+  render();
+  if(unwatch) unwatch();
+  unwatch = await L.watchRoom(code, refresh, 5000);
+}
+
+async function drawQr(url){
+  const box = $('qr'); box.textContent = '';
+  try{
+    if(!window.qrcode){
+      await new Promise((ok, no) => { const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js'; s.onload = ok; s.onerror = no; document.head.appendChild(s); });
+    }
+    const qr = window.qrcode(0, 'M'); qr.addData(url); qr.make(); box.innerHTML = qr.createSvgTag({ scalable:true, margin:0 });
+  }catch(e){ box.textContent = 'QR'; box.title = 'לא ניתן לטעון QR. השתמשו בקישור'; }
+}
+
+async function refresh(){
+  if(!api || busy) return; busy = true;
+  try{ S = await api.state(); render(); }
+  catch(e){ if(String(e.message).includes('bad_pin')) exit(); }
+  finally{ busy = false; }
+}
+
+async function act(fn, errEl){
+  $('err3').textContent = '';
+  try{ await fn(); busy = false; await refresh(); }catch(e){ $('err3').textContent = L.hebError(e); }
+}
+
+/* ---------- תצוגה ---------- */
+function render(){
+  const room = S.room, players = S.players || [];
+  $('onl').textContent = players.filter(p => p.online).length;
+  $('tot').textContent = 'נרשמו בסך הכול: ' + players.length;
+  if(document.activeElement !== $('gn')) $('gn').value = room.groups_n;
+  if(document.activeElement !== $('mode')) $('mode').value = room.open_mode;
+  $('closeBtn').textContent = room.closed ? 'חידוש המשחק' : 'סיום המשחק';
+  const ot = $('openTeam'), keep = ot.value; ot.textContent = '';
+  if(room.groups_n === 0){ const o = document.createElement('option'); o.value = ''; o.textContent = 'כולם'; ot.appendChild(o); }
+  else for(let k=1;k<=room.groups_n;k++){ const o = document.createElement('option'); o.value = k; o.textContent = 'קבוצה ' + k; ot.appendChild(o); }
+  if([...ot.options].some(o => o.value === keep)) ot.value = keep;
+
+  const tb = $('plist'); tb.textContent = '';
+  $('pempty').hidden = players.length > 0;
+  players.forEach(p => {
+    const tr = document.createElement('tr');
+    const td1 = document.createElement('td'); td1.innerHTML = '<span class="dot' + (p.online ? ' on' : '') + '" title="' + (p.online ? 'מחובר' : 'לא מחובר') + '"></span>'; td1.append(p.name);
+    const td2 = document.createElement('td');
+    if(room.groups_n > 0){
+      const sel = document.createElement('select'); sel.style.maxWidth = '120px'; sel.setAttribute('aria-label', 'קבוצה של ' + p.name);
+      const o0 = document.createElement('option'); o0.value = ''; o0.textContent = '—'; sel.appendChild(o0);
+      for(let k=1;k<=room.groups_n;k++){ const o = document.createElement('option'); o.value = k; o.textContent = k; sel.appendChild(o); }
+      sel.value = p.team == null ? '' : p.team;
+      sel.addEventListener('change', () => act(() => api.move(p.id, sel.value === '' ? null : +sel.value)));
+      td2.appendChild(sel);
+    } else td2.textContent = '—';
+    const td3 = document.createElement('td');
+    const kb = document.createElement('button'); kb.className = 'btn sm danger'; kb.textContent = 'הסרה'; kb.setAttribute('aria-label', 'הסרת ' + p.name);
+    kb.addEventListener('click', () => act(() => api.kick(p.id)));
+    td3.appendChild(kb); tr.append(td1, td2, td3); tb.appendChild(tr);
+  });
+
+  const opened = {}; (S.opened || []).forEach(o => { opened[o.cell_id] = o; });
+  const ans = {}; (S.answers || []).forEach(a => { (ans[a.cell_id] = ans[a.cell_id] || []).push(a); });
+  const box = $('cells'); box.textContent = '';
+  CELLS.forEach((c, i) => {
+    if(c.logo) return;
+    const id = cellId(i), o = opened[id];
+    const d = document.createElement('div'); d.className = 'cell' + (o ? ' open' : '');
+    d.innerHTML = '<b class="tg t-' + c.track + '"></b><span></span>';
+    d.firstChild.textContent = TRACKS[c.track].short; d.lastChild.textContent = TYPES[c.type].name;
+    if(o){
+      const s = document.createElement('div'); s.className = 'muted'; s.textContent = 'נפתח' + (o.team ? ' · קבוצה ' + o.team : ''); d.appendChild(s);
+      (ans[id] || []).forEach(a => { const x = document.createElement('div'); x.className = 'ans'; x.textContent = (a.team ? 'קבוצה ' + a.team + ': ' : '') + a.answer; d.appendChild(x); });
+    } else {
+      const b = document.createElement('button'); b.className = 'btn sm'; b.style.marginTop = '6px'; b.textContent = 'פתיחה';
+      b.setAttribute('aria-label', 'פתיחת ' + TRACKS[c.track].short + ' ' + TYPES[c.type].name);
+      b.addEventListener('click', () => act(() => api.open(id, $('openTeam').value === '' ? null : +$('openTeam').value)));
+      d.appendChild(b);
+    }
+    box.appendChild(d);
+  });
+}
+
+/* ---------- פעולות ---------- */
+$('gn').addEventListener('change', () => act(() => api.groups(+$('gn').value, +$('gn').value > 0)));
+$('split').addEventListener('click', () => act(() => api.groups(+$('gn').value || 2, true)));
+$('mode').addEventListener('change', () => act(() => api.mode($('mode').value, S.room.closed)));
+$('closeBtn').addEventListener('click', () => act(() => api.mode(S.room.open_mode, !S.room.closed)));
+function armed(btn, label, fn){
+  let t = null;
+  btn.addEventListener('click', () => {
+    if(!btn.classList.contains('arm')){ btn.classList.add('arm'); btn.textContent = 'לחצו שוב לאישור'; t = setTimeout(() => { btn.classList.remove('arm'); btn.textContent = label; }, 3500); }
+    else { clearTimeout(t); btn.classList.remove('arm'); btn.textContent = label; fn(); }
+  });
+}
+armed($('resetBtn'), 'איפוס הכוורת', () => act(() => api.reset()));
+armed($('delBtn'), 'מחיקת החדר', async () => { try{ await api.remove(); exit(); }catch(e){ $('err3').textContent = L.hebError(e); } });
+$('copyJoin').addEventListener('click', async () => { try{ await navigator.clipboard.writeText($('joinLink').textContent); $('copyJoin').textContent = 'הועתק ✓'; setTimeout(() => $('copyJoin').textContent = 'העתקה', 1800); }catch(e){} });
+$('exitBtn').addEventListener('click', exit);
+function exit(){
+  if(unwatch){ unwatch(); unwatch = null; }
+  put(null); A = api = S = null;
+  $('console').hidden = true; $('entry').hidden = false; $('exitBtn').hidden = true;
+  $('pin1').value = $('pin2').value = '';
+}
+
+/* חזרה אוטומטית באותו דפדפן (רענון) */
+const saved = get();
+if(saved && saved.code && L.isConfigured) enter(saved.code, saved.pin).catch(() => put(null));
+</script>
+</body>
+</html>

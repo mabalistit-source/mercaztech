@@ -54,19 +54,15 @@ drop policy if exists p_read on public.hive_players;
 drop policy if exists o_read on public.hive_opened;
 drop policy if exists a_read on public.hive_answers;
 create policy r_read on public.hive_rooms   for select to anon using (true);
-create policy p_read on public.hive_players for select to anon using (true);
 create policy o_read on public.hive_opened  for select to anon using (true);
-create policy a_read on public.hive_answers for select to anon using (true);
 
 revoke all on public.hive_rooms, public.hive_players, public.hive_opened, public.hive_answers from anon, authenticated;
 grant select (code, groups_n, open_mode, closed, created_at) on public.hive_rooms to anon;
-grant select on public.hive_players, public.hive_opened, public.hive_answers to anon;
+grant select on public.hive_opened to anon;   -- שמות ותשובות נקראים רק דרך פונקציות
 
 -- Realtime
 do $$ begin
-  begin alter publication supabase_realtime add table public.hive_players; exception when others then null; end;
   begin alter publication supabase_realtime add table public.hive_opened;  exception when others then null; end;
-  begin alter publication supabase_realtime add table public.hive_answers; exception when others then null; end;
   begin alter publication supabase_realtime add table public.hive_rooms;   exception when others then null; end;
 end $$;
 
@@ -85,7 +81,7 @@ begin
   if p_pin is null or char_length(p_pin) < 4 then raise exception 'pin_too_short'; end if;
   delete from hive_rooms where created_at < now() - interval '24 hours';
   loop
-    c := upper(substr(translate(encode(extensions.gen_random_bytes(6),'base64'),'+/=OIl01',''),1,5));
+    c := upper(substr(translate(encode(extensions.gen_random_bytes(6),'base64'),'+/=OIl01oiLQqgG9B8S5Zz2',''),1,5));
     exit when char_length(c) = 5 and not exists (select 1 from hive_rooms where code = c);
     i := i + 1; if i > 20 then raise exception 'code_gen_failed'; end if;
   end loop;
@@ -105,10 +101,47 @@ begin
   return pid;
 end $$;
 
-create or replace function public.hive_ping(p_player uuid) returns void
+-- מצב לטלפון: מעדכן "נראה לאחרונה" ומחזיר את כל מה שהמשתתף צריך.
+drop function if exists public.hive_ping(uuid);
+create or replace function public.hive_state(p_player uuid) returns json
+language plpgsql security definer set search_path = public as $$
+declare pl hive_players; res json;
+begin
+  update hive_players set last_seen = now() where id = p_player returning * into pl;
+  if not found then return json_build_object('exists', false); end if;
+  select json_build_object(
+    'exists', true, 'name', pl.name, 'team', pl.team,
+    'room', (select json_build_object('code',code,'groups_n',groups_n,'open_mode',open_mode,'closed',closed) from hive_rooms where code = pl.room_code),
+    'online', (select count(*) from hive_players where room_code = pl.room_code and last_seen > now() - interval '40 seconds'),
+    'opened', coalesce((select json_agg(json_build_object('cell_id',cell_id,'team',team,'opened_at',opened_at) order by opened_at) from hive_opened where room_code = pl.room_code),'[]'::json)
+  ) into res;
+  return res;
+end $$;
+
+-- מצב למסך המקרן (בלי שמות): חדר, כמות מחוברים, תאים שנפתחו.
+create or replace function public.hive_public_state(p_code text) returns json
 language sql security definer set search_path = public as $$
-  update hive_players set last_seen = now() where id = p_player;
+  select json_build_object(
+    'exists', exists(select 1 from hive_rooms where code = upper(p_code)),
+    'room', (select json_build_object('code',code,'groups_n',groups_n,'open_mode',open_mode,'closed',closed) from hive_rooms where code = upper(p_code)),
+    'online', (select count(*) from hive_players where room_code = upper(p_code) and last_seen > now() - interval '40 seconds'),
+    'total', (select count(*) from hive_players where room_code = upper(p_code)),
+    'opened', coalesce((select json_agg(json_build_object('cell_id',cell_id,'team',team,'opened_at',opened_at) order by opened_at) from hive_opened where room_code = upper(p_code)),'[]'::json)
+  );
 $$;
+
+-- מצב למנהל (דורש PIN): כולל שמות, קבוצות ותשובות.
+create or replace function public.hive_admin_state(p_code text, p_pin text) returns json
+language plpgsql security definer set search_path = public, extensions as $$
+begin
+  if not _hive_pin_ok(upper(p_code), p_pin) then raise exception 'bad_pin'; end if;
+  return json_build_object(
+    'room', (select json_build_object('code',code,'groups_n',groups_n,'open_mode',open_mode,'closed',closed) from hive_rooms where code = upper(p_code)),
+    'players', coalesce((select json_agg(json_build_object('id',id,'name',name,'team',team,'online', last_seen > now() - interval '40 seconds') order by joined_at) from hive_players where room_code = upper(p_code)),'[]'::json),
+    'opened', coalesce((select json_agg(json_build_object('cell_id',cell_id,'team',team,'opened_at',opened_at) order by opened_at) from hive_opened where room_code = upper(p_code)),'[]'::json),
+    'answers', coalesce((select json_agg(json_build_object('cell_id',cell_id,'team',team,'answer',answer,'at',created_at) order by created_at) from hive_answers where room_code = upper(p_code)),'[]'::json)
+  );
+end $$;
 
 -- פתיחת תא. מצב 'teams': רק משתתף משובץ לקבוצה פותח עבור קבוצתו. מצב 'admin': דרך hive_admin_open.
 create or replace function public.hive_open_cell(p_player uuid, p_cell text) returns boolean
@@ -197,7 +230,8 @@ end $$;
 -- הרשאות הרצה: רק הפונקציות הציבוריות; _hive_pin_ok פנימית.
 revoke all on function public._hive_pin_ok(text,text) from public, anon, authenticated;
 grant execute on function
-  public.hive_create_room(text), public.hive_join(text,text), public.hive_ping(uuid),
+  public.hive_create_room(text), public.hive_join(text,text), public.hive_state(uuid),
+  public.hive_public_state(text), public.hive_admin_state(text,text),
   public.hive_open_cell(uuid,text), public.hive_submit_answer(uuid,text,text),
   public.hive_admin_set_groups(text,text,int,boolean), public.hive_admin_move(text,text,uuid,int),
   public.hive_admin_kick(text,text,uuid), public.hive_admin_mode(text,text,text,boolean),
