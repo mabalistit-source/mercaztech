@@ -3,615 +3,581 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>כוורת הידע — המרכז הטכנולוגי</title>
+<meta name="theme-color" content="#ffffff">
+<title>כוורת הידע — המרכז הטכנולוגי אשדוד</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@500;700;800&family=Assistant:wght@400;600;700&display=swap');
 
   :root{
-    --bg: #faf6ec;
-    --bg-panel: #ffffff;
-    --bg-panel-2: #f2ecdd;
-    --paper: #eee6d3;
-    --ink: #241f17;
-    --ink-dim: #6d6455;
-    --amber: #b9750f;
-    --amber-dim: #8a6a2f;
-    --amber-tint: #fbecc9;
-    --electricity: #c07f1c;
-    --electricity-dim: #fbe7c4;
-    --machines: #2f6d95;
-    --machines-dim: #dcedf7;
-    --biotech: #2f7a4c;
-    --biotech-dim: #dcf2e2;
-    --danger: #ac3629;
-    --good: #2f7a41;
-    --line: #e3dac4;
-    --radius: 10px;
-    font-size: 16px;
+    --bg:#fbf8f1; --ink:#1d2433; --muted:#556070; --line:#e6dfcf; --card:#ffffff;
+    --c-el:#a35f00;  --c-el2:#8a5000;
+    --c-ma:#1f6fb0;  --c-ma2:#16599a;
+    --c-bi:#467d18;  --c-bi2:#386a12;
+    --b-blue:#3090d8; --b-green:#78a830; --b-amber:#f0a818; --b-red:#d84830;
+    --danger:#b3261e;
+    font-size:16px;
   }
   *{box-sizing:border-box;}
-  html,body{height:100%;}
+  html,body{height:100%;margin:0;}
   body{
-    margin:0;
+    display:flex; flex-direction:column; height:100vh; height:100dvh; overflow:hidden;
     background:
-      radial-gradient(circle at 20% 8%, #fff9ea 0%, transparent 45%),
-      radial-gradient(circle at 85% 90%, #fbeed0 0%, transparent 40%),
+      radial-gradient(circle at 15% 0%, #fff7e0 0, transparent 45%),
+      radial-gradient(circle at 90% 100%, #e8f3fb 0, transparent 45%),
       var(--bg);
     color:var(--ink);
-    font-family:'Assistant', 'Segoe UI', sans-serif;
-    min-height:100%;
+    font-family:'Assistant','Segoe UI','Arial',sans-serif;
   }
-  .blueprint-grid{
-    position:fixed; inset:0; pointer-events:none; opacity:.07; z-index:0;
-    background-image:
-      linear-gradient(var(--amber) 1px, transparent 1px),
-      linear-gradient(90deg, var(--amber) 1px, transparent 1px);
-    background-size:38px 38px;
-  }
-  .site-header{
-    position:relative; z-index:2; display:flex; align-items:center; justify-content:center;
-    gap:12px; padding:12px 16px; background:#ffffff; border-bottom:1px solid var(--line);
-    box-shadow:0 1px 0 rgba(0,0,0,.02);
-  }
-  .site-header .muni-logo{height:40px; width:auto; flex:none;}
-  .site-header .site-header-title{font-family:'Rubik'; font-weight:700; color:var(--ink); font-size:1rem;}
-  h1,h2,h3{font-family:'Rubik','Assistant',sans-serif; margin:0;}
   button{font-family:inherit; cursor:pointer;}
-  .screen{position:relative; z-index:1; min-height:100vh; display:none; flex-direction:column; align-items:center; padding:28px 16px 60px;}
-  .screen.active{display:flex;}
-  .wrap{width:100%; max-width:980px;}
+  h1,h2,h3{font-family:'Rubik','Assistant',sans-serif; margin:0;}
 
-  /* ---------- Header ---------- */
-  .hero{
-    display:flex; align-items:center; gap:16px; margin-bottom:26px; justify-content:center; text-align:center; flex-direction:column;
+  /* ---------- header ---------- */
+  .top{
+    position:relative; flex:none; display:flex; align-items:center; justify-content:space-between;
+    gap:12px; padding:8px clamp(12px,2vw,28px); background:#fff; min-height:64px;
+    box-shadow:0 2px 10px rgba(29,36,51,.06);
   }
-  .hex-badge{
-    width:64px; height:56px;
-    background: conic-gradient(from 90deg, var(--electricity), var(--machines), var(--biotech), var(--electricity));
-    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
-    display:flex; align-items:center; justify-content:center;
-    box-shadow: 0 0 22px rgba(217,164,65,.35);
+  .top::after{
+    content:""; position:absolute; inset-inline:0; bottom:0; height:4px;
+    background:linear-gradient(90deg,var(--b-blue) 0 25%,var(--b-green) 25% 50%,var(--b-amber) 50% 75%,var(--b-red) 75% 100%);
   }
-  .hex-badge span{font-size:26px;}
-  .hero h1{font-size:1.9rem; font-weight:800; letter-spacing:.2px;}
-  .hero p{color:var(--ink-dim); margin-top:6px; font-size:1rem; max-width:560px;}
+  .brand{display:flex; align-items:center; gap:12px; min-width:0;}
+  .brand img{height:46px; width:auto; flex:none;}
+  .brand .t1{font:800 clamp(1.15rem,2.2vw,1.9rem)/1.1 'Rubik',sans-serif;}
+  .brand .t2{font-size:clamp(.8rem,1.3vw,1.05rem); color:var(--muted); font-weight:600;}
+  .tools{display:flex; gap:8px; flex:none;}
+  .ibtn{
+    min-width:44px; min-height:44px; padding:0 14px; border-radius:12px; border:1.5px solid var(--line);
+    background:#fff; color:var(--ink); font-weight:700; font-size:.95rem;
+    display:inline-flex; align-items:center; justify-content:center; gap:6px;
+  }
+  .ibtn:hover{border-color:var(--ink);}
+  .ibtn.arm{background:var(--danger); color:#fff; border-color:var(--danger);}
 
-  /* ---------- Setup screen ---------- */
-  .panel{
-    background:var(--bg-panel);
-    border:1px solid var(--line);
-    border-radius: var(--radius);
-    padding:22px;
-    margin-bottom:18px;
+  /* ---------- hive ---------- */
+  main{flex:1; min-height:0; display:flex; align-items:center; justify-content:center; padding:8px 12px; overflow:auto;}
+  .hive{--hw:150px; --hh:calc(var(--hw)*1.1547); --gap:6px; display:flex; flex-direction:column; align-items:center;}
+  .row{display:flex; justify-content:center;}
+  .row + .row{margin-top:calc(var(--hh)*-0.25 + var(--gap)*0.86);}
+  .hexbtn{
+    position:relative; flex:none; width:var(--hw); height:var(--hh); margin:0 calc(var(--gap)/2);
+    padding:0; border:0; background:none; color:#fff;
+    filter:drop-shadow(0 6px 8px rgba(29,36,51,.2));
+    transition:transform .16s ease, filter .16s ease;
+    animation:pop .45s cubic-bezier(.2,.9,.3,1.2) both; animation-delay:calc(var(--i)*45ms);
   }
-  .panel h2{font-size:1.05rem; margin-bottom:14px; color:var(--amber); font-weight:700;}
-  .field-row{display:flex; gap:10px; align-items:center; margin-bottom:10px; flex-wrap:wrap;}
-  .field-row label{min-width:130px; color:var(--ink-dim); font-size:.92rem;}
-  input[type=text], input[type=number]{
-    background:var(--bg-panel-2); border:1px solid var(--line); color:var(--ink);
-    border-radius:6px; padding:8px 10px; font-size:.95rem; font-family:inherit;
+  .hex{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);
   }
-  input[type=number]{width:76px;}
-  .team-row{display:flex; gap:10px; align-items:center; margin-bottom:8px; flex-wrap:wrap;}
-  .team-swatch{width:14px; height:14px; border-radius:3px; flex:none;}
-  .team-row input[type=text]{flex:1; min-width:120px;}
-  .mode-toggle{display:flex; gap:10px; margin-top:6px; flex-wrap:wrap;}
-  .mode-opt{
-    flex:1; min-width:200px; border:1px solid var(--line); border-radius:8px; padding:12px 14px;
-    background:var(--bg-panel-2); transition:.15s;
+  .t-electricity .hex{background:linear-gradient(160deg,var(--c-el),var(--c-el2));}
+  .t-machines    .hex{background:linear-gradient(160deg,var(--c-ma),var(--c-ma2));}
+  .t-biotech     .hex{background:linear-gradient(160deg,var(--c-bi),var(--c-bi2));}
+  .hexbtn:not(:disabled):hover{transform:translateY(-5px) scale(1.05); z-index:2; filter:drop-shadow(0 12px 12px rgba(29,36,51,.28));}
+  .hexbtn:focus-visible{outline:4px solid var(--ink); outline-offset:3px; border-radius:14px; z-index:3;}
+  .in{display:flex; flex-direction:column; align-items:center; gap:calc(var(--hw)*.02); text-align:center; padding:0 6%;}
+  .ticon{width:calc(var(--hw)*.22); height:calc(var(--hw)*.22); display:block;}
+  .ticon svg{width:100%; height:100%; display:block;}
+  .tname{font:800 max(14px,calc(var(--hw)*.125))/1.1 'Rubik','Assistant',sans-serif;}
+  .ttype{font:600 max(12px,calc(var(--hw)*.092))/1.15 'Assistant',sans-serif; color:rgba(255,255,255,.94);}
+  .hexbtn:disabled{cursor:default; filter:none;}
+  .hexbtn:disabled .hex{background:#dcd6c8;}
+  .hexbtn:disabled .in{color:#8b8575;}
+  .hexbtn:disabled .check{width:calc(var(--hw)*.32); height:calc(var(--hw)*.32);}
+  .logohex{position:relative; flex:none; width:var(--hw); height:var(--hh); margin:0 calc(var(--gap)/2);
+    filter:drop-shadow(0 6px 8px rgba(29,36,51,.2)); animation:pop .45s cubic-bezier(.2,.9,.3,1.2) both;}
+  .logohex .hex{background:linear-gradient(135deg,var(--b-blue),var(--b-green),var(--b-amber),var(--b-red));}
+  .logohex .hex::after{
+    content:""; position:absolute; inset:calc(var(--hw)*.045); background:#fff;
+    clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);
   }
-  .mode-opt.selected{border-color:var(--amber); background:var(--amber-tint);}
-  .mode-opt b{display:block; font-size:.95rem; margin-bottom:3px;}
-  .mode-opt span{font-size:.82rem; color:var(--ink-dim);}
-  .player-total{font-size:.85rem; margin-top:10px; color:var(--ink-dim);}
-  .player-total.warn{color:var(--danger);}
-  .btn{
-    border:none; border-radius:8px; padding:12px 22px; font-size:1rem; font-weight:700;
-    background:var(--amber); color:#20180a; transition:.15s;
-  }
-  .btn:hover{filter:brightness(1.08);}
-  .btn.secondary{background:transparent; border:1px solid var(--line); color:var(--ink); font-weight:600;}
-  .btn.secondary:hover{border-color:var(--amber); color:var(--amber);}
-  .btn:disabled{opacity:.4; cursor:not-allowed;}
-  .btn-row{display:flex; gap:10px; justify-content:center; margin-top:8px; flex-wrap:wrap;}
-  .link-btn{background:none;border:none;color:var(--ink-dim);text-decoration:underline;font-size:.85rem;padding:4px;}
-  .link-btn:hover{color:var(--amber);}
+  .logohex img{position:relative; z-index:1; height:50%; width:auto;}
+  @keyframes pop{from{opacity:0; transform:scale(.55);} to{opacity:1; transform:scale(1);}}
 
-  /* ---------- Board screen ---------- */
-  .board-top{display:flex; justify-content:space-between; align-items:center; width:100%; max-width:980px; margin-bottom:14px; flex-wrap:wrap; gap:10px;}
-  .scoreboard{display:flex; gap:8px; flex-wrap:wrap;}
-  .score-chip{
-    display:flex; align-items:center; gap:7px; background:var(--bg-panel); border:1px solid var(--line);
-    border-radius:20px; padding:6px 12px; font-size:.86rem;
+  /* ---------- overlays ---------- */
+  .ov{position:fixed; inset:0; z-index:50; display:none; align-items:center; justify-content:center; padding:2vh 2vw; background:rgba(20,26,38,.74);}
+  .ov.on{display:flex;}
+  .card{
+    --tc:var(--c-ma); width:min(1100px,96vw); max-height:96vh; max-height:96dvh;
+    display:flex; flex-direction:column; overflow:hidden; background:var(--card); border-radius:22px;
+    box-shadow:0 24px 60px rgba(0,0,0,.4); animation:cardIn .24s ease-out both;
   }
-  .score-chip.turn{border-color:var(--amber); box-shadow:0 0 0 1px var(--amber) inset;}
-  .score-chip .dot{width:9px; height:9px; border-radius:50%;}
-  .score-chip b{font-family:'Rubik'; font-size:.95rem;}
-  .turn-note{font-size:.82rem; color:var(--ink-dim); text-align:center; margin-bottom:14px;}
+  @keyframes cardIn{from{opacity:0; transform:translateY(14px) scale(.97);} to{opacity:1; transform:none;}}
+  .card:focus{outline:none;}
+  .card.t-electricity{--tc:var(--c-el);}
+  .card.t-machines{--tc:var(--c-ma);}
+  .card.t-biotech{--tc:var(--c-bi);}
+  .card-head{
+    flex:none; display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:10px; padding:12px 20px; color:#fff;
+    background:var(--tc);
+  }
+  .card.t-electricity .card-head{background:linear-gradient(160deg,var(--c-el),var(--c-el2));}
+  .card.t-machines .card-head{background:linear-gradient(160deg,var(--c-ma),var(--c-ma2));}
+  .card.t-biotech .card-head{background:linear-gradient(160deg,var(--c-bi),var(--c-bi2));}
+  .tag{display:flex; flex-direction:column; gap:2px; min-width:0;}
+  .tag .a{font:800 clamp(1.05rem,1.8vw,1.6rem)/1.15 'Rubik',sans-serif;}
+  .tag .b{font-size:clamp(.9rem,1.4vw,1.2rem); opacity:.95; font-weight:600;}
+  .timer{position:relative; width:clamp(64px,8vw,92px); height:clamp(64px,8vw,92px);}
+  .timer svg{width:100%; height:100%; transform:rotate(-90deg);}
+  .timer .bg{stroke:rgba(255,255,255,.3);} .timer .fg{stroke:#fff; transition:stroke-dashoffset .25s linear;}
+  .timer .num{position:absolute; inset:0; display:grid; place-items:center; font:800 clamp(1.3rem,2.4vw,2rem) 'Rubik',sans-serif;}
+  .timer.low .fg{stroke:#ffd5cc;} .timer.low{animation:pulse .8s ease-in-out infinite;}
+  @keyframes pulse{50%{transform:scale(1.08);}}
+  .xbtn{justify-self:end; width:48px; height:48px; border-radius:50%; border:2px solid rgba(255,255,255,.7); background:transparent; color:#fff; font-size:1.4rem; line-height:1;}
+  .xbtn:hover{background:rgba(255,255,255,.2);}
+  .card-body{flex:1; min-height:0; overflow:auto; padding:clamp(16px,3vh,32px) clamp(18px,3vw,44px); font-size:calc(1rem*var(--fit,1));}
+  .reward{display:none; margin:0 0 14px; padding:.55em 1em; border-radius:12px; background:#fff3d6; border:2px solid var(--b-amber); font-weight:700; font-size:calc(clamp(1rem,1.5vw,1.4rem)*var(--fit,1));}
+  .reward.on{display:block;}
+  .q{font:700 calc(clamp(1.35rem,2.7vw,2.7rem)*var(--fit,1))/1.5 'Assistant',sans-serif; margin:0 0 .7em;}
+  .opts{display:flex; flex-direction:column; gap:calc(.5em*var(--fit,1));}
+  .opt{display:flex; gap:.7em; align-items:flex-start; padding:.55em .9em; border:2px solid var(--line); border-radius:14px; background:#fffdf8;
+       font-size:calc(clamp(1.05rem,1.75vw,1.85rem)*var(--fit,1)); line-height:1.45;}
+  .opt .l{flex:none; width:1.9em; height:1.9em; border-radius:50%; background:var(--tc); color:#fff; display:grid; place-items:center; font-weight:800; font-size:.85em;}
+  .hint{display:none; margin-top:1em; padding:.6em 1em; border-radius:12px; background:#eef6ff; border:2px solid #bcd9f5; font-size:calc(clamp(1.05rem,1.6vw,1.6rem)*var(--fit,1)); font-weight:600;}
+  .hint.on{display:block;}
+  .timesup{display:none; margin-top:1em; padding:.6em 1em; border-radius:12px; background:#fdeceb; border:2px solid var(--danger); color:var(--danger); font-weight:800; text-align:center; font-size:calc(clamp(1.1rem,1.8vw,1.8rem)*var(--fit,1));}
+  .timesup.on{display:block;}
+  .card-foot{flex:none; display:flex; gap:10px; flex-wrap:wrap; align-items:center; padding:12px 20px; border-top:1px solid var(--line); background:#faf7ef;}
+  .btn{min-height:50px; padding:0 22px; border-radius:12px; border:2px solid var(--ink); background:#fff; color:var(--ink); font-weight:800; font-size:1.05rem;}
+  .btn:hover{background:#f1ede2;}
+  .btn.pri{background:var(--ink); color:#fff; margin-inline-start:auto;}
+  .btn.pri:hover{background:#2c3650;}
 
-  .hive{display:flex; flex-direction:column; align-items:center; overflow-x:auto; width:100%; padding:6px 0 10px;}
-  .hive-row{display:flex; justify-content:center;}
-  .hive-row:not(:first-child){margin-top:-27px;}
-  .hexcell{
-    position:relative; width:104px; height:120px; margin:0 3px; flex:none;
-    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
-    display:flex; align-items:center; justify-content:center;
-    cursor:pointer; transition:transform .15s, filter .15s;
-    font-family:'Rubik'; font-weight:700;
-  }
-  .hexcell:hover:not(.done):not(.logo){transform:translateY(-4px) scale(1.04); filter:brightness(1.12);}
-  .hexcell .inner{
-    display:flex; flex-direction:column; align-items:center; gap:4px; text-align:center; padding:0 10px;
-  }
-  .hexcell .tname{font-size:.72rem; letter-spacing:.2px; opacity:.9;}
-  .hexcell .ttype{font-size:.6rem; letter-spacing:.1px; opacity:.85; font-weight:600;}
-  .hexcell .ticon{width:22px; height:22px; opacity:.85; display:inline-flex;}
-  .hexcell .ticon svg{width:100%; height:100%;}
-  .hexcell.track-electricity{background:linear-gradient(160deg,#e0a13a,#a9772a); color:#241905;}
-  .hexcell.track-machines{background:linear-gradient(160deg,#5fa3cc,#2f5978); color:#08151f;}
-  .hexcell.track-biotech{background:linear-gradient(160deg,#69b884,#2e6e46); color:#06170e;}
-  .hexcell.logo{background:radial-gradient(circle,#f2d383,#d9a441 70%); color:#241905; cursor:default;}
-  .hexcell.logo .inner b{font-size:.68rem; line-height:1.15; display:block;}
-  .hexcell.done{filter:grayscale(.5) brightness(.8); cursor:default;}
-  .hexcell.done::after{
-    content:"✓"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-    font-size:1.6rem; color:#fff; text-shadow:0 0 6px rgba(0,0,0,.6);
-  }
-  .hexcell .wonchip{
-    position:absolute; bottom:14px; font-size:.62rem; background:rgba(0,0,0,.45); padding:2px 6px; border-radius:8px;
-  }
+  /* splash + celebration */
+  .panel{width:min(760px,94vw); max-height:96vh; max-height:96dvh; overflow:auto; background:#fff; border-radius:26px; padding:clamp(22px,4vh,44px) clamp(20px,4vw,52px); text-align:center; box-shadow:0 24px 60px rgba(0,0,0,.35); animation:cardIn .3s ease-out both;}
+  .panel img.logo{height:clamp(72px,14vh,120px); width:auto; margin-bottom:10px;}
+  .panel h2{font-size:clamp(1.6rem,3.6vw,2.6rem); line-height:1.2; margin-bottom:.35em; text-wrap:balance;}
+  .panel p.sub{font-size:clamp(1.05rem,1.8vw,1.4rem); color:var(--muted); margin:0 0 1.1em; font-weight:600;}
+  .steps{list-style:none; padding:0; margin:0 0 1.4em; display:flex; flex-direction:column; gap:10px; text-align:start;}
+  .steps li{display:flex; gap:14px; align-items:center; padding:.6em 1em; border-radius:14px; background:#faf7ef; font-size:clamp(1.05rem,1.8vw,1.4rem); font-weight:700;}
+  .steps .n{flex:none; width:2em; height:2em; border-radius:50%; background:var(--ink); color:#fff; display:grid; place-items:center; font-weight:800; font-size:.9em;}
+  .panel .btn.pri{margin:0; min-height:58px; padding:0 40px; font-size:1.3rem;}
+  .confetti{position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:60;}
+  .confetti i{position:absolute; top:-5vh; width:10px; height:16px; border-radius:2px; animation:fall linear forwards;}
+  @keyframes fall{to{transform:translateY(112vh) rotate(720deg);}}
 
-  .board-actions{display:flex; gap:10px; margin-top:14px;}
-
-  /* ---------- Modal ---------- */
-  .modal-overlay{
-    position:fixed; inset:0; background:rgba(8,10,11,.86); backdrop-filter: blur(2px);
-    display:none; align-items:center; justify-content:center; z-index:50; padding:16px;
+  @media (max-width:640px){
+    .brand img{height:36px;} .brand .t2{display:none;}
+    .ov{padding:0;} .card{width:100vw; max-height:100vh; max-height:100dvh; border-radius:0;}
+    .card-head{padding:10px 14px;} .card-foot{padding:10px 14px;}
+    .btn{flex:1 1 40%; padding:0 12px;} .btn.pri{flex:1 1 100%; margin:0;}
+    .ibtn .lbl{display:none;}
   }
-  .modal-overlay.active{display:flex;}
-  .modal{
-    background:var(--bg-panel); border:1px solid var(--line); border-radius:14px;
-    max-width:640px; width:100%; max-height:92vh; overflow-y:auto;
-    padding:0; position:relative;
-  }
-  .modal-head{
-    padding:18px 22px 14px; border-bottom:1px solid var(--line);
-    display:flex; align-items:center; justify-content:space-between; gap:10px;
-  }
-  .modal-head .tag{
-    display:flex; align-items:center; gap:8px; font-size:.85rem; color:var(--ink-dim);
-  }
-  .modal-head .tag .swatch{width:11px; height:11px; border-radius:3px;}
-  .timer-wrap{padding:0; height:6px; background:var(--bg-panel-2); position:relative; overflow:hidden;}
-  .timer-bar{height:100%; width:100%; background:var(--amber); transition:width 1s linear;}
-  .timer-bar.low{background:var(--danger);}
-  .timer-num{
-    position:absolute; top:10px; left:20px; font-family:'Rubik'; font-weight:800; font-size:1.3rem; color:var(--amber);
-  }
-  .modal-body{padding:20px 22px;}
-  .qtype{font-size:.78rem; color:var(--ink-dim); margin-bottom:6px;}
-  .qtext{font-size:1.15rem; line-height:1.55; font-weight:600; margin-bottom:16px;}
-  .options{display:flex; flex-direction:column; gap:8px; margin-bottom:6px;}
-  .opt{
-    border:1px solid var(--line); background:var(--bg-panel-2); border-radius:8px; padding:10px 14px;
-    font-size:.95rem; text-align:right;
-  }
-  .opt .letter{font-weight:800; color:var(--amber); margin-left:8px;}
-  .opt.correct{border-color:var(--good); background:#e4f5e7; color:#1c5c2c; font-weight:700;}
-  .answer-box{
-    border:1px dashed var(--line); border-radius:8px; padding:12px 14px; font-size:.94rem;
-    color:var(--ink-dim); margin-top:4px; display:none; line-height:1.5;
-  }
-  .answer-box.show{display:block; color:var(--ink); border-color:var(--amber-dim);}
-  .hint-box{
-    margin-top:10px; border-radius:8px; padding:10px 14px; font-size:.86rem; color:var(--ink-dim);
-    background:var(--bg-panel-2); display:none;
-  }
-  .hint-box.show{display:block;}
-  .reward-box{
-    display:none; margin-top:14px; border:1px solid var(--amber); border-radius:8px; padding:12px 14px;
-    background:var(--amber-tint); font-size:.9rem;
-  }
-  .reward-box.show{display:block;}
-  .reward-box b{color:var(--amber);}
-  .modal-controls{display:flex; gap:8px; flex-wrap:wrap; margin-top:16px;}
-  .score-row{margin-top:18px; padding-top:16px; border-top:1px solid var(--line);}
-  .score-row h3{font-size:.85rem; color:var(--ink-dim); margin-bottom:10px; font-weight:600;}
-  .team-buttons{display:flex; flex-wrap:wrap; gap:8px;}
-  .team-btn{
-    border-radius:8px; padding:9px 14px; font-size:.9rem; border:1px solid var(--line);
-    background:var(--bg-panel-2); color:var(--ink); display:flex; align-items:center; gap:7px;
-  }
-  .team-btn:hover{border-color:var(--amber);}
-  .team-btn .dot{width:9px; height:9px; border-radius:50%;}
-  .bonus-note{font-size:.78rem; color:var(--ink-dim); margin-top:8px;}
-  .close-x{
-    background:none; border:none; color:var(--ink-dim); font-size:1.3rem; line-height:1; padding:4px 8px;
-  }
-  .close-x:hover{color:var(--ink);}
-
-  /* ---------- End screen ---------- */
-  .podium{display:flex; flex-direction:column; gap:10px; width:100%; max-width:520px; margin:20px 0;}
-  .prow{
-    display:flex; align-items:center; gap:12px; background:var(--bg-panel); border:1px solid var(--line);
-    border-radius:10px; padding:14px 18px;
-  }
-  .prow .rank{font-family:'Rubik'; font-weight:800; font-size:1.2rem; width:28px; color:var(--amber);}
-  .prow .dot{width:12px; height:12px; border-radius:50%; flex:none;}
-  .prow .name{flex:1; font-weight:700;}
-  .prow .pts{font-family:'Rubik'; font-weight:800; color:var(--amber);}
-  .prow.first{border-color:var(--amber); background:var(--amber-tint);}
-
-  .info-modal .modal-body{font-size:.88rem; line-height:1.6;}
-  .info-table{width:100%; border-collapse:collapse; font-size:.83rem;}
-  .info-table th,.info-table td{border-bottom:1px solid var(--line); padding:7px 6px; text-align:right; vertical-align:top;}
-  .info-table th{color:var(--amber); font-weight:700;}
-  .track-tag{display:inline-block; padding:1px 7px; border-radius:6px; font-size:.72rem; font-weight:700;}
-  .track-tag.electricity{background:var(--electricity-dim); color:var(--electricity);}
-  .track-tag.machines{background:var(--machines-dim); color:var(--machines);}
-  .track-tag.biotech{background:var(--biotech-dim); color:var(--biotech);}
-
-  @media (max-width:600px){
-    .hexcell{width:82px; height:96px; margin:0 2px;}
-    .hive-row:not(:first-child){margin-top:-21px;}
-    .hero h1{font-size:1.45rem;}
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.01ms !important; animation-delay:0s !important; transition-duration:.01ms !important;}
   }
 </style>
 </head>
 <body>
-<header class="site-header">
-  <img src="ashdod-logo.png" alt="עיריית אשדוד" class="muni-logo" onerror="this.style.display='none'">
-  <span class="site-header-title">המרכז הטכנולוגי אשדוד</span>
+
+<header class="top">
+  <div class="brand">
+    <img src="ashdod-logo.png" alt="עיריית אשדוד" onerror="this.style.display='none'">
+    <div>
+      <div class="t1">כוורת הידע</div>
+      <div class="t2">המרכז הטכנולוגי אשדוד</div>
+    </div>
+  </div>
+  <div class="tools">
+    <button class="ibtn" id="soundBtn" aria-pressed="true" aria-label="צליל פעיל. לחיצה להשתקה">🔊<span class="lbl"> צליל</span></button>
+    <button class="ibtn" id="resetBtn" aria-label="איפוס הכוורת" title="איפוס הכוורת">↺<span class="lbl"> איפוס הכוורת</span></button>
+  </div>
 </header>
-<div class="blueprint-grid"></div>
 
-<!-- ============ GAME SCREEN ============ -->
-<div class="screen active" id="screen-board">
-  <div class="wrap">
-    <div class="hero">
-      <div class="hex-badge"><span>⬡</span></div>
-      <h1>כוורת הידע של המרכז הטכנולוגי</h1>
-      <p>שלוש מגמות, כוורת שלמה. בחרו תא בכוורת, ענו בעל פה לפני שהזמן אוזל.</p>
-    </div>
-  </div>
-  <div class="board-top">
-    <button class="btn secondary" id="infoBtn">מדריך הכנה לכוורת הפיזית</button>
-    <button class="btn secondary" id="answerKeyBtn">מחוון תשובות (למנחה בלבד)</button>
-  </div>
-  <div class="hive" id="hive"></div>
-  <div class="board-actions">
-    <button class="btn secondary" id="restartBtn">איפוס הכוורת</button>
+<main id="main"><div class="hive" id="hive" role="group" aria-label="כוורת השאלות"></div></main>
+
+<!-- welcome -->
+<div class="ov on" id="splash" role="dialog" aria-modal="true" aria-labelledby="wTitle">
+  <div class="panel">
+    <img class="logo" src="ashdod-logo.png" alt="עיריית אשדוד" onerror="this.style.display='none'">
+    <h2 id="wTitle"></h2>
+    <p class="sub" id="wSub"></p>
+    <ol class="steps" id="wSteps"></ol>
+    <button class="btn pri" id="startBtn"></button>
   </div>
 </div>
 
-<!-- ============ QUESTION MODAL ============ -->
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal">
-    <div class="modal-head">
-      <div class="tag"><span class="swatch" id="mSwatch"></span><span id="mTrackName"></span> · <span id="mTypeName"></span></div>
-      <button class="close-x" id="closeModalX">✕</button>
-    </div>
-    <div class="timer-wrap"><div class="timer-bar" id="timerBar"></div></div>
-    <div class="modal-body">
-      <div class="timer-num" id="timerNum"></div>
-      <div class="qtext" id="qtext" style="margin-top:22px;"></div>
-      <div class="options" id="optionsWrap"></div>
-      <div class="hint-box" id="hintBox"></div>
-      <div class="reward-box" id="rewardBox"></div>
-
-      <div class="modal-controls">
-        <button class="btn secondary" id="pauseTimerBtn">עצירת טיימר</button>
-        <button class="btn secondary" id="revealHintBtn">הצג רמז</button>
+<!-- question -->
+<div class="ov" id="qov">
+  <div class="card" id="card" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="qtext">
+    <div class="card-head">
+      <div class="tag"><span class="a" id="mTrack"></span><span class="b" id="mType"></span></div>
+      <div class="timer" id="timer" aria-hidden="true">
+        <svg viewBox="0 0 100 100"><circle class="bg" cx="50" cy="50" r="44" fill="none" stroke-width="9"/><circle class="fg" id="ring" cx="50" cy="50" r="44" fill="none" stroke-width="9" stroke-linecap="round" stroke-dasharray="276.46" stroke-dashoffset="0"/></svg>
+        <span class="num" id="num"></span>
       </div>
-
-      <div class="score-row">
-        <div class="btn-row" style="justify-content:flex-start;">
-          <button class="btn" id="closeCellBtn">סגירת התא</button>
-        </div>
-      </div>
+      <button class="xbtn" id="xBtn" aria-label="סגירת השאלה">✕</button>
+    </div>
+    <div class="card-body" id="body">
+      <div class="reward" id="reward">🎁 שאלת הפתעה — פרס מחכה למי שפותר!</div>
+      <p class="q" id="qtext"></p>
+      <div class="opts" id="opts"></div>
+      <div class="hint" id="hint"></div>
+      <div class="timesup" id="timesup" role="status">⏰ הזמן נגמר!</div>
+    </div>
+    <div class="card-foot">
+      <button class="btn" id="pauseBtn">עצירת טיימר</button>
+      <button class="btn" id="hintBtn">💡 רמז</button>
+      <button class="btn pri" id="doneBtn">סיום השאלה ✓</button>
     </div>
   </div>
 </div>
 
-<!-- ============ PREP INFO MODAL ============ -->
-<div class="modal-overlay" id="infoOverlay">
-  <div class="modal info-modal">
-    <div class="modal-head">
-      <div class="tag"><b style="color:var(--ink)">מדריך הכנה — כל תאי הכוורת והרמזים המוצעים להדפסה</b></div>
-      <button class="close-x" id="closeInfoX">✕</button>
-    </div>
-    <div class="modal-body">
-      <p style="color:var(--ink-dim); margin-bottom:12px;">
-        לכל תא מוצע סמל פשוט וחד־קווי, מתאים לתבליט שטוח שקל למדל ולהדפיס בתלת מימד ולשבץ בתוך תא הכוורת הפיזי כרמז.
-        התא העליון (הלוגו) יכול להישאר ריק מרמז ולשמש סמל של המרכז עצמו.
-      </p>
-      <table class="info-table" id="infoTable"></table>
-    </div>
+<!-- celebration -->
+<div class="ov" id="win" role="dialog" aria-modal="true" aria-labelledby="winTitle">
+  <div class="panel">
+    <h2 id="winTitle">🎉 כל הכבוד!</h2>
+    <p class="sub">פתחתם את כל תאי הכוורת.</p>
+    <button class="btn pri" id="againBtn">משחק חדש</button>
   </div>
 </div>
-
-<!-- ============ ANSWER KEY MODAL (host/moderator only — never shown during live play) ============ -->
-<div class="modal-overlay" id="answerKeyOverlay">
-  <div class="modal info-modal">
-    <div class="modal-head">
-      <div class="tag"><b style="color:var(--ink)">מחוון תשובות — למנחה בלבד</b></div>
-      <button class="close-x" id="closeAnswerKeyX">✕</button>
-    </div>
-    <div class="modal-body">
-      <p style="color:var(--ink-dim); margin-bottom:12px;">
-        רשימה זו מיועדת למנחה/ה בלבד לצורך שיפוט תשובות. אין להציג מסך זה למשתתפים — התשובות אינן מופיעות במהלך המשחק עצמו.
-      </p>
-      <div id="answerKeyList"></div>
-    </div>
-  </div>
-</div>
+<div class="confetti" id="confetti" aria-hidden="true"></div>
 
 <script>
-/* ================= DATA ================= */
+/* ===== ניסוח הודעת הברכה — אפשר לערוך כאן ===== */
+const WELCOME = {
+  title: 'ברוכים הבאים למרכז הטכנולוגי אשדוד',
+  sub:   'כוורת הידע — שלוש מגמות ו-12 אתגרים',
+  steps: ['בוחרים תא בכוורת', 'עונים בעל פה לפני שהזמן נגמר', 'כל תא נפתח פעם אחת בלבד'],
+  button:'בואו נתחיל'
+};
+
+/* ===== נתונים ===== */
 const TRACKS = {
-  electricity: { name:'הנדסת חשמל ואלקטרוניקה', color:'var(--electricity)', short:'חשמל' },
-  machines:    { name:'הנדסת מכונות',            color:'var(--machines)',    short:'מכונות' },
-  biotech:     { name:'ביוטכנולוגיה',             color:'var(--biotech)',     short:'ביוטק' },
+  electricity:{ name:'הנדסת חשמל ואלקטרוניקה', short:'חשמל' },
+  machines:   { name:'הנדסת מכונות',            short:'מכונות' },
+  biotech:    { name:'ביוטכנולוגיה',             short:'ביוטק' }
 };
 const TYPES = {
-  knowledge: { name:'שאלת ידע',    seconds:20 },
-  logic:     { name:'שאלת היגיון', seconds:25 },
-  task:      { name:'שאלת משימה', seconds:90 },
-  surprise:  { name:'תא הפתעה',    seconds:30 },
+  knowledge:{ name:'שאלת ידע',    seconds:20 },
+  logic:    { name:'שאלת היגיון', seconds:25 },
+  task:     { name:'שאלת משימה', seconds:90 },
+  surprise: { name:'שאלת הפתעה', seconds:30 }
 };
-
-function icon(type){
-  switch(type){
-    case 'knowledge': return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="10" r="6"/><path d="M9.5 16h5"/><path d="M10 19h4"/><path d="M12 4V2"/></svg>`;
-    case 'logic': return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="5" cy="12" r="2"/><circle cx="19" cy="6" r="2"/><circle cx="19" cy="18" r="2"/><path d="M7 12h5"/><path d="M12 12l5-5"/><path d="M12 12l5 5"/></svg>`;
-    case 'task': return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="3" width="16" height="18" rx="1.5"/><path d="M8 8h8"/><path d="M8 12l2 2 4-4"/><path d="M8 17h5"/></svg>`;
-    case 'surprise': return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="9" width="18" height="11" rx="1"/><path d="M3 13h18"/><path d="M12 9v11"/><path d="M12 9c-2-4-7-4-7-1 0 2 3 1 7 1Z"/><path d="M12 9c2-4 7-4 7-1 0 2-3 1-7 1Z"/></svg>`;
-  }
-}
-
-/* 12 content cells + 1 logo cell, arranged into hive rows [1,2,3,4,3] */
 const CELLS = [
-  { logo:true },
-
-  // row2 (2) — knowledge
-  { track:'electricity', type:'knowledge', q:'למה ציפור שעומדת על חוט חשמל לא מתחשמלת?',
-    answer:'בלי הפרש פוטנציאלים לא זורם זרם. הציפור נוגעת רק בחוט אחד, ולכן אין הפרש פוטנציאלים.',
-    hint:'סמל מוצע: ציפור פשוטה על קו ישר (חוט).' },
-  { track:'machines', type:'knowledge', q:'במערכת מכטרונית, מהו התפקיד העיקרי של הבקר?',
-    options:['להפוך אנרגיה חשמלית לאנרגיה מכנית','לקבל מידע מחיישנים, לעבד אותו ולקבוע את פעולת המערכת','להגדיל את המתח שמגיע למנוע','לחבר את החלקים המכניים של המערכת'],
-    correct:1,
-    hint:'סמל מוצע: שבב/מעגל מודפס (מלבן עם רגליים קצרות).' },
-
-  // row3 (3) — knowledge + logic
-  { track:'biotech', type:'knowledge', q:'במעבדה נמצאו שתי קבוצות תאים זהות כמעט לחלוטין. בקבוצה א\' נמדדה כמות גבוהה של חלבון מסוים, ובקבוצה ב\' כמעט לא נמצא החלבון. בבדיקת רצף ה-DNA נמצא שבקבוצה ב\' קיימת מוטציה באזור הפרומוטר של הגן. איזה הסבר הוא הסביר ביותר?',
-    options:['המוטציה גרמה לריבוזומים לייצר יותר חלבון','המוטציה עשויה לפגוע בקישור של RNA פולימראז ובכך להפחית את השעתוק','המוטציה גרמה ל-DNA להפוך ל-RNA','המוטציה פגעה ישירות בכל הריבוזומים בתא'],
-    correct:1,
-    hint:'סמל מוצע: סליל DNA עם "דגל" קטן בתחילתו (אזור הפרומוטר).' },
-  { track:'electricity', type:'logic', q:'אם המקרר מקרר, למה החלק האחורי שלו חם?',
-    answer:'המקרר לא "מייצר קור" אלא מזיז חום מהפנים אל החוץ (מחזור קירור). חום זה משתחרר דרך הצינורות (המעבה) שבגב המקרר, ולכן הוא חם — בנוסף לחום שמייצר המדחס עצמו בפעולתו. זהו עיקרון "משאבת החום": אנרגיה לא נעלמת, היא רק עוברת ממקום למקום.',
-    hint:'סמל מוצע: שמש יוצאת מתוך המקרר.' },
-  { track:'machines', type:'logic', q:'רובוט נוסע בקו ישר באמצעות שני מנועים. המנוע הימני מסתובב מעט מהר יותר מהמנוע השמאלי. מה צפוי לקרות לרובוט, ומדוע?',
-    options:['הרובוט ימשיך ישר כי שני המנועים פועלים','הרובוט יסטה לכיוון הצד של המנוע האיטי יותר','הרובוט יסטה לכיוון הצד של המנוע המהיר יותר','הרובוט יעצור מיד'],
-    correct:2,
-    answer:'התשובה הנכונה: ב — כאשר המנוע הימני מהיר יותר, הצד הימני מתקדם יותר מהצד השמאלי, ולכן הרובוט יסטה שמאלה, לכיוון הצד האיטי יותר.',
-    hint:'סמל מוצע: רובוט קטן עם חץ עקום המצביע הצידה.' },
-
-  // row4 (4) — logic + task
-  { track:'biotech', type:'logic', q:'חוקר חשף תאים לקרינת UV, ולאחר מכן חילק אותם לשתי קבוצות: קבוצה א\' הושארה בחושך, קבוצה ב\' נחשפה לאור כחול לזמן מה. לאחר מכן נבדקה כמות הנזק ב-DNA. איזו תוצאה היא הסבירה ביותר, ומדוע?',
-    options:['בשתי הקבוצות כמות הנזק תהיה זהה, מכיוון שקרינת UV פוגעת ב-DNA באופן בלתי הפיך','בקבוצה א\' צפויה להישאר כמות גדולה יותר של נזק, ואילו בקבוצה ב\' כמות הנזק עשויה להיות נמוכה יותר, משום שאנזימים מסוימים יכולים להשתמש באנרגיית אור כחול לתיקון נזקי DNA','בקבוצה ב\' כמות הנזק תהיה גבוהה יותר, משום שאור כחול גורם בעצמו לשבירת קשרים ב-DNA','בשתי הקבוצות לא יימצא נזק, משום שהתאים תמיד מתקנים DNA שנפגע מקרינת UV באופן מיידי'],
-    correct:1,
-    hint:'סמל מוצע: קרן שמש/אור עם קו גלי (אור כחול).' },
-  { track:'electricity', type:'task', q:'קיר עם מעגל חשמלי פתוח: חוטים, סוללה ונורה. איך אפשר להדליק את האור? מצאו את שתי הנקודות הנכונות ו"סִגרו" את המעגל.',
-    answer:'המעגל בין שתי הנקודות המסומנות פתוח. יש לגעת בו-זמנית בשתי הנקודות (בעזרת הגוף, או חוט/מוליך) כדי לסגור את המעגל דרך המוליך ולהדליק את הנורה. זו הדגמה חיה למושג "מעגל סגור" מול "מעגל פתוח".' },
-  { track:'machines', type:'task', q:'בנו מנגנון גלגלי שיניים (בעזרת ערכת הרכבה כגון לגו טכניק או מאייקנו) שממחיש כיצד שינוי היחס בין גדלי הגלגלים משנה את מהירות הסיבוב ואת המומנט המועבר. הדגימו לפחות שני יחסי הילוכים שונים והסבירו מה קורה למהירות ולכוח בכל יחס.',
-    answer:'מנגנון תקין מראה שגלגל שיניים קטן המניע גלגל גדול מוריד מהירות אך מגדיל מומנט (כוח סיבוב), ולהפך — גלגל גדול המניע גלגל קטן מעלה מהירות אך מקטין מומנט. יחס ההילוכים = מספר השיניים של הגלגל המונע חלקי מספר השיניים של הגלגל המניע.' },
-  { track:'biotech', type:'task', q:'בנו דגם של גדילי ה-DNA. הדגם חייב להציג: שני גדילים, ארבעה סוגי בסיסים, התאמה בין הבסיסים, מבנה של סליל כפול, וסימון סוג הקשר.',
-    answer:'דגם תקין יציג שני גדילים אנטי-מקבילים, ארבעת הבסיסים (A,T,C,G), התאמה נכונה (A-T, C-G), מבנה סליל כפול (double helix), וסימון שהקשר בין הבסיסים הוא קשר מימן.' },
-
-  // row5 (3) — surprise
-  { track:'electricity', type:'surprise', q:'מה ההבדל בין זרם למתח?',
-    answer:'מתח הוא ההפרש בין שני מוקדים אשר גורם לזרם לזרום, כמו הפרש הגבהים שגורם למים בנהר לזרום. זרם הוא כמות המטען החשמלי שזורמת בפועל דרך המוליך ביחידת זמן — כלומר "כמה מים זורמים בנהר" בפועל, כתוצאה מהפרש הגבהים (המתח).',
-    hint:'נהר זורם.',
-    reward:'תג "מהנדס/ת חשמל מוסמך/ת" + בונוס נקודות' },
-  { track:'machines', type:'surprise', q:'מערכת הילוכים מורכבת משני גלגלי שיניים: גלגל מניע בעל 60 שיניים המסתובב במהירות 120 סל"ד, מחובר לגלגל מונע בעל 20 שיניים. מהי מהירות הסיבוב של הגלגל המונע, ומהו יחס ההילוכים?',
-    answer:'יחס ההילוכים = 60/20 = 3. מהירות הגלגל המונע = 120 × 3 = 360 סל"ד. ככל שהגלגל המונע קטן יותר מהמניע, כך הוא מסתובב מהר יותר — אך עם פחות מומנט.',
-    hint:'סמל מוצע: גלגל שיניים בודד עם מספר קטן לצדו.',
-    reward:'תג "מהנדס/ת מכונות מוסמך/ת" + בונוס נקודות' },
-  { track:'biotech', type:'surprise', q:'חוקר השווה בין תאים תקינים לתאים סרטניים, ומצא שבתאים הסרטניים גן מסוים — שתפקידו לעצור חלוקת תאים כאשר ה-DNA פגום — אינו פעיל. איזו תוצאה צפויה?',
-    options:['התאים הסרטניים יפסיקו להתחלק לחלוטין','התאים יוכלו להמשיך להתחלק גם כאשר קיימים נזקי DNA, ולכן עלולה לעלות הצטברות המוטציות','התאים הסרטניים לא יכילו DNA','כל התאים ימותו מיד לאחר הפגיעה ב-DNA'],
-    correct:1,
-    hint:'סמל מוצע: תא מתחלק לשניים עם תמרור "עצור" קטן לצדו.',
-    reward:'תג "ביוטכנולוג/ית מוסמך/ת" + בונוס נקודות' },
+ {
+  "logo": true
+ },
+ {
+  "track": "electricity",
+  "type": "knowledge",
+  "q": "למה ציפור שעומדת על חוט חשמל לא מתחשמלת?",
+  "hint": "ציפור על חוט"
+ },
+ {
+  "track": "machines",
+  "type": "knowledge",
+  "q": "במערכת מכטרונית, מהו התפקיד העיקרי של הבקר?",
+  "options": [
+   "להפוך אנרגיה חשמלית לאנרגיה מכנית",
+   "לקבל מידע מחיישנים, לעבד אותו ולקבוע את פעולת המערכת",
+   "להגדיל את המתח שמגיע למנוע",
+   "לחבר את החלקים המכניים של המערכת"
+  ],
+  "hint": "שבב אלקטרוני"
+ },
+ {
+  "track": "biotech",
+  "type": "knowledge",
+  "q": "במעבדה נמצאו שתי קבוצות תאים זהות כמעט לחלוטין. בקבוצה א' נמדדה כמות גבוהה של חלבון מסוים, ובקבוצה ב' כמעט לא נמצא החלבון. בבדיקת רצף ה-DNA נמצא שבקבוצה ב' קיימת מוטציה באזור הפרומוטר של הגן. איזה הסבר הוא הסביר ביותר?",
+  "options": [
+   "המוטציה גרמה לריבוזומים לייצר יותר חלבון",
+   "המוטציה עשויה לפגוע בקישור של RNA פולימראז ובכך להפחית את השעתוק",
+   "המוטציה גרמה ל-DNA להפוך ל-RNA",
+   "המוטציה פגעה ישירות בכל הריבוזומים בתא"
+  ],
+  "hint": "סליל DNA עם דגל בהתחלה"
+ },
+ {
+  "track": "electricity",
+  "type": "logic",
+  "q": "אם המקרר מקרר, למה החלק האחורי שלו חם?",
+  "hint": "שמש יוצאת מתוך המקרר"
+ },
+ {
+  "track": "machines",
+  "type": "logic",
+  "q": "רובוט נוסע בקו ישר באמצעות שני מנועים. המנוע הימני מסתובב מעט מהר יותר מהמנוע השמאלי. מה צפוי לקרות לרובוט, ומדוע?",
+  "options": [
+   "הרובוט ימשיך ישר כי שני המנועים פועלים",
+   "הרובוט יסטה לכיוון הצד של המנוע האיטי יותר",
+   "הרובוט יסטה לכיוון הצד של המנוע המהיר יותר",
+   "הרובוט יעצור מיד"
+  ],
+  "hint": "רובוט שפונה הצידה"
+ },
+ {
+  "track": "biotech",
+  "type": "logic",
+  "q": "חוקר חשף תאים לקרינת UV, ולאחר מכן חילק אותם לשתי קבוצות: קבוצה א' הושארה בחושך, קבוצה ב' נחשפה לאור כחול לזמן מה. לאחר מכן נבדקה כמות הנזק ב-DNA. איזו תוצאה היא הסבירה ביותר, ומדוע?",
+  "options": [
+   "בשתי הקבוצות כמות הנזק תהיה זהה, מכיוון שקרינת UV פוגעת ב-DNA באופן בלתי הפיך",
+   "בקבוצה א' צפויה להישאר כמות גדולה יותר של נזק, ואילו בקבוצה ב' כמות הנזק עשויה להיות נמוכה יותר, משום שאנזימים מסוימים יכולים להשתמש באנרגיית אור כחול לתיקון נזקי DNA",
+   "בקבוצה ב' כמות הנזק תהיה גבוהה יותר, משום שאור כחול גורם בעצמו לשבירת קשרים ב-DNA",
+   "בשתי הקבוצות לא יימצא נזק, משום שהתאים תמיד מתקנים DNA שנפגע מקרינת UV באופן מיידי"
+  ],
+  "hint": "קרן אור כחולה"
+ },
+ {
+  "track": "electricity",
+  "type": "task",
+  "q": "קיר עם מעגל חשמלי פתוח: חוטים, סוללה ונורה. איך אפשר להדליק את האור? מצאו את שתי הנקודות הנכונות ו\"סִגרו\" את המעגל."
+ },
+ {
+  "track": "machines",
+  "type": "task",
+  "q": "בנו מנגנון גלגלי שיניים (בעזרת ערכת הרכבה כגון לגו טכניק או מאייקנו) שממחיש כיצד שינוי היחס בין גדלי הגלגלים משנה את מהירות הסיבוב ואת המומנט המועבר. הדגימו לפחות שני יחסי הילוכים שונים והסבירו מה קורה למהירות ולכוח בכל יחס."
+ },
+ {
+  "track": "biotech",
+  "type": "task",
+  "q": "בנו דגם של גדילי ה-DNA. הדגם חייב להציג: שני גדילים, ארבעה סוגי בסיסים, התאמה בין הבסיסים, מבנה של סליל כפול, וסימון סוג הקשר."
+ },
+ {
+  "track": "electricity",
+  "type": "surprise",
+  "q": "מה ההבדל בין זרם למתח?",
+  "hint": "נהר זורם",
+  "reward": true
+ },
+ {
+  "track": "machines",
+  "type": "surprise",
+  "q": "מערכת הילוכים מורכבת משני גלגלי שיניים: גלגל מניע בעל 60 שיניים המסתובב במהירות 120 סל\"ד, מחובר לגלגל מונע בעל 20 שיניים. מהי מהירות הסיבוב של הגלגל המונע, ומהו יחס ההילוכים?",
+  "hint": "גלגל שיניים קטן",
+  "reward": true
+ },
+ {
+  "track": "biotech",
+  "type": "surprise",
+  "q": "חוקר השווה בין תאים תקינים לתאים סרטניים, ומצא שבתאים הסרטניים גן מסוים — שתפקידו לעצור חלוקת תאים כאשר ה-DNA פגום — אינו פעיל. איזו תוצאה צפויה?",
+  "options": [
+   "התאים הסרטניים יפסיקו להתחלק לחלוטין",
+   "התאים יוכלו להמשיך להתחלק גם כאשר קיימים נזקי DNA, ולכן עלולה לעלות הצטברות המוטציות",
+   "התאים הסרטניים לא יכילו DNA",
+   "כל התאים ימותו מיד לאחר הפגיעה ב-DNA"
+  ],
+  "hint": "תא מתחלק עם תמרור \"עצור\"",
+  "reward": true
+ }
 ];
 
-const ROW_SIZES = [1,2,3,4,3];
+/* ===== כלים ===== */
+const $ = id => document.getElementById(id);
+const NS = 'http://www.w3.org/2000/svg';
+function icon(type){
+  const p = {
+    knowledge:'<circle cx="12" cy="10" r="6"/><path d="M9.5 16h5"/><path d="M10 19h4"/><path d="M12 4V2"/>',
+    logic:'<circle cx="5" cy="12" r="2"/><circle cx="19" cy="6" r="2"/><circle cx="19" cy="18" r="2"/><path d="M7 12h5"/><path d="M12 12l5-5"/><path d="M12 12l5 5"/>',
+    task:'<rect x="4" y="3" width="16" height="18" rx="1.5"/><path d="M8 8h8"/><path d="M8 12l2 2 4-4"/><path d="M8 17h5"/>',
+    surprise:'<rect x="3" y="9" width="18" height="11" rx="1"/><path d="M3 13h18"/><path d="M12 9v11"/><path d="M12 9c-2-4-7-4-7-1 0 2 3 1 7 1Z"/><path d="M12 9c2-4 7-4 7-1 0 2-3 1-7 1Z"/>'
+  }[type];
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+}
+const CHECK = '<svg class="check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 
-/* ================= STATE ================= */
-let state = {
-  cells: [],
-  activeCellIndex: null,
-  timer: { remaining:0, total:0, handle:null, paused:false },
-};
+/* ===== מצב ===== */
+let cells = [];
+let active = -1;
+let lastRows = '';
+let sound = true;
+let ac = null;
 
-/* ================= GAME SCREEN ================= */
-document.getElementById('infoBtn').addEventListener('click', ()=> openInfoModal());
-document.getElementById('closeInfoX').addEventListener('click', ()=> document.getElementById('infoOverlay').classList.remove('active'));
-document.getElementById('answerKeyBtn').addEventListener('click', ()=> openAnswerKeyModal());
-document.getElementById('closeAnswerKeyX').addEventListener('click', ()=> document.getElementById('answerKeyOverlay').classList.remove('active'));
-document.getElementById('restartBtn').addEventListener('click', startGame);
-
-function startGame(){
-  state.cells = CELLS.map(c=>({ ...c, answered:false, wonBy:null }));
-  renderHive();
+function newGame(){
+  cells = CELLS.map(c => ({...c, answered:false}));
+  lastRows = '';
+  layoutHive(true);
 }
 
-function renderHive(){
-  const hive = document.getElementById('hive');
-  hive.innerHTML = '';
+/* ===== כוורת ===== */
+function layoutHive(force){
+  const narrow = innerWidth < 700 && innerHeight >= innerWidth;
+  const rows = narrow ? [1,2,3,2,3,2] : [1,2,3,4,3];
+  const main = $('main');
+  const M = Math.max(...rows), R = rows.length;
+  const availW = main.clientWidth - 24, availH = main.clientHeight - 24 - (R-1)*6*0.86;
+  const factor = 1 + 0.75*(R-1);
+  let W = Math.min(availH/(factor*1.1547), availW/(M+0.2));
+  W = Math.max(72, Math.min(W, 270));
+  $('hive').style.setProperty('--hw', W.toFixed(1)+'px');
+  const key = rows.join(',');
+  if(force || key !== lastRows){ lastRows = key; renderHive(rows); }
+}
+
+function renderHive(rows){
+  const hive = $('hive'); hive.textContent = '';
   let idx = 0;
-  ROW_SIZES.forEach(size=>{
-    const row = document.createElement('div');
-    row.className = 'hive-row';
-    for(let i=0;i<size;i++){
-      row.appendChild(makeHexEl(idx));
-      idx++;
-    }
+  rows.forEach(n => {
+    const row = document.createElement('div'); row.className = 'row';
+    for(let k=0;k<n;k++){ row.appendChild(makeCell(idx)); idx++; }
     hive.appendChild(row);
   });
 }
 
-function makeHexEl(index){
-  const cell = state.cells[index];
-  const el = document.createElement('div');
-  el.className = 'hexcell';
-  if(cell.logo){
-    el.classList.add('logo');
-    el.innerHTML = `<div class="inner"><b>⬡<br>המרכז<br>הטכנולוגי</b></div>`;
-    return el;
+function makeCell(i){
+  const c = cells[i];
+  if(c.logo){
+    const d = document.createElement('div'); d.className = 'logohex'; d.style.setProperty('--i', i);
+    d.innerHTML = '<div class="hex"><img src="ashdod-logo.png" alt="" onerror="this.replaceWith(Object.assign(document.createElement(\'b\'),{textContent:\'המרכז הטכנולוגי\'}))"></div>';
+    return d;
   }
-  el.classList.add('track-'+cell.track);
-  if(cell.answered) el.classList.add('done');
-  if(!cell.answered){
-    el.innerHTML = `<div class="inner"><span class="ticon">${icon(cell.type)}</span><span class="tname">${TRACKS[cell.track].short}</span><span class="ttype">${TYPES[cell.type].name}</span></div>`;
-    el.addEventListener('click', ()=> openQuestion(index));
-  }
-  return el;
-}
-
-/* ================= QUESTION MODAL ================= */
-const overlay = document.getElementById('modalOverlay');
-const els = {
-  swatch: document.getElementById('mSwatch'),
-  trackName: document.getElementById('mTrackName'),
-  typeName: document.getElementById('mTypeName'),
-  qtext: document.getElementById('qtext'),
-  options: document.getElementById('optionsWrap'),
-  hintBox: document.getElementById('hintBox'),
-  rewardBox: document.getElementById('rewardBox'),
-  timerBar: document.getElementById('timerBar'),
-  timerNum: document.getElementById('timerNum'),
-};
-
-function openQuestion(index){
-  state.activeCellIndex = index;
-  const cell = state.cells[index];
-  const track = TRACKS[cell.track];
-  const type = TYPES[cell.type];
-
-  els.swatch.style.background = track.color;
-  els.trackName.textContent = track.name;
-  els.typeName.textContent = type.name;
-  els.qtext.textContent = cell.q;
-  els.hintBox.classList.remove('show');
-  els.hintBox.textContent = cell.hint ? ('רמז: ' + cell.hint) : '';
-  document.getElementById('revealHintBtn').style.display = cell.hint ? '' : 'none';
-  els.rewardBox.classList.remove('show');
-  if(cell.reward){
-    els.rewardBox.innerHTML = `🎁 <b>פרס לתא ההפתעה:</b> ${cell.reward}`;
-    els.rewardBox.classList.add('show');
-  }
-
-  if(cell.options){
-    els.options.innerHTML = cell.options.map((opt,i)=>`
-      <div class="opt" data-i="${i}"><span class="letter">${['א','ב','ג','ד'][i]}.</span>${opt}</div>
-    `).join('');
+  const b = document.createElement('button'); b.type = 'button';
+  b.className = 'hexbtn t-' + c.track; b.style.setProperty('--i', i);
+  const label = TRACKS[c.track].short + ' — ' + TYPES[c.type].name;
+  if(c.answered){
+    b.disabled = true; b.setAttribute('aria-label', label + ' (נענה)');
+    b.innerHTML = '<span class="hex"><span class="in">' + CHECK + '</span></span>';
   } else {
-    els.options.innerHTML = '';
+    b.setAttribute('aria-label', label);
+    b.innerHTML = '<span class="hex"><span class="in"><span class="ticon">' + icon(c.type) + '</span>' +
+      '<span class="tname">' + TRACKS[c.track].short + '</span><span class="ttype">' + TYPES[c.type].name + '</span></span></span>';
+    b.addEventListener('click', () => openQuestion(i));
   }
-
-  overlay.classList.add('active');
-  startTimer(type.seconds);
+  return b;
 }
 
-document.getElementById('closeCellBtn').addEventListener('click', ()=> closeQuestion());
-document.getElementById('closeModalX').addEventListener('click', ()=> closeQuestion());
+/* ===== שאלה ===== */
+const CIRC = 276.46;
+let T = { end:0, left:0, total:0, paused:false, handle:null, done:false };
 
-document.getElementById('revealHintBtn').addEventListener('click', ()=>{
-  els.hintBox.classList.toggle('show');
-});
+function openQuestion(i){
+  active = i; const c = cells[i];
+  $('card').className = 'card t-' + c.track;
+  $('mTrack').textContent = TRACKS[c.track].name;
+  $('mType').textContent = TYPES[c.type].name;
+  $('qtext').textContent = c.q;
+  $('reward').classList.toggle('on', !!c.reward);
+  const o = $('opts'); o.textContent = '';
+  (c.options || []).forEach((t,k) => {
+    const d = document.createElement('div'); d.className = 'opt';
+    const l = document.createElement('span'); l.className = 'l'; l.textContent = 'אבגד'[k];
+    const s = document.createElement('span'); s.textContent = t;
+    d.append(l, s); o.appendChild(d);
+  });
+  $('hint').classList.remove('on');
+  $('hint').textContent = c.hint ? '💡 רמז: ' + c.hint : '';
+  $('hintBtn').style.display = c.hint ? '' : 'none';
+  $('timesup').classList.remove('on');
+  $('pauseBtn').textContent = 'עצירת טיימר';
+  $('qov').classList.add('on');
+  fitCard();
+  startTimer(TYPES[c.type].seconds);
+  $('card').focus({preventScroll:true});
+}
 
-document.getElementById('pauseTimerBtn').addEventListener('click', (e)=>{
-  state.timer.paused = !state.timer.paused;
-  e.target.textContent = state.timer.paused ? 'המשך טיימר' : 'עצירת טיימר';
-});
+function fitCard(){
+  const card = $('card'), b = $('body'); let s = 1; card.style.setProperty('--fit', 1);
+  for(let g=0; g<14 && b.scrollHeight > b.clientHeight + 1 && s > 0.6; g++){ s -= 0.05; card.style.setProperty('--fit', s.toFixed(2)); }
+}
 
 function closeQuestion(){
-  stopTimer();
-  const cell = state.cells[state.activeCellIndex];
-  cell.answered = true;
-  overlay.classList.remove('active');
-  renderHive();
+  stopTimer(); $('qov').classList.remove('on');
+  if(active >= 0){ cells[active].answered = true; active = -1; }
+  renderHive(lastRows.split(',').map(Number));
+  const next = document.querySelector('.hexbtn:not(:disabled)');
+  if(!next) celebrate(); else if(kbd) next.focus({preventScroll:true});
 }
 
-/* ---- timer ---- */
-function startTimer(seconds){
-  stopTimer();
-  state.timer.total = seconds;
-  state.timer.remaining = seconds;
-  state.timer.paused = false;
-  document.getElementById('pauseTimerBtn').textContent = 'עצירת טיימר';
-  tickTimer();
-  state.timer.handle = setInterval(()=>{
-    if(state.timer.paused) return;
-    state.timer.remaining -= 1;
-    tickTimer();
-    if(state.timer.remaining<=0){ stopTimer(); }
-  }, 1000);
+/* ===== טיימר ===== */
+function startTimer(sec){
+  stopTimer(); T = { end:Date.now()+sec*1000, left:sec*1000, total:sec, paused:false, handle:null, done:false };
+  tick(); T.handle = setInterval(tick, 200);
 }
-function tickTimer(){
-  const pct = Math.max(0, state.timer.remaining/state.timer.total*100);
-  els.timerBar.style.width = pct+'%';
-  els.timerBar.classList.toggle('low', state.timer.remaining<=5);
-  els.timerNum.textContent = Math.max(0,state.timer.remaining);
+function stopTimer(){ if(T.handle){ clearInterval(T.handle); T.handle = null; } }
+function tick(){
+  if(T.paused) return;
+  const ms = Math.max(0, T.end - Date.now()), s = Math.ceil(ms/1000);
+  $('num').textContent = s;
+  $('ring').style.strokeDashoffset = (CIRC * (1 - ms/(T.total*1000))).toFixed(2);
+  $('timer').classList.toggle('low', s <= 5 && s > 0);
+  if(ms <= 0 && !T.done){ T.done = true; stopTimer(); $('timer').classList.remove('low'); $('timesup').classList.add('on'); fitCard(); beep(); }
 }
-function stopTimer(){
-  if(state.timer.handle){ clearInterval(state.timer.handle); state.timer.handle=null; }
+$('pauseBtn').addEventListener('click', () => {
+  if(T.done) return;
+  if(!T.paused){ T.paused = true; T.left = Math.max(0, T.end - Date.now()); $('pauseBtn').textContent = 'המשך טיימר'; }
+  else { T.paused = false; T.end = Date.now() + T.left; $('pauseBtn').textContent = 'עצירת טיימר'; }
+});
+$('hintBtn').addEventListener('click', () => { $('hint').classList.toggle('on'); fitCard(); });
+$('doneBtn').addEventListener('click', closeQuestion);
+$('xBtn').addEventListener('click', closeQuestion);
+
+/* ===== צליל ===== */
+function beep(){
+  if(!sound) return;
+  try{
+    ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+    [[0,880],[.24,660]].forEach(([t,f]) => {
+      const o = ac.createOscillator(), g = ac.createGain(), at = ac.currentTime + t;
+      o.type = 'sine'; o.frequency.value = f;
+      g.gain.setValueAtTime(.0001, at); g.gain.exponentialRampToValueAtTime(.28, at+.02); g.gain.exponentialRampToValueAtTime(.0001, at+.22);
+      o.connect(g).connect(ac.destination); o.start(at); o.stop(at+.24);
+    });
+  }catch(e){}
+}
+$('soundBtn').addEventListener('click', e => {
+  sound = !sound; const b = e.currentTarget;
+  b.setAttribute('aria-pressed', sound);
+  b.setAttribute('aria-label', sound ? 'צליל פעיל. לחיצה להשתקה' : 'צליל מושתק. לחיצה להפעלה');
+  b.firstChild.textContent = sound ? '🔊' : '🔇';
+});
+
+/* ===== איפוס (לחיצה כפולה) ===== */
+let armTimer = null;
+$('resetBtn').addEventListener('click', e => {
+  const b = e.currentTarget, lbl = b.querySelector('.lbl');
+  if(!b.classList.contains('arm')){
+    b.classList.add('arm'); if(lbl) lbl.textContent = ' לחצו שוב לאישור';
+    armTimer = setTimeout(disarm, 3500);
+  } else { disarm(); newGame(); }
+});
+function disarm(){
+  clearTimeout(armTimer); const b = $('resetBtn'); b.classList.remove('arm');
+  const l = b.querySelector('.lbl'); if(l) l.textContent = ' איפוס הכוורת';
 }
 
-startGame();
-/* ================= INFO / PREP MODAL ================= */
-function openInfoModal(){
-  const table = document.getElementById('infoTable');
-  let rows = `<tr><th>מגמה</th><th>סוג</th><th>שאלה (תמצית)</th><th>רמז מוצע להדפסה</th></tr>`;
-  CELLS.forEach(c=>{
-    if(c.logo) return;
-    const t = TRACKS[c.track];
-    rows += `<tr>
-      <td><span class="track-tag ${c.track}">${t.short}</span></td>
-      <td>${TYPES[c.type].name}</td>
-      <td>${c.q.slice(0,42)}${c.q.length>42?'…':''}</td>
-      <td>${c.hint || ''}</td>
-    </tr>`;
-  });
-  table.innerHTML = rows;
-  document.getElementById('infoOverlay').classList.add('active');
+/* ===== חגיגה ===== */
+function celebrate(){
+  $('win').classList.add('on');
+  const box = $('confetti'); box.textContent = '';
+  if(matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  const cols = ['#3090d8','#78a830','#f0a818','#d84830','#1d2433'];
+  for(let k=0;k<70;k++){
+    const i = document.createElement('i');
+    i.style.left = Math.random()*100 + 'vw'; i.style.background = cols[k % cols.length];
+    i.style.animationDuration = (2.4 + Math.random()*2.2) + 's'; i.style.animationDelay = (Math.random()*1.2) + 's';
+    box.appendChild(i);
+  }
+  setTimeout(() => { box.textContent = ''; }, 7000);
 }
+$('againBtn').addEventListener('click', () => { $('win').classList.remove('on'); $('confetti').textContent = ''; newGame(); });
 
-function openAnswerKeyModal(){
-  const list = document.getElementById('answerKeyList');
-  const letters = ['א','ב','ג','ד'];
-  let html = '';
-  CELLS.forEach(c=>{
-    if(c.logo) return;
-    const t = TRACKS[c.track];
-    const typeLabel = TYPES[c.type].name;
-    let answerHtml = '';
-    if(c.options){
-      answerHtml = `<b>תשובה נכונה: ${letters[c.correct]}.</b> ${c.options[c.correct]}`;
-    }
-    if(c.answer){
-      answerHtml += (answerHtml ? '<br>' : '') + c.answer;
-    }
-    html += `
-      <div style="border-bottom:1px solid var(--line); padding:12px 0;">
-        <div style="margin-bottom:4px;"><span class="track-tag ${c.track}">${t.short}</span> <span style="color:var(--ink-dim); font-size:.82rem;">${typeLabel}</span></div>
-        <div style="font-weight:600; margin-bottom:6px;">${c.q}</div>
-        <div style="font-size:.9rem; color:var(--ink);">${answerHtml}</div>
-      </div>`;
-  });
-  list.innerHTML = html;
-  document.getElementById('answerKeyOverlay').classList.add('active');
-}
+/* ===== ברכה + מקלדת + גודל חלון ===== */
+let kbd = false;
+addEventListener('keydown', () => { kbd = true; }, true);
+addEventListener('pointerdown', () => { kbd = false; }, true);
+$('wTitle').textContent = WELCOME.title; $('wSub').textContent = WELCOME.sub; $('startBtn').textContent = WELCOME.button;
+WELCOME.steps.forEach((t,k) => { const li = document.createElement('li'); li.innerHTML = '<span class="n">' + (k+1) + '</span>'; li.append(t); $('wSteps').appendChild(li); });
+$('startBtn').addEventListener('click', () => {
+  $('splash').classList.remove('on');
+  try{ ac = ac || new (window.AudioContext || window.webkitAudioContext)(); if(ac.resume) ac.resume(); }catch(e){}
+  if(kbd){ const f = document.querySelector('.hexbtn:not(:disabled)'); if(f) f.focus({preventScroll:true}); }
+});
+document.addEventListener('keydown', e => {
+  const open = ['qov','splash','win'].map($).find(x => x.classList.contains('on'));
+  if(e.key === 'Escape' && $('qov').classList.contains('on')){ closeQuestion(); return; }
+  if(e.key === 'Tab' && open){
+    const f = [...open.querySelectorAll('button:not([disabled])')].filter(x => x.offsetParent !== null);
+    if(!f.length) return;
+    const first = f[0], last = f[f.length-1];
+    if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+    else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+  }
+});
+let rz = null;
+addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { layoutHive(false); if($('qov').classList.contains('on')) fitCard(); }, 80); });
+
+newGame();
+$('startBtn').focus({preventScroll:true});
 </script>
 </body>
 </html>
