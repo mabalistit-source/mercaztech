@@ -50,6 +50,7 @@
   .live[hidden]{display:none;}
   .live .lc{font:800 clamp(1.1rem,2.2vw,1.8rem)/1 'Rubik',sans-serif; letter-spacing:.14em; direction:ltr; background:#fff; border:2px solid var(--ink); border-radius:10px; padding:3px 10px;}
   .live .lq{width:52px; height:52px; background:#fff; border-radius:6px;} .live .lq svg{width:100%;height:100%;display:block;}
+  .live.off .lo{color:var(--danger); font-weight:800;} .live.off .lc{border-color:var(--danger);}
   .live .lw{display:flex; align-items:center; gap:10px;}
   .live .lo{white-space:nowrap;font-size:clamp(.85rem,1.4vw,1.1rem); color:var(--muted);}
   .ibtn{
@@ -469,7 +470,7 @@ addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { lay
 
 /* ===== מצב חי: ?room=CODE (חדר בשרת). בלי הפרמטר המשחק עובד כרגיל, בלי שרת ===== */
 const ROOM = (new URLSearchParams(location.search).get('room') || '').toUpperCase().replace(/[^A-Z0-9]/g,'');
-let LV = null, seen = new Set(), queue = [], firstSync = true;
+let LV = null, seen = new Set(), queue = [], firstSync = true, liveOff = false;
 function adminSession(){ try{ const a = JSON.parse(sessionStorage.getItem('hive.admin') || 'null'); return a && a.code === ROOM ? a : null; }catch(e){ return null; } }
 function liveOpened(i){                       // המנחה פתח תא במקרן: מעדכנים גם את הטלפונים (אם יש קוד מנחה בדפדפן הזה)
   const id = cellId(i); seen.add(id);
@@ -486,6 +487,7 @@ function pump(){                              // שאלות שנפתחו מהט�
 }
 async function syncLive(){
   const st = await LV.publicState(ROOM);
+  if(liveOff){ liveOff = false; firstSync = true; $('live').classList.remove('off'); }   // חזר החיבור: תאים שנפתחו בינתיים נשרפים בלי להקפיץ שאלה ישנה
   if(!st || !st.exists){ $('liveOn').textContent = 'חדר לא נמצא'; return; }
   $('liveOn').textContent = 'מחוברים: ' + st.online;
   const opened = st.opened || [], ids = new Set(opened.map(o => o.cell_id));
@@ -502,14 +504,18 @@ async function syncLive(){
   if(changed) renderHive(lastRows.split(',').map(Number));
   pump();
 }
+async function liveTick(){
+  try{ await syncLive(); }
+  catch(e){ liveOff = true; $('live').classList.add('off'); $('liveOn').textContent = 'אין חיבור לשרת. אפשר להמשיך ולפתוח תאים כאן ידנית'; }
+}
 async function initLive(){
   try{
     LV = await import('./hive-live.js');
     if(!LV.isConfigured){ LV = null; return; }
     $('live').hidden = false; $('liveCode').textContent = ROOM; $('liveOn').textContent = 'מתחבר…';
     LV.joinUrl && drawLiveQr(LV.joinUrl(ROOM));
-    await syncLive();
-    await LV.watchRoom(ROOM, () => syncLive().catch(() => { $('liveOn').textContent = 'אין חיבור'; }), 5000);
+    await liveTick();
+    await LV.watchRoom(ROOM, liveTick, 5000);
   }catch(e){ $('live').hidden = false; $('liveCode').textContent = ROOM; $('liveOn').textContent = 'אין חיבור (המשחק ממשיך כרגיל)'; }
 }
 async function drawLiveQr(url){

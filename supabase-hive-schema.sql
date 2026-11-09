@@ -82,10 +82,41 @@ do $$ begin
 end $$;
 
 -- ===== פונקציות =====
-create or replace function public._hive_pin_ok(p_code text, p_pin text) returns boolean
-language sql security definer set search_path = public, extensions as $$
-  select exists (select 1 from hive_room_secrets where room_code = p_code
-                 and pin_hash = extensions.crypt(p_pin, pin_hash));
+-- חסימה אחרי ניסיונות PIN שגויים: 5 כשלונות = נעילה ל-2 דקות. נשמר בשרת (הפונקציות מחזירות שגיאה ולא זורקות, כדי שהמונה יישמר).
+alter table public.hive_room_secrets add column if not exists fails int not null default 0;
+alter table public.hive_room_secrets add column if not exists locked_until timestamptz;
+
+drop function if exists public._hive_pin_ok(text,text);
+create or replace function public._hive_pin_check(p_code text, p_pin text) returns text
+language plpgsql security definer set search_path = public, extensions as $$
+declare s hive_room_secrets;
+begin
+  select * into s from hive_room_secrets where room_code = p_code for update;
+  if not found then return 'bad_pin'; end if;
+  if s.locked_until is not null and s.locked_until > now() then return 'locked'; end if;
+  if s.pin_hash = extensions.crypt(coalesce(p_pin,''), s.pin_hash) then
+    if s.fails > 0 or s.locked_until is not null then
+      update hive_room_secrets set fails = 0, locked_until = null where room_code = p_code;
+    end if;
+    return null;
+  end if;
+  if s.fails + 1 >= 5 then
+    update hive_room_secrets set fails = 0, locked_until = now() + interval '2 minutes' where room_code = p_code;
+    return 'locked';
+  end if;
+  update hive_room_secrets set fails = fails + 1 where room_code = p_code;
+  return 'bad_pin';
+end $$;
+
+-- סינון שמות: בלי מספרים ארוכים, אימייל, קישורים או קללות. (המנהל יכול גם להסיר משתתף ידנית.)
+create or replace function public._hive_name_ok(n text) returns boolean
+language sql immutable as $$
+  select not (
+    n ~ '[0-9]{4,}' or n ~ '@' or n ~* '(https?:|www\.|\.com|\.co\.il)'
+    or lower(n) ~ '(fuck|shit|bitch|cunt|nazi|hitler|porn)' or lower(n) ~ '\y(dick|sex)\y'
+    or n ~ '(^|[^א-ת])(כוס|זין|חרא)([^א-ת]|$)'
+    or n ~ '(^|[^א-ת])(זונה|שרמוט|מניאק|מזדיין|בן זונה|סקס|פורנו)'
+  );
 $$;
 
 -- יצירת חדר (מנהל). מנקה חדרים ישנים (>24 שעות).
@@ -112,6 +143,7 @@ language plpgsql security definer set search_path = public as $$
 declare pid uuid; n text := btrim(p_name);
 begin
   if n is null or char_length(n) < 1 or char_length(n) > 20 then raise exception 'bad_name'; end if;
+  if not _hive_name_ok(n) then raise exception 'bad_name_content'; end if;
   if not exists (select 1 from hive_rooms where code = upper(p_code) and not closed) then raise exception 'no_room'; end if;
   if (select count(*) from hive_players where room_code = upper(p_code)) >= 60 then raise exception 'room_full'; end if;
   insert into hive_players(room_code, name) values (upper(p_code), n) returning id into pid;
@@ -150,8 +182,10 @@ $$;
 -- מצב למנהל (דורש PIN): כולל שמות, קבוצות ותשובות.
 create or replace function public.hive_admin_state(p_code text, p_pin text) returns json
 language plpgsql security definer set search_path = public, extensions as $$
+declare e text;
 begin
-  if not _hive_pin_ok(upper(p_code), p_pin) then raise exception 'bad_pin'; end if;
+  e := _hive_pin_check(upper(p_code), p_pin);
+  if e is not null then return json_build_object('error', e); end if;
   return json_build_object(
     'room', (select json_build_object('code',code,'groups_n',groups_n,'open_mode',open_mode,'closed',closed) from hive_rooms where code = upper(p_code)),
     'players', coalesce((select json_agg(json_build_object('id',id,'name',name,'team',team,'online', last_seen > now() - interval '40 seconds') order by joined_at) from hive_players where room_code = upper(p_code)),'[]'::json),
@@ -185,67 +219,89 @@ begin
   insert into hive_answers(room_code, cell_id, team, player_id, answer) values (pl.room_code, p_cell, pl.team, p_player, left(p_answer,200));
 end $$;
 
--- ===== פעולות מנהל (דורשות PIN) =====
-create or replace function public.hive_admin_set_groups(p_code text, p_pin text, p_n int, p_assign boolean) returns void
+-- ===== פעולות מנהל (דורשות PIN). מחזירות {"ok":true} או {"error":"bad_pin"|"locked"} =====
+drop function if exists public.hive_admin_set_groups(text,text,int,boolean);
+drop function if exists public.hive_admin_move(text,text,uuid,int);
+drop function if exists public.hive_admin_kick(text,text,uuid);
+drop function if exists public.hive_admin_mode(text,text,text,boolean);
+drop function if exists public.hive_admin_open(text,text,text,int);
+drop function if exists public.hive_admin_reset(text,text);
+drop function if exists public.hive_admin_delete_room(text,text);
+
+create or replace function public.hive_admin_set_groups(p_code text, p_pin text, p_n int, p_assign boolean) returns json
 language plpgsql security definer set search_path = public, extensions as $$
+declare e text := _hive_pin_check(upper(p_code), p_pin);
 begin
-  if not _hive_pin_ok(upper(p_code), p_pin) then raise exception 'bad_pin'; end if;
+  if e is not null then return json_build_object('error', e); end if;
   update hive_rooms set groups_n = greatest(0, least(10, p_n)) where code = upper(p_code);
-  if p_assign and p_n > 0 then   -- חלוקה אקראית שווה
+  if p_assign and p_n > 0 then
     with r as (select id, (row_number() over (order by random()) - 1) % p_n + 1 as t
                from hive_players where room_code = upper(p_code))
     update hive_players p set team = r.t from r where p.id = r.id;
   elsif p_n = 0 then
     update hive_players set team = null where room_code = upper(p_code);
   end if;
+  return json_build_object('ok', true);
 end $$;
 
-create or replace function public.hive_admin_move(p_code text, p_pin text, p_player uuid, p_team int) returns void
+create or replace function public.hive_admin_move(p_code text, p_pin text, p_player uuid, p_team int) returns json
 language plpgsql security definer set search_path = public, extensions as $$
+declare e text := _hive_pin_check(upper(p_code), p_pin);
 begin
-  if not _hive_pin_ok(upper(p_code), p_pin) then raise exception 'bad_pin'; end if;
+  if e is not null then return json_build_object('error', e); end if;
   update hive_players set team = p_team where id = p_player and room_code = upper(p_code);
+  return json_build_object('ok', true);
 end $$;
 
-create or replace function public.hive_admin_kick(p_code text, p_pin text, p_player uuid) returns void
+create or replace function public.hive_admin_kick(p_code text, p_pin text, p_player uuid) returns json
 language plpgsql security definer set search_path = public, extensions as $$
+declare e text := _hive_pin_check(upper(p_code), p_pin);
 begin
-  if not _hive_pin_ok(upper(p_code), p_pin) then raise exception 'bad_pin'; end if;
+  if e is not null then return json_build_object('error', e); end if;
   delete from hive_players where id = p_player and room_code = upper(p_code);
+  return json_build_object('ok', true);
 end $$;
 
-create or replace function public.hive_admin_mode(p_code text, p_pin text, p_mode text, p_closed boolean) returns void
+create or replace function public.hive_admin_mode(p_code text, p_pin text, p_mode text, p_closed boolean) returns json
 language plpgsql security definer set search_path = public, extensions as $$
+declare e text := _hive_pin_check(upper(p_code), p_pin);
 begin
-  if not _hive_pin_ok(upper(p_code), p_pin) then raise exception 'bad_pin'; end if;
+  if e is not null then return json_build_object('error', e); end if;
   if p_mode not in ('teams','admin') then raise exception 'bad_mode'; end if;
   update hive_rooms set open_mode = p_mode, closed = p_closed where code = upper(p_code);
+  return json_build_object('ok', true);
 end $$;
 
-create or replace function public.hive_admin_open(p_code text, p_pin text, p_cell text, p_team int) returns void
+create or replace function public.hive_admin_open(p_code text, p_pin text, p_cell text, p_team int) returns json
 language plpgsql security definer set search_path = public, extensions as $$
+declare e text := _hive_pin_check(upper(p_code), p_pin);
 begin
-  if not _hive_pin_ok(upper(p_code), p_pin) then raise exception 'bad_pin'; end if;
+  if e is not null then return json_build_object('error', e); end if;
   insert into hive_opened(room_code, cell_id, team) values (upper(p_code), p_cell, p_team) on conflict do nothing;
+  return json_build_object('ok', true);
 end $$;
 
-create or replace function public.hive_admin_reset(p_code text, p_pin text) returns void
+create or replace function public.hive_admin_reset(p_code text, p_pin text) returns json
 language plpgsql security definer set search_path = public, extensions as $$
+declare e text := _hive_pin_check(upper(p_code), p_pin);
 begin
-  if not _hive_pin_ok(upper(p_code), p_pin) then raise exception 'bad_pin'; end if;
+  if e is not null then return json_build_object('error', e); end if;
   delete from hive_opened  where room_code = upper(p_code);
   delete from hive_answers where room_code = upper(p_code);
+  return json_build_object('ok', true);
 end $$;
 
-create or replace function public.hive_admin_delete_room(p_code text, p_pin text) returns void
+create or replace function public.hive_admin_delete_room(p_code text, p_pin text) returns json
 language plpgsql security definer set search_path = public, extensions as $$
+declare e text := _hive_pin_check(upper(p_code), p_pin);
 begin
-  if not _hive_pin_ok(upper(p_code), p_pin) then raise exception 'bad_pin'; end if;
+  if e is not null then return json_build_object('error', e); end if;
   delete from hive_rooms where code = upper(p_code);
+  return json_build_object('ok', true);
 end $$;
 
--- הרשאות הרצה: רק הפונקציות הציבוריות; _hive_pin_ok פנימית.
-revoke all on function public._hive_pin_ok(text,text) from public, anon, authenticated;
+-- הרשאות הרצה: רק הפונקציות הציבוריות; פונקציות העזר פנימיות.
+revoke all on function public._hive_pin_check(text,text), public._hive_name_ok(text) from public, anon, authenticated;
 grant execute on function
   public.hive_create_room(text), public.hive_join(text,text), public.hive_state(uuid),
   public.hive_public_state(text), public.hive_admin_state(text,text),

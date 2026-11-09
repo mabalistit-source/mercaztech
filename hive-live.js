@@ -10,7 +10,9 @@ const HEB = {
   too_many_rooms: 'יש כרגע יותר מדי חדרים פעילים. נסו שוב מאוחר יותר',
   no_room: 'לא נמצא חדר פעיל עם הקוד הזה',
   room_full: 'החדר מלא (עד 60 משתתפים)',
+  bad_name_content: 'נא להשתמש בשם פרטי או בכינוי נקי, בלי מספרים, קישורים או אימייל',
   bad_name: 'נא להזין שם פרטי או כינוי (עד 20 תווים)',
+  locked: 'יותר מדי ניסיונות שגויים. נסו שוב בעוד 2 דקות',
   no_player: 'החיבור נותק, נא להצטרף מחדש',
   no_team: 'המנחה עוד לא שייך אתכם לקבוצה',
   not_allowed: 'כרגע המנחה פותח את התאים',
@@ -34,6 +36,7 @@ async function sb(){
 export async function rpc(name, args){
   const { data, error } = await (await sb()).rpc(name, args || {});
   if(error) throw new Error(error.message || error.code || 'rpc_error');
+  if(data && typeof data === 'object' && !Array.isArray(data) && data.error) throw new Error(String(data.error));
   return data;
 }
 
