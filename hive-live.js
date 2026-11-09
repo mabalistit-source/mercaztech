@@ -18,8 +18,10 @@ const HEB = {
 export function hebError(e){
   const m = String((e && e.message) || e || '');
   for(const k in HEB) if(m.includes(k)) return HEB[k];
-  if(/fetch|network|Failed|load/i.test(m)) return 'אין חיבור לשרת. בדקו את האינטרנט ונסו שוב';
-  return 'משהו השתבש. נסו שוב';
+  if(/Could not find the function|schema cache|PGRST202|does not exist/i.test(m)) return 'הסכמה עוד לא הותקנה ב-Supabase. יש להריץ את הקובץ supabase-hive-schema.sql ב-SQL Editor ולנסות שוב';
+  if(/permission denied|not authorized|JWT|401|403/i.test(m)) return 'אין הרשאה בשרת. יש להריץ מחדש את supabase-hive-schema.sql (' + m.slice(0,80) + ')';
+  if(/fetch|network|Failed to|NetworkError|load/i.test(m)) return 'אין חיבור לשרת. בדקו את האינטרנט ונסו שוב';
+  return 'משהו השתבש (' + m.slice(0,120) + ')';
 }
 
 let client = null;
