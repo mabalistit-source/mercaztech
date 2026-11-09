@@ -7,12 +7,27 @@ create extension if not exists pgcrypto with schema extensions;
 
 create table if not exists public.hive_rooms (
   code        text primary key,
-  pin_hash    text not null,
   groups_n    int  not null default 0 check (groups_n between 0 and 10),
   open_mode   text not null default 'teams' check (open_mode in ('teams','admin')),
   closed      boolean not null default false,
   created_at  timestamptz not null default now()
 );
+
+-- ה-PIN נשמר בטבלה נפרדת בלי שום הרשאת קריאה, כדי שלא יזלג דרך Realtime/API.
+create table if not exists public.hive_room_secrets (
+  room_code text primary key references public.hive_rooms(code) on delete cascade,
+  pin_hash  text not null
+);
+alter table public.hive_room_secrets enable row level security;   -- בלי policies = אין גישה ללקוח
+revoke all on public.hive_room_secrets from anon, authenticated;
+
+-- הגירה מגרסה קודמת (אם הייתה עמודת pin_hash בטבלת החדרים): חדרים ישנים נמחקים.
+do $$ begin
+  if exists (select 1 from information_schema.columns where table_schema='public' and table_name='hive_rooms' and column_name='pin_hash') then
+    delete from public.hive_rooms;
+    alter table public.hive_rooms drop column pin_hash;
+  end if;
+end $$;
 
 create table if not exists public.hive_players (
   id        uuid primary key default gen_random_uuid(),
@@ -57,7 +72,7 @@ create policy r_read on public.hive_rooms   for select to anon using (true);
 create policy o_read on public.hive_opened  for select to anon using (true);
 
 revoke all on public.hive_rooms, public.hive_players, public.hive_opened, public.hive_answers from anon, authenticated;
-grant select (code, groups_n, open_mode, closed, created_at) on public.hive_rooms to anon;
+grant select on public.hive_rooms to anon;   -- אין בה שום סוד
 grant select on public.hive_opened to anon;   -- שמות ותשובות נקראים רק דרך פונקציות
 
 -- Realtime
@@ -69,7 +84,7 @@ end $$;
 -- ===== פונקציות =====
 create or replace function public._hive_pin_ok(p_code text, p_pin text) returns boolean
 language sql security definer set search_path = public, extensions as $$
-  select exists (select 1 from hive_rooms where code = p_code
+  select exists (select 1 from hive_room_secrets where room_code = p_code
                  and pin_hash = extensions.crypt(p_pin, pin_hash));
 $$;
 
@@ -78,14 +93,16 @@ create or replace function public.hive_create_room(p_pin text) returns text
 language plpgsql security definer set search_path = public, extensions as $$
 declare c text; i int := 0;
 begin
-  if p_pin is null or char_length(p_pin) < 4 then raise exception 'pin_too_short'; end if;
+  if p_pin is null or char_length(p_pin) < 6 then raise exception 'pin_too_short'; end if;
   delete from hive_rooms where created_at < now() - interval '24 hours';
+  if (select count(*) from hive_rooms) >= 300 then raise exception 'too_many_rooms'; end if;
   loop
     c := upper(substr(translate(encode(extensions.gen_random_bytes(6),'base64'),'+/=OIl01oiLQqgG9B8S5Zz2',''),1,5));
     exit when char_length(c) = 5 and not exists (select 1 from hive_rooms where code = c);
     i := i + 1; if i > 20 then raise exception 'code_gen_failed'; end if;
   end loop;
-  insert into hive_rooms(code, pin_hash) values (c, extensions.crypt(p_pin, extensions.gen_salt('bf')));
+  insert into hive_rooms(code) values (c);
+  insert into hive_room_secrets(room_code, pin_hash) values (c, extensions.crypt(p_pin, extensions.gen_salt('bf')));
   return c;
 end $$;
 

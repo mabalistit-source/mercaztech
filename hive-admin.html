@@ -56,7 +56,7 @@
       <h2>חדר חדש</h2>
       <p class="muted">בוחרים קוד מנחה (PIN) שרק את/ה מכיר/ה. הוא נחוץ לניהול החדר.</p>
       <form id="newForm" novalidate>
-        <label for="pin1">קוד מנחה (לפחות 4 תווים)</label>
+        <label for="pin1">קוד מנחה (לפחות 6 תווים)</label>
         <input type="password" id="pin1" autocomplete="new-password" aria-describedby="err">
         <div class="err" id="err" role="alert"></div>
         <button class="btn pri" type="submit" id="newBtn">יצירת חדר</button>
@@ -134,7 +134,7 @@ let A = null, api = null, S = null, unwatch = null, busy = false;
 $('newForm').addEventListener('submit', async e => {
   e.preventDefault(); $('err').textContent = '';
   const pin = $('pin1').value;
-  if(pin.length < 4){ $('err').textContent = 'קוד המנחה חייב להכיל לפחות 4 תווים'; return; }
+  if(pin.length < 6){ $('err').textContent = 'קוד המנחה חייב להכיל לפחות 6 תווים'; return; }
   if(!L.isConfigured){ $('err').textContent = 'השרת עדיין לא הוגדר'; return; }
   $('newBtn').disabled = true;
   try{ const code = await L.createRoom(pin); await enter(code, pin); }

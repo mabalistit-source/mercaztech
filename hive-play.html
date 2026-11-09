@@ -263,15 +263,16 @@ function dismissed(){ try{ return JSON.parse(sget('hive.dis.' + me.code) || '[]'
 function syncQuestion(opened){
   if(q.cell) return;                              // שאלה פעילה כבר מוצגת
   const dis = dismissed();
-  const mine = (S.opened || []).filter(o => o.team === S.team && !dis.includes(o.cell_id));
+  const mine = (S.opened || []).filter(o => o.team === S.team && !dis.includes(o.cell_id + '@' + o.opened_at));
   if(!mine.length) return;
-  showQuestion(mine[mine.length - 1].cell_id);
+  const o = mine[mine.length - 1];
+  showQuestion(o.cell_id, o.cell_id + '@' + o.opened_at);
 }
 
-function showQuestion(id){
+function showQuestion(id, key){
   const i = +id.slice(1), c = CELLS[i]; if(!c || c.logo) return;
-  q = { cell:id, total:TYPES[c.type].seconds, end:0, handle:null, sent:false, done:false };
-  const t0k = 'hive.t0.' + me.code + '.' + id;
+  q = { cell:id, key, total:TYPES[c.type].seconds, end:0, handle:null, sent:false, done:false };
+  const t0k = 'hive.t0.' + me.code + '.' + key;
   let t0 = +sget(t0k); if(!t0){ t0 = Date.now(); sset(t0k, t0); }
   q.end = t0 + q.total * 1000;
   $('mTrack').textContent = TRACKS[c.track].name;
@@ -326,7 +327,7 @@ async function send(btn, text){
 }
 $('hintBtn').addEventListener('click', () => $('hint').classList.toggle('on'));
 $('closeQ').addEventListener('click', () => {
-  const dis = dismissed(); if(q.cell && !dis.includes(q.cell)) dis.push(q.cell); sset('hive.dis.' + me.code, JSON.stringify(dis));
+  const dis = dismissed(); if(q.key && !dis.includes(q.key)) dis.push(q.key); sset('hive.dis.' + me.code, JSON.stringify(dis));
   stopQ(); $('qov').classList.remove('on'); render();
 });
 
