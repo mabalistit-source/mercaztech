@@ -112,7 +112,7 @@ end $$;
 create or replace function public._hive_name_ok(n text) returns boolean
 language sql immutable as $$
   select not (
-    n ~ '[0-9]{4,}' or n ~ '@' or n ~* '(https?:|www\.|\.com|\.co\.il)'
+    n ~ '[0-9٠-٩۰-۹]{4,}' or length(regexp_replace(n, '[^0-9٠-٩۰-۹]', '', 'g')) >= 5 or n ~ '@' or n ~* '(https?:|www\.|\.com|\.co\.il)'
     or lower(n) ~ '(fuck|shit|bitch|cunt|nazi|hitler|porn)' or lower(n) ~ '\y(dick|sex)\y'
     or n ~ '(^|[^א-ת])(כוס|זין|חרא)([^א-ת]|$)'
     or n ~ '(^|[^א-ת])(זונה|שרמוט|מניאק|מזדיין|בן זונה|סקס|פורנו)'
