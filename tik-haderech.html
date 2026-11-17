@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>תיק הדרך · תוכנית העצמה לבנות · המרכז הטכנולוגי אשדוד</title>
+<title>תכנית מהנדסת · תוכנית העצמה לבנות · המרכז הטכנולוגי אשדוד</title>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -128,7 +128,7 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:10px 0 30px}
 
 <header class="hero">
   <div class="top"><img src="ashdod-logo.png" alt="עיריית אשדוד" onerror="this.style.display='none'"><div><b>המרכז הטכנולוגי אשדוד</b><br><small>מגמות חשמל ומכונות · שכבות י'–יב'</small></div></div>
-  <h1>תיק <span>הדרך</span></h1>
+  <h1>תכנית <span>מהנדסת</span></h1>
   <p class="sub">תוכנית העצמה לבנות · 10 מפגשים של 90 דקות · כל מפגש מסתיים בתוצר אישי</p>
 </header>
 
@@ -155,7 +155,7 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:10px 0 30px}
     <a class="btn" id="allDrive" target="_blank" rel="noopener">📁 כל תיקיות התמונות בדרייב</a>
   </section>
 </main>
-<footer>המרכז הטכנולוגי אשדוד · תוכנית העצמה לבנות</footer>
+<footer>תכנית מהנדסת · המרכז הטכנולוגי אשדוד</footer>
 
 <script>
 /* ===== הגדרות ===== */
@@ -193,7 +193,7 @@ const pad = n=>String(n).padStart(2,"0");
 const ymd = d=>`${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}`;
 function gcal(m){
   const e=new Date(m.date); e.setDate(e.getDate()+1);
-  const q=new URLSearchParams({action:"TEMPLATE",text:`תיק הדרך · מפגש ${m.n}: ${m.t}`,dates:`${ymd(m.date)}/${ymd(e)}`,details:`${m.a}\nתוצר לתיק: ${m.o}\nתמונות וחומרים: ${folderUrl(m.f)}`,location:"המרכז הטכנולוגי אשדוד"});
+  const q=new URLSearchParams({action:"TEMPLATE",text:`תכנית מהנדסת · מפגש ${m.n}: ${m.t}`,dates:`${ymd(m.date)}/${ymd(e)}`,details:`${m.a}\nתוצר לתיק: ${m.o}\nתמונות וחומרים: ${folderUrl(m.f)}`,location:"המרכז הטכנולוגי אשדוד"});
   return "https://calendar.google.com/calendar/render?"+q;
 }
 
