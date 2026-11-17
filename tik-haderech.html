@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>תיק הדרך · תוכנית העצמה לבנות · המרכז הטכנולוגי אשדוד</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1b1630; --muted:#6b6584; --bg:#faf7f2; --card:#fff; --line:#ece6dc;
+  --p1:#e8553d; --p1bg:#fdeee9;   /* מי אני */
+  --p2:#2a7f86; --p2bg:#e4f3f3;   /* איך אני עובדת */
+  --p3:#6a4bc4; --p3bg:#eeeafb;   /* לאן אני הולכת */
+  --gold:#f2b544; --r:18px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--ink);line-height:1.55;font-size:15.5px}
+a{color:inherit}
+button{font-family:inherit;cursor:pointer}
+
+/* HERO */
+.hero{background:var(--ink);color:#fff;padding:22px 20px 70px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;inset:0;background:
+  radial-gradient(circle at 12% 120%,rgba(232,85,61,.55),transparent 40%),
+  radial-gradient(circle at 55% -30%,rgba(42,127,134,.55),transparent 45%),
+  radial-gradient(circle at 95% 90%,rgba(106,75,196,.6),transparent 40%);pointer-events:none}
+.hero>*{position:relative;z-index:1}
+.top{display:flex;align-items:center;gap:12px;max-width:1000px;margin:0 auto}
+.top img{height:42px;background:#fff;border-radius:10px;padding:4px}
+.top small{opacity:.75;font-size:13px}
+.hero h1{max-width:1000px;margin:26px auto 6px;font-size:clamp(30px,6vw,52px);font-weight:900;letter-spacing:-.5px;line-height:1.05}
+.hero h1 span{color:var(--gold)}
+.hero p.sub{max-width:1000px;margin:0 auto;opacity:.85;font-size:16px}
+
+/* NEXT CARD */
+.wrap{max-width:1000px;margin:0 auto;padding:0 16px}
+.next{margin-top:-48px;background:var(--card);border-radius:var(--r);box-shadow:0 14px 40px -12px rgba(27,22,48,.25);padding:20px;display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;position:relative;z-index:2}
+.next .lbl{font-size:13px;color:var(--muted);font-weight:700}
+.next h2{font-size:22px;font-weight:800;margin:2px 0}
+.next .meta{color:var(--muted);font-size:14px}
+.count{display:flex;gap:8px;direction:rtl}
+.count div{background:var(--bg);border-radius:12px;padding:8px 12px;text-align:center;min-width:62px}
+.count b{display:block;font-size:26px;font-weight:900;line-height:1}
+.count span{font-size:12px;color:var(--muted)}
+.prog{grid-column:1/-1;height:10px;background:var(--line);border-radius:9px;overflow:hidden;display:flex;gap:3px}
+.prog i{flex:1;background:#ddd5c8;border-radius:3px}
+.prog i.done{background:var(--ink)}
+.prog i.today{background:var(--gold)}
+
+/* PHASES / FILTERS */
+.phases{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:22px 0 8px}
+.phase{border-radius:14px;padding:12px 14px;border:2px solid transparent;background:var(--card);text-align:right}
+.phase b{display:block;font-size:17px;font-weight:800}
+.phase span{font-size:13px;color:var(--muted)}
+.phase[data-p="1"] b{color:var(--p1)} .phase[data-p="2"] b{color:var(--p2)} .phase[data-p="3"] b{color:var(--p3)}
+.phase.on[data-p="1"]{border-color:var(--p1);background:var(--p1bg)}
+.phase.on[data-p="2"]{border-color:var(--p2);background:var(--p2bg)}
+.phase.on[data-p="3"]{border-color:var(--p3);background:var(--p3bg)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 18px;align-items:center}
+.chips .t{font-size:13px;color:var(--muted);margin-left:4px}
+.chip{border:1.5px solid var(--line);background:var(--card);border-radius:99px;padding:5px 13px;font-size:14px;font-weight:500}
+.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+/* TIMELINE */
+.tl{position:relative;padding-right:30px;margin-bottom:40px}
+.tl::before{content:"";position:absolute;right:11px;top:8px;bottom:8px;width:3px;background:var(--line);border-radius:3px}
+.m{position:relative;background:var(--card);border-radius:var(--r);margin-bottom:14px;border:1.5px solid var(--line);transition:.2s}
+.m::before{content:attr(data-n);position:absolute;right:-31px;top:18px;width:26px;height:26px;border-radius:50%;background:var(--c);color:#fff;font-weight:800;font-size:13px;display:grid;place-items:center;box-shadow:0 0 0 4px var(--bg)}
+.m.past{opacity:.78}
+.m.past::before{content:"✓"}
+.m.isnext{border-color:var(--gold);box-shadow:0 0 0 3px rgba(242,181,68,.25)}
+.mh{display:grid;grid-template-columns:78px 1fr auto;gap:14px;align-items:center;padding:14px 16px;width:100%;background:none;border:0;text-align:right;color:inherit}
+.date{background:var(--cbg);color:var(--c);border-radius:12px;text-align:center;padding:6px 0}
+.date b{display:block;font-size:24px;font-weight:900;line-height:1.05}
+.date span{font-size:12px;font-weight:700}
+.mh h3{font-size:18px;font-weight:800;line-height:1.25}
+.mh .act{font-size:14px;color:var(--muted)}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.tag{font-size:12px;border-radius:99px;padding:1px 9px;background:var(--bg);font-weight:500}
+.tag.ext{background:#fff3d6;color:#8a5a00;font-weight:700}
+.tag.st{background:var(--ink);color:#fff}
+.arrow{font-size:20px;color:var(--muted);transition:.2s}
+.m.open .arrow{transform:rotate(180deg)}
+.mb{display:none;padding:0 16px 16px;border-top:1px dashed var(--line)}
+.m.open .mb{display:block}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.box{background:var(--bg);border-radius:12px;padding:10px 12px}
+.box small{display:block;font-size:12px;color:var(--muted);font-weight:700}
+.box b{font-weight:700}
+.prod{display:flex;align-items:center;gap:10px;background:var(--cbg);border-radius:12px;padding:10px 12px;margin-bottom:12px}
+.prod input{width:22px;height:22px;accent-color:var(--c)}
+.prod label{flex:1;font-weight:700}
+.prod small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.btn{display:inline-flex;align-items:center;gap:6px;border-radius:10px;padding:8px 14px;font-size:14px;font-weight:700;text-decoration:none;border:1.5px solid var(--line);background:var(--card)}
+.btn.pri{background:var(--c);border-color:var(--c);color:#fff}
+
+/* GALLERY */
+.gal h4{font-size:15px;font-weight:800;margin:6px 0 8px}
+.frame{width:100%;height:320px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg)}
+.up{border:2px dashed var(--c);background:var(--cbg);border-radius:12px;padding:14px;margin-top:10px;text-align:center}
+.up input[type=text]{width:100%;max-width:280px;padding:8px 10px;border-radius:9px;border:1.5px solid var(--line);font-family:inherit;margin:6px 0}
+.up .msg{font-size:13px;margin-top:6px;font-weight:700}
+.note{font-size:13px;color:var(--muted);margin-top:6px}
+
+/* BAG */
+.bag{background:var(--ink);color:#fff;border-radius:var(--r);padding:20px;margin:10px 0 30px}
+.bag h2{font-size:22px;font-weight:900}
+.bag p{opacity:.8;font-size:14px}
+.bagbar{height:12px;background:rgba(255,255,255,.15);border-radius:9px;margin:12px 0 6px;overflow:hidden}
+.bagbar i{display:block;height:100%;background:var(--gold);width:0;transition:.4s}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:10px 0 30px}
+
+@media(max-width:640px){
+  .next{grid-template-columns:1fr}
+  .count{justify-content:flex-start}
+  .phases{gap:6px}
+  .phase{padding:8px}
+  .phase b{font-size:14px}
+  .phase span{font-size:11px}
+  .mh{grid-template-columns:62px 1fr 18px;gap:10px}
+  .date b{font-size:20px}
+  .grid2{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="top"><img src="ashdod-logo.png" alt="עיריית אשדוד" onerror="this.style.display='none'"><div><b>המרכז הטכנולוגי אשדוד</b><br><small>מגמות חשמל ומכונות · שכבות י'–יב'</small></div></div>
+  <h1>תיק <span>הדרך</span></h1>
+  <p class="sub">תוכנית העצמה לבנות · 10 מפגשים של 90 דקות · כל מפגש מסתיים בתוצר אישי</p>
+</header>
+
+<main class="wrap">
+  <section class="next" id="next"></section>
+
+  <div class="phases" id="phases">
+    <button class="phase" data-p="1"><b>מי אני</b><span>מפגשים 1–3</span></button>
+    <button class="phase" data-p="2"><b>איך אני עובדת</b><span>מפגשים 4–7</span></button>
+    <button class="phase" data-p="3"><b>לאן אני הולכת</b><span>מפגשים 8–10</span></button>
+  </div>
+  <div class="chips" id="chips"><span class="t">מי מעבירה:</span></div>
+
+  <section class="tl" id="tl"></section>
+
+  <section class="bag">
+    <h2>התיק שלי</h2>
+    <p>סמני כל תוצר שנכנס לקלסר שלך. הסימונים נשמרים בטלפון שלך.</p>
+    <div class="bagbar"><i id="bagfill"></i></div>
+    <b id="bagtxt"></b>
+  </section>
+
+  <section style="margin-bottom:24px">
+    <a class="btn" id="allDrive" target="_blank" rel="noopener">📁 כל תיקיות התמונות בדרייב</a>
+  </section>
+</main>
+<footer>המרכז הטכנולוגי אשדוד · תוכנית העצמה לבנות</footer>
+
+<script>
+/* ===== הגדרות ===== */
+const YEAR = 2027;
+// אחרי פריסת סקריפט ההעלאה (girls-upload.gs) – הדביקי כאן את כתובת ה-Web App:
+const UPLOAD_URL = "";
+const ROOT_FOLDER = "1zuZJ3mG2hIUePfL6T_dCihX3iJQeBGUn";
+
+const M = [
+ {n:1, d:"7.1",  t:"מי אני ולמה בחרתי",     a:"\"ציירי מהנדס/ת\" ומפת הבחירה שלי",          o:"מפת הבחירה שלי",          w:["אולגה","לנה","שרי"], f:"1NSGU9VCmxROAg9km7O24-PO5M9elPTy0"},
+ {n:2, d:"21.1", t:"ביטחון ותסמונת המתחזה", a:"\"עמדי אם...\" וסדנת החוזקות",               o:"כרטיס חוזקות",            w:["אולגה","שרי"],       f:"1h1ae_Loqfi7e0_72ZyEnwd-xfV2uY5Jd"},
+ {n:3, d:"4.2",  t:"נשים שעשו את זה",        a:"ספרייה אנושית",                              o:"כרטיס \"מה לקחתי איתי\"", w:["חיצוני","אולגה","שרי"], ext:"הרצאה חיצונית", f:"1IjDQ0hPeGD23W2cL7F8ljHVR7_ijPiOq"},
+ {n:4, d:"18.2", t:"ניהול זמן ומשימות",      a:"מטריצת דחוף/חשוב ולוח אישי",                o:"לוח משימות אישי",         w:["אולגה","שרי"],       f:"1TkKa6VFexJt5BM3gIivT90WQwjk6J5qK"},
+ {n:5, d:"4.3",  t:"עבודת צוות ותקשורת",     a:"\"הבנייה העיוורת\"",                         o:"מפת התפקידים שלי בצוות",  w:["אולגה","לנה","שרי"], f:"18GYKkuN7muQbmB8U4pICrfzU9ZG550zW"},
+ {n:6, d:"18.3", t:"ניהול פרויקטים",         a:"\"חברת הבנייה שלנו\"",                       o:"דף רטרוספקטיבה",          w:["אולגה","לנה","שרי"], f:"1Ou61Cg6heQEyi4V-z2mDI31iSpnh3uoC"},
+ {n:7, d:"1.4",  t:"לא לפחד מכישלונות",      a:"\"קרקס הכישלונות\" ואתגר הניסיון האמיץ",     o:"מפת הפחד והצעד האמיץ שלי", w:["אולגה","לנה","שרי"], f:"19ymIc1ypesmd2z7lRlHaRkNx0ymtMV-L"},
+ {n:8, d:"8.4",  t:"להשמיע קול",             a:"פיץ' של 60 שניות",                           o:"פיץ' \"מי אני\" כתוב",    w:["חיצוני","כולנו"], ext:"סדנה חיצונית", f:"1-yhfCyNIDB84BTS7u1YlFTLoCk-WFDkg"},
+ {n:9, d:"6.5",  t:"הכנה לראיון עבודה",      a:"\"הסיפור שלי\" וראיונות מדומים",             o:"כרטיס משוב",              w:["חיצוני","כולנו"], ext:"סדנה חיצונית", f:"13NavlUVD9aMDPADpqgbvjnRdksAZXegR"},
+ {n:10,d:"13.5", t:"מבט קדימה",              a:"מפת מסלולים ו\"אני בעוד 10 שנים\"",          o:"רשימת משימות עד גיל 25",  w:["אולגה","לנה","שרי"], f:"1QrIDAdCOOhRJVX1uDmvX-LoQNlTgsMfA"},
+];
+const PH = n => n<=3?1:n<=7?2:3;
+const DAYS = ["ראשון","שני","שלישי","רביעי","חמישי","שישי","שבת"];
+const MON = ["ינואר","פברואר","מרץ","אפריל","מאי","יוני","יולי","אוגוסט","ספטמבר","אוקטובר","נובמבר","דצמבר"];
+M.forEach(m=>{const [dd,mm]=m.d.split(".").map(Number); m.date=new Date(YEAR,mm-1,dd); m.p=PH(m.n);});
+
+/* ===== אחסון מקומי (בטוח) ===== */
+const store={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+let done = store.get("tik-done",{});
+
+const today = new Date(); today.setHours(0,0,0,0);
+const same = (a,b)=>a.getTime()===b.getTime();
+const nextM = M.find(m=>m.date>=today);
+const folderUrl = id=>`https://drive.google.com/drive/folders/${id}`;
+const pad = n=>String(n).padStart(2,"0");
+const ymd = d=>`${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}`;
+function gcal(m){
+  const e=new Date(m.date); e.setDate(e.getDate()+1);
+  const q=new URLSearchParams({action:"TEMPLATE",text:`תיק הדרך · מפגש ${m.n}: ${m.t}`,dates:`${ymd(m.date)}/${ymd(e)}`,details:`${m.a}\nתוצר לתיק: ${m.o}\nתמונות וחומרים: ${folderUrl(m.f)}`,location:"המרכז הטכנולוגי אשדוד"});
+  return "https://calendar.google.com/calendar/render?"+q;
+}
+
+/* ===== המפגש הבא + ספירה לאחור ===== */
+function renderNext(){
+  const el=document.getElementById("next");
+  const bars=M.map(m=>`<i class="${same(m.date,today)?'today':m.date<today?'done':''}"></i>`).join("");
+  if(!nextM){el.innerHTML=`<div><div class="lbl">התוכנית הסתיימה 🎓</div><h2>כל 10 המפגשים מאחורינו</h2><div class="meta">כל הכבוד לכולן!</div></div><div class="prog">${bars}</div>`;return;}
+  const isToday=same(nextM.date,today);
+  const diff=Math.round((nextM.date-today)/864e5);
+  el.innerHTML=`<div><div class="lbl">${isToday?"🔔 היום!":"המפגש הבא"} · מפגש ${nextM.n} מתוך 10</div>
+    <h2>${nextM.t}</h2><div class="meta">יום ${DAYS[nextM.date.getDay()]}, ${nextM.date.getDate()} ב${MON[nextM.date.getMonth()]} · ${nextM.a}</div></div>
+    <div class="count">${isToday?`<div><b>⭐</b><span>היום</span></div>`:`<div><b>${diff}</b><span>ימים</span></div><div><b>${Math.floor(diff/7)}</b><span>שבועות</span></div>`}</div>
+    <div class="prog">${bars}</div>`;
+}
+
+/* ===== סינון ===== */
+let fPhase=null,fWho=null;
+const people=[...new Set(M.flatMap(m=>m.w))];
+const chips=document.getElementById("chips");
+people.forEach(p=>{const b=document.createElement("button");b.className="chip";b.textContent=p;b.onclick=()=>{fWho=fWho===p?null:p;syncF()};chips.appendChild(b)});
+document.querySelectorAll(".phase").forEach(b=>b.onclick=()=>{const p=+b.dataset.p;fPhase=fPhase===p?null:p;syncF()});
+function syncF(){
+  document.querySelectorAll(".phase").forEach(b=>b.classList.toggle("on",+b.dataset.p===fPhase));
+  document.querySelectorAll(".chip").forEach(b=>b.classList.toggle("on",b.textContent===fWho));
+  document.querySelectorAll(".m").forEach(el=>{const m=M[el.dataset.n-1];el.style.display=(!fPhase||m.p===fPhase)&&(!fWho||m.w.includes(fWho))?"":"none"});
+}
+
+/* ===== ציר המפגשים ===== */
+function renderTL(){
+  const tl=document.getElementById("tl");
+  tl.innerHTML=M.map(m=>{
+    const c=`--c:var(--p${m.p});--cbg:var(--p${m.p}bg)`;
+    const past=m.date<today&&!same(m.date,today), isN=nextM&&m.n===nextM.n;
+    const st=same(m.date,today)?"היום":isN?"הבא בתור":"";
+    return `<article class="m ${past?'past':''} ${isN?'isnext':''}" data-n="${m.n}" style="${c}" id="m${m.n}">
+      <button class="mh" onclick="tog(${m.n})" aria-expanded="false">
+        <div class="date"><b>${m.date.getDate()}.${m.date.getMonth()+1}</b><span>יום ${DAYS[m.date.getDay()]}</span></div>
+        <div><h3>${m.t}</h3><div class="act">${m.a}</div>
+          <div class="tags">${st?`<span class="tag st">${st}</span>`:""}${m.ext?`<span class="tag ext">★ ${m.ext}</span>`:""}<span class="tag">${m.w.join(" · ")}</span></div></div>
+        <span class="arrow">⌄</span>
+      </button>
+      <div class="mb">
+        <div class="grid2">
+          <div class="box"><small>פעילות מרכזית</small><b>${m.a}</b></div>
+          <div class="box"><small>מי מעבירה</small><b>${m.w.join(", ")}</b></div>
+        </div>
+        <div class="prod"><input type="checkbox" id="c${m.n}" ${done[m.n]?"checked":""} onchange="mark(${m.n},this.checked)">
+          <label for="c${m.n}">${m.o}<small>התוצר של המפגש לתיק הדרך</small></label></div>
+        <div class="btns">
+          <a class="btn pri" href="${folderUrl(m.f)}" target="_blank" rel="noopener">📷 פתיחת התיקייה בדרייב</a>
+          <a class="btn" href="${gcal(m)}" target="_blank" rel="noopener">📅 הוספה ליומן</a>
+        </div>
+        <div class="gal"><h4>מרחב התמונות והחומרים של המפגש</h4>
+          <div data-frame="${m.f}"></div>
+          ${uploadBox(m)}
+        </div>
+      </div>
+    </article>`}).join("");
+}
+function uploadBox(m){
+  if(!UPLOAD_URL) return `<p class="note">להעלאת תמונות וחומרים: "פתיחת התיקייה בדרייב" ← "חדש" ← "העלאת קובץ".</p>`;
+  return `<div class="up"><b>העלאת תמונות וחומרים למפגש ${m.n}</b><br>
+    <input type="text" id="who${m.n}" placeholder="שם (לא חובה)">
+    <input type="file" id="f${m.n}" multiple accept="image/*,video/*,application/pdf,.doc,.docx,.ppt,.pptx">
+    <div><button class="btn pri" style="margin-top:8px" onclick="upload(${m.n})">⬆ העלאה</button></div>
+    <div class="msg" id="msg${m.n}"></div></div>`;
+}
+window.tog=n=>{
+  const el=document.getElementById("m"+n); el.classList.toggle("open");
+  el.querySelector(".mh").setAttribute("aria-expanded",el.classList.contains("open"));
+  const fr=el.querySelector("[data-frame]");
+  if(el.classList.contains("open")&&!fr.dataset.loaded){fr.dataset.loaded=1;
+    fr.innerHTML=`<iframe class="frame" loading="lazy" src="https://drive.google.com/embeddedfolderview?id=${fr.dataset.frame}#grid"></iframe>`;}
+};
+window.mark=(n,v)=>{done[n]=v;store.set("tik-done",done);renderBag()};
+function renderBag(){
+  const k=M.filter(m=>done[m.n]).length;
+  document.getElementById("bagfill").style.width=(k*10)+"%";
+  document.getElementById("bagtxt").textContent=`${k} מתוך 10 תוצרים בתיק`+(k===10?" 🎉":"");
+}
+
+/* ===== העלאה דרך Apps Script ===== */
+const toB64=f=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(",")[1]);r.onerror=rej;r.readAsDataURL(f)});
+window.upload=async n=>{
+  const m=M[n-1], files=[...document.getElementById("f"+n).files], msg=document.getElementById("msg"+n);
+  if(!files.length){msg.textContent="בחרי קובץ אחד לפחות";return}
+  const big=files.find(f=>f.size>20*1024*1024); if(big){msg.textContent=`הקובץ ${big.name} גדול מ-20MB`;return}
+  const who=document.getElementById("who"+n).value.trim();
+  let ok=0;
+  for(const f of files){
+    msg.textContent=`מעלה ${ok+1} מתוך ${files.length}...`;
+    try{
+      await fetch(UPLOAD_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain"},
+        body:JSON.stringify({folderId:m.f,name:(who?who+" - ":"")+f.name,mime:f.type||"application/octet-stream",data:await toB64(f)})});
+      ok++;
+    }catch(e){msg.textContent="שגיאה בהעלאה: "+f.name;return}
+  }
+  msg.textContent=`✓ הועלו ${ok} קבצים. הם יופיעו בגלריה תוך כמה שניות.`;
+  document.getElementById("f"+n).value="";
+  const fr=document.querySelector(`#m${n} iframe`); if(fr) setTimeout(()=>fr.src=fr.src,2500);
+};
+
+document.getElementById("allDrive").href=folderUrl(ROOT_FOLDER);
+renderNext(); renderTL(); renderBag();
+if(nextM) tog(nextM.n);
+</script>
+</body>
+</html>
