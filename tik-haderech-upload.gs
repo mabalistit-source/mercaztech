@@ -21,6 +21,7 @@ const ALLOWED = [
   '13NavlUVD9aMDPADpqgbvjnRdksAZXegR', // 9
   '1QrIDAdCOOhRJVX1uDmvX-LoQNlTgsMfA', // 10
 ];
+const ROOT = '1zuZJ3mG2hIUePfL6T_dCihX3iJQeBGUn'; // תכנית מהנדסת – תמונות וחומרים
 const MAX_BYTES = 20 * 1024 * 1024;
 
 function doPost(e) {
@@ -31,16 +32,22 @@ function doPost(e) {
     if (bytes.length > MAX_BYTES) return out({ ok: false, error: 'size' });
     const name = String(p.name || 'file').replace(/[\\/:*?"<>|]/g, '').slice(0, 150);
     let folder = DriveApp.getFolderById(p.folderId);
-    // תוצרים אישיים נשמרים בתת-תיקייה "תוצרים" בתוך תיקיית המפגש
+    // תוצרים אישיים: תכנית מהנדסת / תיקים אישיים / <שם הבת>
     if (p.kind === 'product') {
-      const it = folder.getFoldersByName('תוצרים');
-      folder = it.hasNext() ? it.next() : folder.createFolder('תוצרים');
+      const student = String(p.student || '').replace(/[\\/:*?"<>|]/g, '').trim().slice(0, 60);
+      if (!student) return out({ ok: false, error: 'name' });
+      folder = sub(sub(DriveApp.getFolderById(ROOT), 'תיקים אישיים'), student);
     }
     const file = folder.createFile(Utilities.newBlob(bytes, p.mime || 'application/octet-stream', name));
     return out({ ok: true, id: file.getId() });
   } catch (err) {
     return out({ ok: false, error: String(err) });
   }
+}
+
+function sub(parent, name) {
+  const it = parent.getFoldersByName(name);
+  return it.hasNext() ? it.next() : parent.createFolder(name);
 }
 
 function doGet() { return out({ ok: true, service: 'tik-haderech-upload' }); }

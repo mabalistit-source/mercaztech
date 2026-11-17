@@ -89,7 +89,8 @@ button{font-family:inherit;cursor:pointer}
 .box small{display:block;font-size:12px;color:var(--muted);font-weight:700}
 .box b{font-weight:700}
 .prod{display:flex;align-items:center;gap:10px;background:var(--cbg);border-radius:12px;padding:10px 12px;margin-bottom:12px}
-.prod input{width:22px;height:22px;accent-color:var(--c)}
+.prod .th{width:56px;height:56px;border-radius:10px;background:#fff center/cover;border:2px dashed var(--c);display:grid;place-items:center;font-size:22px;flex:none}
+.prod .th.has{border-style:solid}
 .prod label{flex:1;font-weight:700}
 .prod small{display:block;font-weight:400;color:var(--muted);font-size:12px}
 .btns{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
@@ -112,6 +113,14 @@ button{font-family:inherit;cursor:pointer}
 .bag p{opacity:.8;font-size:14px}
 .bagbar{height:12px;background:rgba(255,255,255,.15);border-radius:9px;margin:12px 0 6px;overflow:hidden}
 .bagbar i{display:block;height:100%;background:var(--gold);width:0;transition:.4s}
+.slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px;margin-top:14px}
+.slot{background:rgba(255,255,255,.08);border:1.5px dashed rgba(255,255,255,.3);border-radius:12px;color:#fff;text-align:right;padding:0;overflow:hidden}
+.slot .im{aspect-ratio:1;background:center/cover;display:grid;place-items:center;font-size:26px;opacity:.9}
+.slot.has{border-style:solid;border-color:var(--gold)}
+.slot div.cap{padding:6px 8px;font-size:12px;line-height:1.3}
+.slot div.cap b{display:block;font-size:11px;color:var(--gold)}
+.who{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center}
+.who input{padding:8px 10px;border-radius:9px;border:0;font-family:inherit;min-width:220px}
 footer{text-align:center;color:var(--muted);font-size:13px;padding:10px 0 30px}
 
 @media(max-width:640px){
@@ -147,10 +156,12 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:10px 0 30px}
   <section class="tl" id="tl"></section>
 
   <section class="bag">
-    <h2>התיק שלי</h2>
-    <p>סמני כל תוצר שנכנס לקלסר שלך. הסימונים נשמרים בטלפון שלך.</p>
+    <h2>המרחב האישי שלי</h2>
+    <p>כל תוצר שתעלי נשמר בתיקייה האישית שלך בדרייב של התוכנית, ומופיע כאן.</p>
+    <div class="who"><input type="text" id="myname" placeholder="שם פרטי ושם משפחה" autocomplete="name" onchange="setName(this.value)"></div>
     <div class="bagbar"><i id="bagfill"></i></div>
     <b id="bagtxt"></b>
+    <div class="slots" id="slots"></div>
   </section>
 
   <section style="margin-bottom:24px">
@@ -185,8 +196,8 @@ M.forEach(m=>{const [dd,mm]=m.d.split(".").map(Number); m.date=new Date(YEAR,mm-
 
 /* ===== אחסון מקומי (בטוח) ===== */
 const store={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
-let done = store.get("tik-done",{});
 let myName = store.get("tik-name","");
+let prods = store.get("tik-prods",{});
 
 const today = new Date(); today.setHours(0,0,0,0);
 const same = (a,b)=>a.getTime()===b.getTime();
@@ -240,8 +251,8 @@ function renderTL(){
           <div class="box"${m.ext?"":' style="grid-column:1/-1"'}><small>פעילות מרכזית</small><b>${m.a}</b></div>
           ${m.ext?`<div class="box"><small>מעביר</small><b>גורם חיצוני · ${m.ext}</b></div>`:""}
         </div>
-        ${m.ext?"":`<div class="prod"><input type="checkbox" id="c${m.n}" ${done[m.n]?"checked":""} onchange="mark(${m.n},this.checked)">
-          <label for="c${m.n}">${m.o}<small>התוצר היומי של הסדנה · נכנס לתיק הדרך</small></label></div>
+        ${m.ext?"":`<div class="prod"><div class="th" id="th${m.n}">📷</div>
+          <label>${m.o}<small id="st${m.n}">התוצר היומי של הסדנה · מצלמים ומעלים למרחב האישי</small></label></div>
         ${productBox(m)}`}
         <div class="btns">
           <a class="btn pri" href="${folderUrl(m.f)}" target="_blank" rel="noopener">📷 פתיחת התיקייה בדרייב</a>
@@ -255,10 +266,10 @@ function renderTL(){
     </article>`}).join("");
 }
 function productBox(m){
-  return `<div class="up pbox"><b>📤 העלאת התוצר שלי: ${m.o}</b>
-    <p class="note" style="margin:2px 0 4px">הקובץ יישמר במרחב המקוון של המפגש עם השם שלך</p>
-    <input type="text" id="pn${m.n}" placeholder="שם פרטי ושם משפחה" value="${esc(myName)}" autocomplete="name">
-    <input type="file" id="pf${m.n}" multiple accept="image/*,application/pdf,.doc,.docx,.ppt,.pptx">
+  return `<div class="up pbox"><b>📤 העלאת תמונה של התוצר: ${m.o}</b>
+    <p class="note" style="margin:2px 0 4px">צלמי את התוצר. התמונה תישמר במרחב האישי שלך עם השם שלך</p>
+    <input type="text" class="pn" id="pn${m.n}" placeholder="שם פרטי ושם משפחה" value="${esc(myName)}" autocomplete="name">
+    <input type="file" id="pf${m.n}" multiple accept="image/*">
     <div><button class="btn pri" style="margin-top:8px" onclick="uploadProduct(${m.n})">⬆ שליחת התוצר</button></div>
     <div class="msg" id="pmsg${m.n}"></div></div>`;
 }
@@ -277,17 +288,30 @@ window.tog=n=>{
   if(el.classList.contains("open")&&!fr.dataset.loaded){fr.dataset.loaded=1;
     fr.innerHTML=`<iframe class="frame" loading="lazy" src="https://drive.google.com/embeddedfolderview?id=${fr.dataset.frame}#grid"></iframe>`;}
 };
-window.mark=(n,v)=>{done[n]=v;store.set("tik-done",done);renderBag()};
+window.goTo=n=>{const el=document.getElementById("m"+n);if(!el.classList.contains("open"))tog(n);el.scrollIntoView({behavior:"smooth",block:"start"})};
 function renderBag(){
-  const own=M.filter(m=>!m.ext), k=own.filter(m=>done[m.n]).length;
+  const own=M.filter(m=>!m.ext), k=own.filter(m=>prods[m.n]&&prods[m.n].length).length;
+  document.getElementById("slots").innerHTML=own.map(m=>{const t=prods[m.n]&&prods[m.n].slice(-1)[0];
+    return `<button class="slot ${t?"has":""}" onclick="goTo(${m.n})"><div class="im" style="${t?`background-image:url(${t})`:""}">${t?"":"＋"}</div>
+      <div class="cap"><b>מפגש ${m.n} · ${m.d}</b>${m.o}</div></button>`}).join("");
   document.getElementById("bagfill").style.width=(k/own.length*100)+"%";
-  document.getElementById("bagtxt").textContent=`${k} מתוך ${own.length} תוצרים בתיק`+(k===own.length?" 🎉":"");
+  document.getElementById("bagtxt").textContent=`${k} מתוך ${own.length} תוצרים הועלו`+(k===own.length?" 🎉":"");
 }
 
 /* ===== העלאה דרך Apps Script ===== */
 function esc(t){return String(t||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
-const ext=f=>{const i=f.name.lastIndexOf(".");return i>0?f.name.slice(i):""};
 const clean=t=>t.replace(/[\\/:*?"<>|]/g,"").replace(/\s+/g," ").trim();
+function shrink(file,max,q){return new Promise((res,rej)=>{const u=URL.createObjectURL(file),im=new Image();
+  im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement("canvas");
+    c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);
+    URL.revokeObjectURL(u);res(c.toDataURL("image/jpeg",q))};im.onerror=rej;im.src=u})}
+window.setName=v=>{myName=clean(v);store.set("tik-name",myName);document.querySelectorAll(".pn,#myname").forEach(i=>i.value=myName)};
+function paintProducts(){
+  M.filter(m=>!m.ext).forEach(m=>{const t=prods[m.n]&&prods[m.n].slice(-1)[0],th=document.getElementById("th"+m.n),st=document.getElementById("st"+m.n);
+    if(!th)return; th.classList.toggle("has",!!t); th.style.backgroundImage=t?`url(${t})`:""; th.textContent=t?"":"📷";
+    st.textContent=t?`✓ הועלה למרחב האישי (${prods[m.n].length} תמונות)`:"התוצר היומי של הסדנה · מצלמים ומעלים למרחב האישי";});
+  renderBag();
+}
 async function send(payload){
   await fetch(UPLOAD_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain"},body:JSON.stringify(payload)});
 }
@@ -295,19 +319,22 @@ window.uploadProduct=async n=>{
   const m=M[n-1], msg=document.getElementById("pmsg"+n), inp=document.getElementById("pf"+n);
   const name=clean(document.getElementById("pn"+n).value), files=[...inp.files];
   if(name.split(" ").length<2){msg.textContent="כתבי שם פרטי ושם משפחה";return}
-  if(!files.length){msg.textContent="בחרי קובץ של התוצר (צילום או מסמך)";return}
+  if(!files.length){msg.textContent="צלמי או בחרי תמונה של התוצר";return}
   if(!UPLOAD_URL){msg.textContent="ההעלאה עוד לא הופעלה. נסי שוב בקרוב.";return}
   const big=files.find(f=>f.size>20*1024*1024); if(big){msg.textContent=`הקובץ ${big.name} גדול מ-20MB`;return}
-  myName=name; store.set("tik-name",name);
-  let ok=0;
+  setName(name);
+  let ok=0, thumbs=[];
   for(const f of files){
     msg.textContent=`שולחת ${ok+1} מתוך ${files.length}...`;
-    const fname=`${name} – מפגש ${n} – ${clean(m.o)}${files.length>1?" ("+(ok+1)+")":""}${ext(f)}`;
-    try{await send({kind:"product",folderId:m.f,name:fname,mime:f.type||"application/octet-stream",data:await toB64(f)});ok++}
-    catch(e){msg.textContent="שגיאה בשליחה, נסי שוב";return}
+    try{
+      const big=await shrink(f,2000,.85), small=await shrink(f,240,.7);
+      const fname=`${name} – מפגש ${n} – ${clean(m.o)}${files.length>1?" ("+(ok+1)+")":""}.jpg`;
+      await send({kind:"product",student:name,folderId:m.f,name:fname,mime:"image/jpeg",data:big.split(",")[1]});
+      thumbs.push(small); ok++;
+    }catch(e){msg.textContent="שגיאה בשליחה, נסי שוב";return}
   }
-  inp.value=""; msg.textContent=`✓ התוצר נשלח (${ok} קבצים) ונשמר בשם "${name}"`;
-  document.getElementById("c"+n).checked=true; mark(n,true);
+  inp.value=""; msg.textContent=`✓ ${ok} תמונות נשמרו במרחב האישי של ${name}`;
+  prods[n]=(prods[n]||[]).concat(thumbs).slice(-3); store.set("tik-prods",prods); paintProducts();
 };
 const toB64=f=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(",")[1]);r.onerror=rej;r.readAsDataURL(f)});
 window.upload=async n=>{
@@ -330,7 +357,7 @@ window.upload=async n=>{
 };
 
 document.getElementById("allDrive").href=folderUrl(ROOT_FOLDER);
-renderNext(); renderTL(); renderBag();
+renderNext(); renderTL(); document.getElementById("myname").value=myName; paintProducts();
 if(nextM) tog(nextM.n);
 </script>
 </body>
