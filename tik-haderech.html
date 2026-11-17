@@ -101,6 +101,8 @@ button{font-family:inherit;cursor:pointer}
 .frame{width:100%;height:320px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg)}
 .up{border:2px dashed var(--c);background:var(--cbg);border-radius:12px;padding:14px;margin-top:10px;text-align:center}
 .up input[type=text]{width:100%;max-width:280px;padding:8px 10px;border-radius:9px;border:1.5px solid var(--line);font-family:inherit;margin:6px 0}
+.pbox{text-align:right;margin:0 0 12px;border-style:solid}
+.pbox b{display:block}
 .up .msg{font-size:13px;margin-top:6px;font-weight:700}
 .note{font-size:13px;color:var(--muted);margin-top:6px}
 
@@ -184,6 +186,7 @@ M.forEach(m=>{const [dd,mm]=m.d.split(".").map(Number); m.date=new Date(YEAR,mm-
 /* ===== אחסון מקומי (בטוח) ===== */
 const store={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 let done = store.get("tik-done",{});
+let myName = store.get("tik-name","");
 
 const today = new Date(); today.setHours(0,0,0,0);
 const same = (a,b)=>a.getTime()===b.getTime();
@@ -238,7 +241,8 @@ function renderTL(){
           ${m.ext?`<div class="box"><small>מעביר</small><b>גורם חיצוני · ${m.ext}</b></div>`:""}
         </div>
         ${m.ext?"":`<div class="prod"><input type="checkbox" id="c${m.n}" ${done[m.n]?"checked":""} onchange="mark(${m.n},this.checked)">
-          <label for="c${m.n}">${m.o}<small>התוצר היומי של הסדנה · נכנס לתיק הדרך</small></label></div>`}
+          <label for="c${m.n}">${m.o}<small>התוצר היומי של הסדנה · נכנס לתיק הדרך</small></label></div>
+        ${productBox(m)}`}
         <div class="btns">
           <a class="btn pri" href="${folderUrl(m.f)}" target="_blank" rel="noopener">📷 פתיחת התיקייה בדרייב</a>
           <a class="btn" href="${gcal(m)}" target="_blank" rel="noopener">📅 הוספה ליומן</a>
@@ -249,6 +253,14 @@ function renderTL(){
         </div>
       </div>
     </article>`}).join("");
+}
+function productBox(m){
+  return `<div class="up pbox"><b>📤 העלאת התוצר שלי: ${m.o}</b>
+    <p class="note" style="margin:2px 0 4px">הקובץ יישמר במרחב המקוון של המפגש עם השם שלך</p>
+    <input type="text" id="pn${m.n}" placeholder="שם פרטי ושם משפחה" value="${esc(myName)}" autocomplete="name">
+    <input type="file" id="pf${m.n}" multiple accept="image/*,application/pdf,.doc,.docx,.ppt,.pptx">
+    <div><button class="btn pri" style="margin-top:8px" onclick="uploadProduct(${m.n})">⬆ שליחת התוצר</button></div>
+    <div class="msg" id="pmsg${m.n}"></div></div>`;
 }
 function uploadBox(m){
   if(!UPLOAD_URL) return `<p class="note">להעלאת תמונות וחומרים: "פתיחת התיקייה בדרייב" ← "חדש" ← "העלאת קובץ".</p>`;
@@ -273,6 +285,30 @@ function renderBag(){
 }
 
 /* ===== העלאה דרך Apps Script ===== */
+function esc(t){return String(t||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+const ext=f=>{const i=f.name.lastIndexOf(".");return i>0?f.name.slice(i):""};
+const clean=t=>t.replace(/[\\/:*?"<>|]/g,"").replace(/\s+/g," ").trim();
+async function send(payload){
+  await fetch(UPLOAD_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain"},body:JSON.stringify(payload)});
+}
+window.uploadProduct=async n=>{
+  const m=M[n-1], msg=document.getElementById("pmsg"+n), inp=document.getElementById("pf"+n);
+  const name=clean(document.getElementById("pn"+n).value), files=[...inp.files];
+  if(name.split(" ").length<2){msg.textContent="כתבי שם פרטי ושם משפחה";return}
+  if(!files.length){msg.textContent="בחרי קובץ של התוצר (צילום או מסמך)";return}
+  if(!UPLOAD_URL){msg.textContent="ההעלאה עוד לא הופעלה. נסי שוב בקרוב.";return}
+  const big=files.find(f=>f.size>20*1024*1024); if(big){msg.textContent=`הקובץ ${big.name} גדול מ-20MB`;return}
+  myName=name; store.set("tik-name",name);
+  let ok=0;
+  for(const f of files){
+    msg.textContent=`שולחת ${ok+1} מתוך ${files.length}...`;
+    const fname=`${name} – מפגש ${n} – ${clean(m.o)}${files.length>1?" ("+(ok+1)+")":""}${ext(f)}`;
+    try{await send({kind:"product",folderId:m.f,name:fname,mime:f.type||"application/octet-stream",data:await toB64(f)});ok++}
+    catch(e){msg.textContent="שגיאה בשליחה, נסי שוב";return}
+  }
+  inp.value=""; msg.textContent=`✓ התוצר נשלח (${ok} קבצים) ונשמר בשם "${name}"`;
+  document.getElementById("c"+n).checked=true; mark(n,true);
+};
 const toB64=f=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(",")[1]);r.onerror=rej;r.readAsDataURL(f)});
 window.upload=async n=>{
   const m=M[n-1], files=[...document.getElementById("f"+n).files], msg=document.getElementById("msg"+n);
@@ -284,7 +320,7 @@ window.upload=async n=>{
     msg.textContent=`מעלה ${ok+1} מתוך ${files.length}...`;
     try{
       await fetch(UPLOAD_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain"},
-        body:JSON.stringify({folderId:m.f,name:(who?who+" - ":"")+f.name,mime:f.type||"application/octet-stream",data:await toB64(f)})});
+        body:JSON.stringify({kind:"photo",folderId:m.f,name:(who?who+" - ":"")+f.name,mime:f.type||"application/octet-stream",data:await toB64(f)})});
       ok++;
     }catch(e){msg.textContent="שגיאה בהעלאה: "+f.name;return}
   }

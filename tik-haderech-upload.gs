@@ -1,5 +1,5 @@
 /**
- * תיק הדרך – סקריפט העלאה לגוגל דרייב (Google Apps Script)
+ * תכנית מהנדסת – סקריפט העלאה (תמונות + תוצרים אישיים) לגוגל דרייב (Google Apps Script)
  * מאפשר לבנות להעלות תמונות וחומרים מהאפליקציה בלי להתחבר לחשבון גוגל.
  * הקבצים נשמרים בתיקיית המפגש בדרייב של שרי.
  *
@@ -29,9 +29,14 @@ function doPost(e) {
     if (ALLOWED.indexOf(p.folderId) === -1) return out({ ok: false, error: 'folder' });
     const bytes = Utilities.base64Decode(p.data);
     if (bytes.length > MAX_BYTES) return out({ ok: false, error: 'size' });
-    const name = String(p.name || 'file').slice(0, 150);
-    const file = DriveApp.getFolderById(p.folderId)
-      .createFile(Utilities.newBlob(bytes, p.mime || 'application/octet-stream', name));
+    const name = String(p.name || 'file').replace(/[\\/:*?"<>|]/g, '').slice(0, 150);
+    let folder = DriveApp.getFolderById(p.folderId);
+    // תוצרים אישיים נשמרים בתת-תיקייה "תוצרים" בתוך תיקיית המפגש
+    if (p.kind === 'product') {
+      const it = folder.getFoldersByName('תוצרים');
+      folder = it.hasNext() ? it.next() : folder.createFolder('תוצרים');
+    }
+    const file = folder.createFile(Utilities.newBlob(bytes, p.mime || 'application/octet-stream', name));
     return out({ ok: true, id: file.getId() });
   } catch (err) {
     return out({ ok: false, error: String(err) });
