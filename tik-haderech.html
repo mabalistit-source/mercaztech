@@ -78,6 +78,7 @@ button{font-family:inherit;cursor:pointer}
 .tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
 .tag{font-size:12px;border-radius:99px;padding:1px 9px;background:var(--bg);font-weight:500}
 .tag.ext{background:#fff3d6;color:#8a5a00;font-weight:700}
+.tag.prodtag{background:var(--cbg);color:var(--c);font-weight:700}
 .tag.st{background:var(--ink);color:#fff}
 .arrow{font-size:20px;color:var(--muted);transition:.2s}
 .m.open .arrow{transform:rotate(180deg)}
@@ -140,7 +141,6 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:10px 0 30px}
     <button class="phase" data-p="2"><b>איך אני עובדת</b><span>מפגשים 4–7</span></button>
     <button class="phase" data-p="3"><b>לאן אני הולכת</b><span>מפגשים 8–10</span></button>
   </div>
-  <div class="chips" id="chips"><span class="t">מי מעבירה:</span></div>
 
   <section class="tl" id="tl"></section>
 
@@ -165,16 +165,16 @@ const UPLOAD_URL = "";
 const ROOT_FOLDER = "1zuZJ3mG2hIUePfL6T_dCihX3iJQeBGUn";
 
 const M = [
- {n:1, d:"7.1",  t:"מי אני ולמה בחרתי",     a:"\"ציירי מהנדס/ת\" ומפת הבחירה שלי",          o:"מפת הבחירה שלי",          w:["אולגה","לנה","שרי"], f:"1NSGU9VCmxROAg9km7O24-PO5M9elPTy0"},
- {n:2, d:"21.1", t:"ביטחון ותסמונת המתחזה", a:"\"עמדי אם...\" וסדנת החוזקות",               o:"כרטיס חוזקות",            w:["אולגה","שרי"],       f:"1h1ae_Loqfi7e0_72ZyEnwd-xfV2uY5Jd"},
- {n:3, d:"4.2",  t:"נשים שעשו את זה",        a:"ספרייה אנושית",                              o:"כרטיס \"מה לקחתי איתי\"", w:["חיצוני","אולגה","שרי"], ext:"הרצאה חיצונית", f:"1IjDQ0hPeGD23W2cL7F8ljHVR7_ijPiOq"},
- {n:4, d:"18.2", t:"ניהול זמן ומשימות",      a:"מטריצת דחוף/חשוב ולוח אישי",                o:"לוח משימות אישי",         w:["אולגה","שרי"],       f:"1TkKa6VFexJt5BM3gIivT90WQwjk6J5qK"},
- {n:5, d:"4.3",  t:"עבודת צוות ותקשורת",     a:"\"הבנייה העיוורת\"",                         o:"מפת התפקידים שלי בצוות",  w:["אולגה","לנה","שרי"], f:"18GYKkuN7muQbmB8U4pICrfzU9ZG550zW"},
- {n:6, d:"18.3", t:"ניהול פרויקטים",         a:"\"חברת הבנייה שלנו\"",                       o:"דף רטרוספקטיבה",          w:["אולגה","לנה","שרי"], f:"1Ou61Cg6heQEyi4V-z2mDI31iSpnh3uoC"},
- {n:7, d:"1.4",  t:"לא לפחד מכישלונות",      a:"\"קרקס הכישלונות\" ואתגר הניסיון האמיץ",     o:"מפת הפחד והצעד האמיץ שלי", w:["אולגה","לנה","שרי"], f:"19ymIc1ypesmd2z7lRlHaRkNx0ymtMV-L"},
- {n:8, d:"8.4",  t:"להשמיע קול",             a:"פיץ' של 60 שניות",                           o:"פיץ' \"מי אני\" כתוב",    w:["חיצוני","כולנו"], ext:"סדנה חיצונית", f:"1-yhfCyNIDB84BTS7u1YlFTLoCk-WFDkg"},
- {n:9, d:"6.5",  t:"הכנה לראיון עבודה",      a:"\"הסיפור שלי\" וראיונות מדומים",             o:"כרטיס משוב",              w:["חיצוני","כולנו"], ext:"סדנה חיצונית", f:"13NavlUVD9aMDPADpqgbvjnRdksAZXegR"},
- {n:10,d:"13.5", t:"מבט קדימה",              a:"מפת מסלולים ו\"אני בעוד 10 שנים\"",          o:"רשימת משימות עד גיל 25",  w:["אולגה","לנה","שרי"], f:"1QrIDAdCOOhRJVX1uDmvX-LoQNlTgsMfA"},
+ {n:1, d:"7.1",  t:"מי אני ולמה בחרתי",     a:"\"ציירי מהנדס/ת\" ומפת הבחירה שלי",          o:"מפת הבחירה שלי", f:"1NSGU9VCmxROAg9km7O24-PO5M9elPTy0"},
+ {n:2, d:"21.1", t:"ביטחון ותסמונת המתחזה", a:"\"עמדי אם...\" וסדנת החוזקות",               o:"כרטיס חוזקות", f:"1h1ae_Loqfi7e0_72ZyEnwd-xfV2uY5Jd"},
+ {n:3, d:"4.2",  t:"נשים שעשו את זה",        a:"ספרייה אנושית",                              o:"כרטיס \"מה לקחתי איתי\"", ext:"הרצאה חיצונית", f:"1IjDQ0hPeGD23W2cL7F8ljHVR7_ijPiOq"},
+ {n:4, d:"18.2", t:"ניהול זמן ומשימות",      a:"מטריצת דחוף/חשוב ולוח אישי",                o:"לוח משימות אישי", f:"1TkKa6VFexJt5BM3gIivT90WQwjk6J5qK"},
+ {n:5, d:"4.3",  t:"עבודת צוות ותקשורת",     a:"\"הבנייה העיוורת\"",                         o:"מפת התפקידים שלי בצוות", f:"18GYKkuN7muQbmB8U4pICrfzU9ZG550zW"},
+ {n:6, d:"18.3", t:"ניהול פרויקטים",         a:"\"חברת הבנייה שלנו\"",                       o:"דף רטרוספקטיבה", f:"1Ou61Cg6heQEyi4V-z2mDI31iSpnh3uoC"},
+ {n:7, d:"1.4",  t:"לא לפחד מכישלונות",      a:"\"קרקס הכישלונות\" ואתגר הניסיון האמיץ",     o:"מפת הפחד והצעד האמיץ שלי", f:"19ymIc1ypesmd2z7lRlHaRkNx0ymtMV-L"},
+ {n:8, d:"8.4",  t:"להשמיע קול",             a:"פיץ' של 60 שניות",                           o:"פיץ' \"מי אני\" כתוב", ext:"סדנה חיצונית", f:"1-yhfCyNIDB84BTS7u1YlFTLoCk-WFDkg"},
+ {n:9, d:"6.5",  t:"הכנה לראיון עבודה",      a:"\"הסיפור שלי\" וראיונות מדומים",             o:"כרטיס משוב", ext:"סדנה חיצונית", f:"13NavlUVD9aMDPADpqgbvjnRdksAZXegR"},
+ {n:10,d:"13.5", t:"מבט קדימה",              a:"מפת מסלולים ו\"אני בעוד 10 שנים\"",          o:"רשימת משימות עד גיל 25", f:"1QrIDAdCOOhRJVX1uDmvX-LoQNlTgsMfA"},
 ];
 const PH = n => n<=3?1:n<=7?2:3;
 const DAYS = ["ראשון","שני","שלישי","רביעי","חמישי","שישי","שבת"];
@@ -193,7 +193,7 @@ const pad = n=>String(n).padStart(2,"0");
 const ymd = d=>`${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}`;
 function gcal(m){
   const e=new Date(m.date); e.setDate(e.getDate()+1);
-  const q=new URLSearchParams({action:"TEMPLATE",text:`תכנית מהנדסת · מפגש ${m.n}: ${m.t}`,dates:`${ymd(m.date)}/${ymd(e)}`,details:`${m.a}\nתוצר לתיק: ${m.o}\nתמונות וחומרים: ${folderUrl(m.f)}`,location:"המרכז הטכנולוגי אשדוד"});
+  const q=new URLSearchParams({action:"TEMPLATE",text:`תכנית מהנדסת · מפגש ${m.n}: ${m.t}`,dates:`${ymd(m.date)}/${ymd(e)}`,details:`${m.a}${m.ext?"":"\nתוצר לתיק: "+m.o}\nתמונות וחומרים: ${folderUrl(m.f)}`,location:"המרכז הטכנולוגי אשדוד"});
   return "https://calendar.google.com/calendar/render?"+q;
 }
 
@@ -211,15 +211,11 @@ function renderNext(){
 }
 
 /* ===== סינון ===== */
-let fPhase=null,fWho=null;
-const people=[...new Set(M.flatMap(m=>m.w))];
-const chips=document.getElementById("chips");
-people.forEach(p=>{const b=document.createElement("button");b.className="chip";b.textContent=p;b.onclick=()=>{fWho=fWho===p?null:p;syncF()};chips.appendChild(b)});
+let fPhase=null;
 document.querySelectorAll(".phase").forEach(b=>b.onclick=()=>{const p=+b.dataset.p;fPhase=fPhase===p?null:p;syncF()});
 function syncF(){
   document.querySelectorAll(".phase").forEach(b=>b.classList.toggle("on",+b.dataset.p===fPhase));
-  document.querySelectorAll(".chip").forEach(b=>b.classList.toggle("on",b.textContent===fWho));
-  document.querySelectorAll(".m").forEach(el=>{const m=M[el.dataset.n-1];el.style.display=(!fPhase||m.p===fPhase)&&(!fWho||m.w.includes(fWho))?"":"none"});
+  document.querySelectorAll(".m").forEach(el=>{const m=M[el.dataset.n-1];el.style.display=(!fPhase||m.p===fPhase)?"":"none"});
 }
 
 /* ===== ציר המפגשים ===== */
@@ -233,16 +229,16 @@ function renderTL(){
       <button class="mh" onclick="tog(${m.n})" aria-expanded="false">
         <div class="date"><b>${m.date.getDate()}.${m.date.getMonth()+1}</b><span>יום ${DAYS[m.date.getDay()]}</span></div>
         <div><h3>${m.t}</h3><div class="act">${m.a}</div>
-          <div class="tags">${st?`<span class="tag st">${st}</span>`:""}${m.ext?`<span class="tag ext">★ ${m.ext}</span>`:""}<span class="tag">${m.w.join(" · ")}</span></div></div>
+          <div class="tags">${st?`<span class="tag st">${st}</span>`:""}${m.ext?`<span class="tag ext">★ ${m.ext}</span>`:""}${m.ext?"":`<span class="tag prodtag">🎯 תוצר: ${m.o}</span>`}</div></div>
         <span class="arrow">⌄</span>
       </button>
       <div class="mb">
         <div class="grid2">
-          <div class="box"><small>פעילות מרכזית</small><b>${m.a}</b></div>
-          <div class="box"><small>מי מעבירה</small><b>${m.w.join(", ")}</b></div>
+          <div class="box"${m.ext?"":' style="grid-column:1/-1"'}><small>פעילות מרכזית</small><b>${m.a}</b></div>
+          ${m.ext?`<div class="box"><small>מעביר</small><b>גורם חיצוני · ${m.ext}</b></div>`:""}
         </div>
-        <div class="prod"><input type="checkbox" id="c${m.n}" ${done[m.n]?"checked":""} onchange="mark(${m.n},this.checked)">
-          <label for="c${m.n}">${m.o}<small>התוצר של המפגש לתיק הדרך</small></label></div>
+        ${m.ext?"":`<div class="prod"><input type="checkbox" id="c${m.n}" ${done[m.n]?"checked":""} onchange="mark(${m.n},this.checked)">
+          <label for="c${m.n}">${m.o}<small>התוצר היומי של הסדנה · נכנס לתיק הדרך</small></label></div>`}
         <div class="btns">
           <a class="btn pri" href="${folderUrl(m.f)}" target="_blank" rel="noopener">📷 פתיחת התיקייה בדרייב</a>
           <a class="btn" href="${gcal(m)}" target="_blank" rel="noopener">📅 הוספה ליומן</a>
@@ -271,9 +267,9 @@ window.tog=n=>{
 };
 window.mark=(n,v)=>{done[n]=v;store.set("tik-done",done);renderBag()};
 function renderBag(){
-  const k=M.filter(m=>done[m.n]).length;
-  document.getElementById("bagfill").style.width=(k*10)+"%";
-  document.getElementById("bagtxt").textContent=`${k} מתוך 10 תוצרים בתיק`+(k===10?" 🎉":"");
+  const own=M.filter(m=>!m.ext), k=own.filter(m=>done[m.n]).length;
+  document.getElementById("bagfill").style.width=(k/own.length*100)+"%";
+  document.getElementById("bagtxt").textContent=`${k} מתוך ${own.length} תוצרים בתיק`+(k===own.length?" 🎉":"");
 }
 
 /* ===== העלאה דרך Apps Script ===== */
