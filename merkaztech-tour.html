@@ -170,6 +170,9 @@ kbd{font-family:inherit;border:1px solid var(--line);border-bottom-width:2px;bor
 .maplegend span::before{content:"";width:10px;height:10px;border-radius:2px;background:var(--dc)}
 .lbl.out{background:transparent;box-shadow:none;border:0;font-family:var(--display);font-size:1.5rem;color:var(--ink);text-shadow:0 0 6px var(--panel),0 0 2px var(--panel);pointer-events:none}
 .stage.outside .lbl.out{color:#1e2422;text-shadow:0 0 6px #fff,0 0 2px #fff}
+.vrnote{position:absolute;top:52px;left:50%;transform:translateX(-50%);width:min(440px,calc(100% - 32px));z-index:5}
+.vrnote p{margin:0;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:12px 14px;font-size:.88rem;box-shadow:0 4px 14px rgba(0,0,0,.18);cursor:pointer}
+#vrBtn.primary-vr{border-color:var(--accent);color:var(--accent)}
 .stage.walk .legend,.stage.walk .hint{display:none}
 .stage:not(.walk) .mini,.stage:not(.walk) .where,.stage:not(.walk) .keys{display:none}
 @media (max-width:640px){.mini canvas{width:120px;height:75px}.keys{display:none}.where{top:auto;bottom:10px;left:12px;transform:none}}
@@ -183,6 +186,7 @@ kbd{font-family:inherit;border:1px solid var(--line);border-bottom-width:2px;bor
         <button type="button" id="mWalk" aria-pressed="true">🚶 סיור רגלי</button>
         <button type="button" id="mOver" aria-pressed="false">מבט על</button>
       </div>
+      <button class="btn" id="vrBtn" type="button" title="סיור במשקפי VR (לא חובה)">🥽 VR</button>
       <button class="btn primary" id="tourBtn" type="button">▶ סיור מודרך</button>
     </div>
   </header>
@@ -205,6 +209,7 @@ kbd{font-family:inherit;border:1px solid var(--line);border-bottom-width:2px;bor
     <div class="legend" id="legend" role="group" aria-label="בחירת קומה"></div>
     <div class="hint">גררו לסיבוב · גלגלת או צביטה לזום · לחיצה על חדר מציגה אותו</div>
     <div class="where" id="where"></div>
+    <div class="vrnote" id="vrNoteBox"><p id="vrNote" hidden></p></div>
     <div class="hud" id="hud">
       <div class="fl"><button type="button" id="up">קומה ↑</button><button type="button" id="down">קומה ↓</button></div>
       <div class="pad">
@@ -379,6 +384,8 @@ const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
 renderer.setPixelRatio(Math.min(devicePixelRatio,2));
 const scene=new THREE.Scene();
 const camera=new THREE.PerspectiveCamera(62,1,.05,800); camera.rotation.order="YXZ";
+const rig=new THREE.Group(); scene.add(rig); rig.add(camera);
+renderer.xr.enabled=true;
 const controls=new THREE.OrbitControls(camera,canvas);
 controls.enableDamping=true; controls.maxPolarAngle=Math.PI*.48; controls.minDistance=10; controls.maxDistance=170; controls.enabled=false;
 scene.add(new THREE.HemisphereLight(0xffffff,0x8a8f8c,.9));
@@ -775,7 +782,6 @@ new ResizeObserver(resize).observe(stage); resize();
 const v=new THREE.Vector3(), ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
 let last=performance.now(), mapTick=0;
 function loop(now){
-  requestAnimationFrame(loop);
   const dt=Math.min(.05,(now-last)/1000); last=now;
   const out=mode==="walk"&&isOutside();
   if(mode==="walk"){
@@ -783,13 +789,15 @@ function loop(now){
     const sp=(keys.fast?7:3.6)*dt,fw=keys.f-keys.b,st=keys.sr-keys.sl;
     if(fw||st)tryMove((-Math.sin(P.yaw)*fw+Math.cos(P.yaw)*st)*sp,(-Math.cos(P.yaw)*fw-Math.sin(P.yaw)*st)*sp);
     if(glide){const dx=glide.x-P.x,dz=glide.z-P.z,dd=Math.hypot(dx,dz);if(dd<.08)glide=null;else{const s=Math.min(dd,6*dt),bx=P.x,bz=P.z;tryMove(dx/dd*s,dz/dd*s);if(P.x===bx&&P.z===bz)glide=null}}
-    camera.position.set(P.x,yFloor(P.f)+EYE,P.z); camera.rotation.set(P.pitch,P.yaw,0);
+    if(renderer.xr.isPresenting) vrStep(dt);
+    else {camera.position.set(P.x,yFloor(P.f)+EYE,P.z); camera.rotation.set(P.pitch,P.yaw,0);}
     FLOORS.forEach(F=>{floorGroups[F.n].position.y=yFloor(F.n);floorGroups[F.n].visible=true});
     shell.visible=out; ceilings.forEach((c,i)=>c.visible=!out);
     const loc=locate();
     if(loc!==current&&!(loc==="corridor"&&current.startsWith("floor"))){current=loc;eqSel="";syncNav();refreshCard()}
     const F=FLOORS[P.f-1];
-    $("#where").textContent=out?"מחוץ למרכז · הכניסה הראשית בחזית הדרומית":(byId[loc]?byId[loc].name:loc==="stair"?"מדרגות · ↑↓ למעבר קומה":"מסדרון")+` · ${F.name}`;
+    const whereTxt=out?"מחוץ למרכז · הכניסה הראשית בחזית הדרומית":(byId[loc]?byId[loc].name:loc==="stair"?"מדרגות · ↑↓ למעבר קומה":"מסדרון")+` · ${F.name}`;
+    $("#where").textContent=whereTxt; if(renderer.xr.isPresenting) vrHud(whereTxt);
   } else {
     if(tw){const k=Math.min(1,(now-tw.t0)/tw.d),e=ease(k);camera.position.lerpVectors(tw.cf,tw.ct,e);controls.target.lerpVectors(tw.tf,tw.tt,e);if(k>=1)tw=null}
     FLOORS.forEach(F=>{const g=floorGroups[F.n];g.position.y+=(targetY[F.n]-g.position.y)*(reduce?1:.12);g.visible=!(focused&&F.n>focused&&g.position.y>yFloor(F.n)+15)});
@@ -818,7 +826,62 @@ function loop(now){
   if(now-mapTick>80){mapTick=now;drawMap()}
 }
 camera.position.set(62,34,78); controls.target.set(0,6,0);
-setMode("walk"); select("ext"); requestAnimationFrame(loop);
+setMode("walk"); select("ext"); renderer.setAnimationLoop(loop);
+
+/* ---------- optional VR (WebXR) ---------- */
+const vrBtn=$("#vrBtn"), vrNote=$("#vrNote");
+let vrSession=null, vrSnap=0, vrBtnPrev={}, vrHudTxt="";
+const vrHudCanvas=document.createElement("canvas"); vrHudCanvas.width=1024; vrHudCanvas.height=160;
+const vrHudTex=new THREE.CanvasTexture(vrHudCanvas);
+const vrHudMesh=new THREE.Mesh(new THREE.PlaneGeometry(.8,.125),new THREE.MeshBasicMaterial({map:vrHudTex,transparent:true,depthTest:false}));
+vrHudMesh.position.set(0,-.32,-1); vrHudMesh.renderOrder=999; vrHudMesh.visible=false; camera.add(vrHudMesh);
+function vrHud(t){if(t===vrHudTxt)return;vrHudTxt=t;const c=vrHudCanvas.getContext("2d");c.clearRect(0,0,1024,160);
+  c.fillStyle="rgba(30,36,34,.85)";const r=40;c.beginPath();c.moveTo(r,10);c.arcTo(1014,10,1014,150,r);c.arcTo(1014,150,10,150,r);c.arcTo(10,150,10,10,r);c.arcTo(10,10,1014,10,r);c.fill();
+  c.fillStyle="#fff";c.font='600 54px "IBM Plex Sans Hebrew",Arial,sans-serif';c.textAlign="center";c.textBaseline="middle";c.direction="rtl";c.fillText(t,512,82);vrHudTex.needsUpdate=true}
+const vrCtrls=[0,1].map(i=>{const c=renderer.xr.getController(i);
+  const line=new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,0,0),new THREE.Vector3(0,0,-6)]),new THREE.LineBasicMaterial({color:0xffffff}));
+  c.add(line); c.addEventListener("selectstart",()=>vrPoint(c)); rig.add(c); return c});
+const vrMarker=new THREE.Mesh(new THREE.RingGeometry(.25,.32,32),new THREE.MeshBasicMaterial({color:0xec5547,side:THREE.DoubleSide}));
+vrMarker.rotation.x=-Math.PI/2; vrMarker.visible=false; scene.add(vrMarker);
+const vrM=new THREE.Matrix4(), vrO=new THREE.Vector3(), vrD=new THREE.Vector3(), vrH=new THREE.Vector3();
+function vrRay(c){vrM.identity().extractRotation(c.matrixWorld);vrO.setFromMatrixPosition(c.matrixWorld);vrD.set(0,0,-1).applyMatrix4(vrM);
+  if(vrD.y>=-1e-3)return null;const t=(yFloor(P.f)-vrO.y)/vrD.y;if(t>30)return null;return{x:vrO.x+vrD.x*t,z:vrO.z+vrD.z*t}}
+function vrPoint(c){const h=vrRay(c);if(h&&allowed(h.x,h.z,P.f)){P.x=h.x;P.z=h.z;glide=null}}
+function vrStep(dt){
+  // head direction drives walking; the rig carries the player through the building
+  camera.getWorldDirection(vrH); const hy=Math.atan2(-vrH.x,-vrH.z); P.yaw=hy;
+  vrSnap=Math.max(0,vrSnap-dt); let mark=null;
+  for(const src of vrSession.inputSources){const gp=src.gamepad;if(!gp)continue;
+    const ax=gp.axes.length>=4?gp.axes[2]:gp.axes[0]||0, ay=gp.axes.length>=4?gp.axes[3]:gp.axes[1]||0;
+    if(src.handedness==="right"&&Math.abs(ax)>.7&&!vrSnap){rig.rotation.y-=Math.sign(ax)*Math.PI/6;vrSnap=.35}
+    const sx=src.handedness==="right"?0:(Math.abs(ax)>.2?ax:0), sy=Math.abs(ay)>.2?-ay:0;
+    if(sx||sy){const sp=3*dt;tryMove((-Math.sin(hy)*sy+Math.cos(hy)*sx)*sp,(-Math.cos(hy)*sy-Math.sin(hy)*sx)*sp)}
+    const k=src.handedness, up=gp.buttons[4]&&gp.buttons[4].pressed, dn=gp.buttons[5]&&gp.buttons[5].pressed, pv=vrBtnPrev[k]||{};
+    if(up&&!pv.up)changeFloor(1); if(dn&&!pv.dn)changeFloor(-1); vrBtnPrev[k]={up,dn};
+  }
+  vrCtrls.forEach(c=>{const h=vrRay(c);if(h&&allowed(h.x,h.z,P.f))mark=h});
+  vrMarker.visible=!!mark; if(mark)vrMarker.position.set(mark.x,yFloor(P.f)+.03,mark.z);
+  // keep the player's head over P: offset the rig by the head's position inside the play area
+  const hx=camera.position.x, hz=camera.position.z, c=Math.cos(rig.rotation.y), sn=Math.sin(rig.rotation.y);
+  rig.position.set(P.x-(hx*c+hz*sn),yFloor(P.f),P.z-(-hx*sn+hz*c));
+}
+async function enterVR(){
+  if(vrSession){vrSession.end();return}
+  stopTour(); if(mode!=="walk")setMode("walk");   try{
+    const session=await navigator.xr.requestSession("immersive-vr",{optionalFeatures:["local-floor","bounded-floor"]});
+    renderer.xr.setReferenceSpaceType("local-floor"); await renderer.xr.setSession(session);
+    vrSession=session; vrHudMesh.visible=true; vrHudTxt=""; rig.rotation.y=P.yaw; vrBtn.textContent="יציאה מ־VR";
+    session.addEventListener("end",()=>{vrSession=null;vrHudMesh.visible=false;vrMarker.visible=false;rig.position.set(0,0,0);rig.rotation.set(0,0,0);camera.position.set(0,0,0);camera.quaternion.identity();camera.rotation.order="YXZ";P.pitch=-.05;vrBtn.textContent="🥽 VR";resize()});
+  }catch(err){vrNote.textContent="לא הצלחנו לפתוח את מצב ה־VR. ודאו שהמשקפיים מחוברים ושהדפדפן מאשר VR, ונסו שוב.";vrNote.hidden=false}
+}
+vrBtn.onclick=async()=>{
+  vrNote.hidden=true;
+  const ok=navigator.xr&&await navigator.xr.isSessionSupported("immersive-vr").catch(()=>false);
+  if(!ok){vrNote.innerHTML="מצב VR נפתח במשקפי VR, למשל Meta Quest. פתחו את קישור הסיור בדפדפן של המשקפיים ולחצו שוב על <b>🥽 VR</b>. במחשב ובטלפון ממשיכים בסיור הרגיל.";vrNote.hidden=false;return}
+  enterVR();
+};
+vrNote.onclick=()=>{vrNote.hidden=true};
+if(navigator.xr)navigator.xr.isSessionSupported("immersive-vr").then(ok=>{if(ok)vrBtn.classList.add("primary-vr")}).catch(()=>{});
 
 </script>
 
