@@ -265,7 +265,7 @@ const DOORGAP=[470,560];                          // main glass doors, south fac
 const ROOMS=[
  // ---- ground floor
  {id:"ent",f:1,fn:"ent",name:"מרחב כניסה",type:"lobby",open:1,rs:[{r:[345,512,678,628]}],img:["playground"],tags:["כניסה","קבלה","מגרש המשחקים שלך"],
-  desc:"מרחב הכניסה והחצר המקורה בחזית הדרומית. דלתות הזכוכית נפתחות לרחבה, ובצד המזרחי עמדת הקבלה העגולה. על קיר המדרגות שמול הכניסה, קיר המיצג \"מגרש המשחקים שלך\": מסגרת עץ עם 12 לוחות בצבעי אדום, צהוב, לבן ומתכת."},
+  desc:"מרחב הכניסה והחצר המקורה בחזית הדרומית. דלתות הזכוכית נפתחות לרחבה, ובצד המזרחי עמדת הקבלה העגולה. על הקיר השמאלי בכניסה, קיר המיצג \"מגרש המשחקים שלך\": מסגרת עץ עם 12 לוחות בצבעי אדום, צהוב, לבן ומתכת."},
  {id:"pops1",f:1,fn:"pub",name:"מרחב פופים",type:"pops",open:1,rs:[{r:[286,330,346,462]}],img:["pops"],tags:["למידה בלתי פורמלית","מנוחה"],
   desc:"פינת פופים לאורך הקיר האדום של החלל הרב־תכליתי, עם שולחנות צד לבנים."},
  {id:"hall",f:1,fn:"multi",name:"חלל רב תכליתי (אולם)",type:"hall",rs:[{r:[352,322,540,447],d:[["s",410],["s",515],["n",465]]}],pw:"n",img:["hall","hall-entry"],tags:["כנסים","הרצאות","טקסים"],
@@ -741,11 +741,11 @@ const shell=new THREE.Group(); scene.add(shell);
   rectBox(X(232),X(262),Z(112),Z(148),HT+2,cc,(HT+2)/2-.2,shell);
 })();
 
-/* "מגרש המשחקים שלך" wall, on the stair wall seen from the entrance */
+/* "מגרש המשחקים שלך" wall: the left-hand wall when you come in from the entrance */
 (function(){
-  const g=floorGroups[1], x=X(282)+.1, z0=Z(418), z1=Z(468), zc=(z0+z1)/2, mat=B(0xffffff);
-  solid(1,.16,WH,z1-z0,L(0xe9e2d4),x,WH/2,zc,g);
-  const pl=new THREE.Mesh(new THREE.PlaneGeometry(3.5,2.3),mat); pl.rotation.y=Math.PI/2; pl.position.set(x+.09,1.6,zc); g.add(pl);
+  const g=floorGroups[1], x=X(292), zc=Z(555), mat=B(0xffffff);
+  const back=new THREE.Mesh(new THREE.BoxGeometry(.04,2.6,3.8),L(0xe9e2d4)); back.position.set(x+.03,1.6,zc); g.add(back);
+  const pl=new THREE.Mesh(new THREE.PlaneGeometry(3.5,2.3),mat); pl.rotation.y=Math.PI/2; pl.position.set(x+.06,1.6,zc); g.add(pl);
   pl.userData={room:"ent",img:0}; photoPlanes.push(pl);
   if(IMG.playground) texLoader.load(IMG.playground,t=>{mat.map=t;mat.needsUpdate=true;const a=t.image.width/t.image.height;pl.scale.set(Math.min(1,2.3*a/3.5),1,1)});
 })();
