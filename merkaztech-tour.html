@@ -756,6 +756,57 @@ const shell=new THREE.Group(); scene.add(shell);
   rectBox(X(232),X(262),Z(112),Z(148),HT+2,cc,(HT+2)/2-.2,shell);
 })();
 
+/* pigeons on the roof */
+const pigeons=[];
+(function(){
+  const HT=FH*3, ROOF=HT+.4, v=rectM(VOID);
+  const greys=[0x8c939a,0x7a8188,0x9aa1a7,0x6f767d,0xa3a9ae];
+  const okSpot=(x,z)=>x>FX0+1&&x<FX1-1&&z>FZ0+1&&z<FZ1-1&&!inR(x,z,v,1.2);
+  const rnd=()=>{let x,z;do{x=FX0+1+Math.random()*(FX1-FX0-2);z=FZ0+1+Math.random()*(FZ1-FZ0-2)}while(!okSpot(x,z));return[x,z]};
+  for(let i=0;i<9;i++){
+    const g=new THREE.Group(), body=L(greys[i%greys.length]), neck=L(0x5d7a72);
+    const b=new THREE.Mesh(new THREE.SphereGeometry(.16,12,8),body); b.scale.set(1,.85,1.45); b.position.y=.2; g.add(b);
+    const head=new THREE.Group(); head.position.set(0,.36,-.18); g.add(head);
+    const h=new THREE.Mesh(new THREE.SphereGeometry(.075,10,8),body); head.add(h);
+    const n=new THREE.Mesh(new THREE.SphereGeometry(.07,8,6),neck); n.position.set(0,-.06,.03); n.scale.set(1,1.1,1); head.add(n);
+    const beak=new THREE.Mesh(new THREE.ConeGeometry(.02,.07,6),L(0x3a3030)); beak.rotation.x=-Math.PI/2; beak.position.set(0,-.01,-.09); head.add(beak);
+    [-.035,.035].forEach(ex=>{const e=new THREE.Mesh(new THREE.SphereGeometry(.013,6,4),L(0xe07a1e)); e.position.set(ex,.015,-.055); head.add(e)});
+    const tail=new THREE.Mesh(new THREE.BoxGeometry(.13,.03,.2),L(0x4f565c)); tail.position.set(0,.2,.27); tail.rotation.x=-.25; g.add(tail);
+    const wings=[-1,1].map(sd=>{const w=new THREE.Group();w.position.set(sd*.13,.25,-.02);const m=new THREE.Mesh(new THREE.BoxGeometry(.3,.025,.22),L(0x6a7177));m.position.x=sd*.14;w.add(m);w.visible=false;g.add(w);return w});
+    const foldL=new THREE.Mesh(new THREE.SphereGeometry(.12,8,6),L(0x6a7177)); foldL.scale.set(.5,.5,1.5); foldL.position.set(-.1,.24,.04); g.add(foldL);
+    const foldR=foldL.clone(); foldR.position.x=.1; g.add(foldR);
+    [-.05,.05].forEach(lx=>{const l=new THREE.Mesh(new THREE.CylinderGeometry(.012,.012,.1,5),L(0xd4605a)); l.position.set(lx,.05,0); g.add(l)});
+    const [x,z]=rnd(); g.position.set(x,ROOF,z); g.rotation.y=Math.random()*Math.PI*2; g.scale.setScalar(1.6);
+    shell.add(g);
+    pigeons.push({g,head,wings,folds:[foldL,foldR],state:"idle",t:Math.random()*2,tx:x,tz:z,y0:ROOF,phase:Math.random()*10,okSpot,rnd});
+  }
+})();
+function pigeonsStep(dt,now){
+  for(const p of pigeons){
+    p.t-=dt; const g=p.g;
+    if(p.state==="idle"||p.state==="peck"){
+      if(p.state==="peck") p.head.rotation.x=Math.max(0,Math.sin(now*.012+p.phase))*.9; else p.head.rotation.x*=.85;
+      if(p.t<=0){const r=Math.random();
+        if(r<.45){const a=Math.random()*Math.PI*2,d=.8+Math.random()*2.2,nx=g.position.x+Math.sin(a)*d,nz=g.position.z+Math.cos(a)*d;
+          if(p.okSpot(nx,nz)){p.tx=nx;p.tz=nz;p.state="walk";p.t=6}else{p.state="idle";p.t=.5}}
+        else if(r<.75){p.state="peck";p.t=1+Math.random()*2}
+        else if(r<.85){const[nx,nz]=p.rnd();p.sx=g.position.x;p.sz=g.position.z;p.tx=nx;p.tz=nz;p.state="fly";p.ft=0;p.fd=Math.max(1.5,Math.hypot(nx-p.sx,nz-p.sz)/6);
+          g.rotation.y=Math.atan2(-(nx-p.sx),-(nz-p.sz));p.wings.forEach(w=>w.visible=true);p.folds.forEach(f=>f.visible=false)}
+        else{p.state="idle";p.t=1+Math.random()*3;g.rotation.y+= (Math.random()-.5)*1.5}}
+    } else if(p.state==="walk"){
+      const dx=p.tx-g.position.x,dz=p.tz-g.position.z,d=Math.hypot(dx,dz);
+      g.rotation.y=Math.atan2(-dx,-dz);
+      if(d<.05||p.t<=0){p.state="idle";p.t=.5+Math.random()*2;g.position.y=p.y0}
+      else{const sp=Math.min(d,.9*dt);g.position.x+=dx/d*sp;g.position.z+=dz/d*sp;
+        p.head.position.z=-.18+Math.sin(now*.02+p.phase)*.04;g.position.y=p.y0+Math.abs(Math.sin(now*.02+p.phase))*.015}
+    } else if(p.state==="fly"){
+      p.ft+=dt; const k=Math.min(1,p.ft/p.fd), e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+      g.position.x=p.sx+(p.tx-p.sx)*e; g.position.z=p.sz+(p.tz-p.sz)*e; g.position.y=p.y0+Math.sin(k*Math.PI)*(2.5+p.fd);
+      const fl=Math.sin(now*.05+p.phase)*.9; p.wings[0].rotation.z=fl; p.wings[1].rotation.z=-fl;
+      if(k>=1){p.state="idle";p.t=1+Math.random()*2;g.position.y=p.y0;p.wings.forEach(w=>{w.visible=false;w.rotation.z=0});p.folds.forEach(f=>f.visible=true)}
+    }
+  }
+}
 /* labels */
 const labelsEl=$("#labels"), labels=[];
 function addLabel(text,group,cls,onClick,tok){const b=document.createElement("button");b.type="button";b.className="lbl "+cls;b.textContent=text;b.style.setProperty("--fc",`var(${tok})`);b.onclick=onClick;b.hidden=true;labelsEl.appendChild(b);const o={el:b,group,cls};labels.push(o);return o}
@@ -966,6 +1017,7 @@ function loop(now){
     FLOORS.forEach(F=>{const g=floorGroups[F.n];g.position.y+=(targetY[F.n]-g.position.y)*(reduce?1:.12);g.visible=!(focused&&F.n>focused&&g.position.y>yFloor(F.n)+15)});
     shell.visible=!focused; ceilings.forEach(c=>c.visible=false); controls.update();
   }
+  if(shell.visible&&!reduce) pigeonsStep(dt,now);
   stage.classList.toggle("outside",out||(mode==="over"&&!focused));
   renderer.render(scene,camera);
   const W=stage.clientWidth,H=stage.clientHeight;
