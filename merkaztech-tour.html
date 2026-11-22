@@ -274,8 +274,8 @@ const ROOMS=[
   desc:"לב הבניין: אולם בגובה כפול במרכז הקומה, עטוף בקיר אדום ומקורה בגג משונן אדום שנראה מהקומות שמעל. דלתות אדומות גדולות נפתחות למסדרון מצפון ומדרום."},
  {id:"makers",f:1,fn:"mach",name:"מעבדת מכטרוניקה ומייקרס",type:"makers",rs:[{r:[308,148,560,268],d:[["s",440]]}],img:["makers2","makers4","makers5","makers3","makers6","makers"],tags:["מכטרוניקה","מייקרס","CNC","חיתוך לייזר","עיבוד שבבי"],
   desc:"האגף הצפוני של מכונות ורובוטיקה: סדנת מייקרס עם שתי מכונות CNC (ראוטר גדול עם שואב אבק ו־CNC שולחנית), שני חותכי לייזר, כרסומת, מחרטה, מקדחה עמודית, לוח כלים ושולחנות עבודה גדולים."},
- {id:"print",f:1,fn:"mach",name:"פינת הדפסת תלת־ממד",type:"printcorner",open:1,rs:[{r:[452,270,556,316]}],img:["print1"],tags:["הדפסת תלת־ממד","ייצור דיגיטלי"],
-  desc:"דלפק במסדרון, מול חלון הזכוכית של סדנת המייקרס: מדפסות תלת־ממד, מכונת יציקת ואקום ותא ריסוס. לידו עגלת כלים."},
+ {id:"print",f:1,fn:"mach",name:"פינת הדפסת תלת־ממד",type:"printcorner",open:1,rs:[{r:[334,236,402,268]}],img:["print1"],tags:["הדפסת תלת־ממד","ייצור דיגיטלי"],
+  desc:"פינה בצד סדנת המייקרס, לאורך הקיר הדרומי: דלפק עם מדפסות תלת־ממד, מכונת יציקת ואקום ותא ריסוס, ולידו עגלת כלים."},
  {id:"prep1",f:1,fn:"mach",name:"חדרי הכנה ומחסן",type:"store",rs:[{r:[560,148,678,268],d:[["s",620]]}],img:[],tags:["מחסן"],
   desc:"חדרים קטנים בפינה הצפון־מזרחית של אגף מכונות ורובוטיקה. התוכנית מראה כאן חלוקה פנימית. אין עדיין תמונה."},
  {id:"mech",f:1,fn:"mach",name:"מעבדת מכטרוניקה",type:"lab",rs:[{r:[568,272,678,498],d:[["w",390],["n",620]]}],img:["mech2","mech"],tags:["מכטרוניקה","אוטומציה","פנאומטיקה"],
@@ -333,11 +333,11 @@ const EQ={
    ["מסור נימה שולחני","על שולחן העבודה (ככל הנראה)",.42,.5,"none"],
    ["מכונת כיפוף פח","מכופף ידני (מהתמונה הקודמת)",.45,.75,"bender"],
    ["שלט בטיחות ומטף","הוראות עבודה בטוחה ליד ה־CNC, מטף ליד הלייזרים",.01,.3,"safety"]],
- print:[["מדפסת תלת־ממד Bambu Lab X1-Carbon","בקצה הדלפק",.1,.2,"printer"],
-   ["תא ריסוס (איירבראש)","תא שקוף עם מסנן, לצביעת הדפסות",.35,.2,"booth"],
-   ["מכונת יציקת ואקום","מכונה אפורה עם ידיות צהובות (ככל הנראה)",.56,.2,"vacform"],
-   ["מדפסות תלת־ממד נוספות","מדפסת סגורה ומעליה מדפסת שרף (ככל הנראה)",.76,.2,"resin"],
-   ["עגלת כלים","ארגז כלים על גלגלים ליד הקיר הירוק",.96,.55,"toolchest"]],
+ print:[["מדפסת תלת־ממד Bambu Lab X1-Carbon","בקצה הדלפק",.1,.876,"printer"],
+   ["תא ריסוס (איירבראש)","תא שקוף עם מסנן, לצביעת הדפסות",.35,.876,"booth"],
+   ["מכונת יציקת ואקום","מכונה אפורה עם ידיות צהובות (ככל הנראה)",.56,.876,"vacform"],
+   ["מדפסות תלת־ממד נוספות","מדפסת סגורה ומעליה מדפסת שרף (ככל הנראה)",.76,.876,"resin"],
+   ["עגלת כלים","ארגז כלים על גלגלים ליד הדלפק",1.12,.75,"toolchest"]],
  mech:[["מסך מגע אינטראקטיבי גדול","על הקיר, להצגה והדגמה",.5,.01,"screen"],["עמדת מורה עם מחשב","מתחת למסך",.5,.11,"desk"],
    ["עמדות אימון בפנאומטיקה","4 לוחות פרופיל אלומיניום עם סעפת חיבורי אוויר, על הדלפק לאורך החלונות",.93,.5,"pneu"],
    ["מדחסי אוויר עם וסת לחץ","מדחס קטן ליד כל עמדה, עם מד לחץ וצינור כחול",.93,.38,"none"],
@@ -427,7 +427,7 @@ ROOMS.forEach(r=>{
     const p={s:[d.a,b.z1-1.2],n:[d.a,b.z0+1.2],w:[b.x0+1.2,d.a],e:[b.x1-1.2,d.a]}[d.s];
     r.tele={x:p[0],z:p[1],yaw}; r.door=d;
     r.doorPt={s:[d.a,b.z1+.5],n:[d.a,b.z0-.5],w:[b.x0-.5,d.a],e:[b.x1+.5,d.a]}[d.s];
-  } else {r.tele={x:b.cx,z:b.z1-(r.type==="printcorner"?.35:1),yaw:0}; r.doorPt=[b.cx,b.cz]}
+  } else {r.tele=r.type==="printcorner"?{x:b.cx,z:b.z0+.5,yaw:Math.PI}:{x:b.cx,z:b.z1-1,yaw:0}; r.doorPt=[b.cx,b.cz]}
 });
 
 /* ---------- nav ---------- */
@@ -514,7 +514,7 @@ function furnish(r,g,fc){
     addSolid(r.f,b.x0+1.5,b.cx-.8,b.z0+3.9,b.z1-2.7); addSolid(r.f,b.cx+.8,b.x1-1.4,b.z0+3.9,b.z1-2.7);}
   if(t==="makers"){for(const fz of [.5,.7])for(const fx of [.42,.6]){const[x,z]=P(fx,fz);solid(r.f,2.6,.85,1.3,L(0xe9ebea),x,.42,z,g)}
     {const[x,z]=P(.06,.42);box(.08,.07,.07,MAT.dark,x,.9,z,g);const tb=new THREE.Mesh(new THREE.TorusGeometry(.6,.1,8,16,Math.PI),MAT.white);tb.position.set(x-.3,1.2,z+1.2);tb.rotation.y=Math.PI/2;g.add(tb)}}
-  if(t==="printcorner"){solid(r.f,b.w-.4,.95,.62,MAT.white,b.cx,.48,b.z0+.36,g);box(b.w-.4,.04,.66,L(0xc9a46a),b.cx,.97,b.z0+.36,g);box(.4,WH,.4,L(0x8bc34a),b.x1-.2,WH/2,b.z0+.2,g)}
+  if(t==="printcorner"){solid(r.f,b.w-.4,.95,.62,MAT.white,b.cx,.48,b.z1-.36,g);box(b.w-.4,.04,.66,L(0xc9a46a),b.cx,.97,b.z1-.36,g)}
   if(t==="lab"){for(const fz of [.36,.6,.8])for(const fx of [.32,.65]){const[x,z]=P(fx,fz);solid(r.f,2.4,.85,1.2,MAT.dark,x,.42,z,g)}}
   if(t==="comp"||t==="class"){const front=b.z0;
     for(let z=front+2.6;z<b.z1-1.8;z+=1.8){benchRow(r,g,b.x0+1.2,b.cx-.6,z,MAT.white,.7,.75);benchRow(r,g,b.cx+.6,b.x1-1.2,z,MAT.white,.7,.75);
@@ -721,7 +721,7 @@ FLOORS.forEach(F=>{
   ROOMS.filter(r=>r.f===n).forEach(r=>{
     const fc=col(FN[r.fn].tok);
     r.parts.forEach(b=>{
-      box(b.w-.25,.06,b.d-.25,L(fc,{transparent:true,opacity:r.open?.3:.42}),b.cx,.04,b.cz,g);
+      if(r.type!=="printcorner")box(b.w-.25,.06,b.d-.25,L(fc,{transparent:true,opacity:r.open?.3:.42}),b.cx,.04,b.cz,g);
       if(!r.open) buildWalls(r,b,g);
       const hh=r.open?1.2:WH; const hit=new THREE.Mesh(new THREE.BoxGeometry(b.w,hh,b.d),B(0,{visible:false}));
       hit.position.set(b.cx,hh/2,b.cz); hit.userData.room=r.id; g.add(hit); hitVols.push(hit);
@@ -782,10 +782,11 @@ function allowed(x,z,f){
   for(const s of solids[f]) if(x>s.x0-R&&x<s.x1+R&&z>s.z0-R&&z<s.z1+R) return false;
   return true;
 }
+function roomAt(f,x,z){let best=null,ba=1e9;for(const r of ROOMS){if(r.f!==f)continue;for(const b of r.parts)if(inR(x,z,b)&&b.w*b.d<ba){ba=b.w*b.d;best=r}}return best}
 function locate(){
   if(isOutside())return"ext";
   if(inR(P.x,P.z,rectM(STAIRS),.4))return"stair";
-  const r=ROOMS.find(r=>r.f===P.f&&r.parts.some(b=>inR(P.x,P.z,b)));
+  const r=roomAt(P.f,P.x,P.z);
   return r?r.id:"corridor";
 }
 let tw=null;
@@ -933,7 +934,7 @@ function drawMap(){
 map.addEventListener("click",e=>{
   const rc=map.getBoundingClientRect(),cx=(e.clientX-rc.left)/rc.width*map.width,cy=(e.clientY-rc.top)/rc.height*map.height;
   const x=(cx/MC.s+MC.x0-450)/SC,z=(cy/MC.s+MC.y0-390)/SC,f=mapFloor(); stopTour();
-  const r=ROOMS.find(r=>r.f===f&&r.parts.some(b=>inR(x,z,b)));
+  const r=roomAt(f,x,z);
   if(mode==="walk"){if(r&&!r.open){select(r.id);return} if(allowed(x,z,f)){P.f=f;glide=null;P.x=x;P.z=z;return} if(r)select(r.id)}
   else if(r)select(r.id);
 });
@@ -977,7 +978,7 @@ function loop(now){
       Lb.el.classList.toggle("on",eqSel===r.id+":"+Lb.eq)}
     else{const r=Lb.room;
       if(mode==="over"){show=show&&focused===r.f;anchor=r.anchor}
-      else{anchor=r.doorAnchor;const inClosed=byId[current]&&!byId[current].open&&current!=="ext";show=show&&!inClosed&&!out&&r.f===P.f&&current!==r.id&&Math.hypot(r.doorPt[0]-P.x,r.doorPt[1]-P.z)<16}}
+      else{anchor=r.doorAnchor;const inClosed=byId[current]&&(!byId[current].open||byId[current].type==="printcorner")&&current!=="ext";show=show&&!inClosed&&!out&&r.f===P.f&&current!==r.id&&Math.hypot(r.doorPt[0]-P.x,r.doorPt[1]-P.z)<16}}
     if(!show){Lb.el.hidden=true;return}
     v.copy(anchor).applyMatrix4(Lb.group.matrixWorld);
     if(mode==="walk"&&Lb.cls!=="out"){const dx=v.x-camera.position.x,dz=v.z-camera.position.z;if(-Math.sin(P.yaw)*dx-Math.cos(P.yaw)*dz<.3){Lb.el.hidden=true;return}}
