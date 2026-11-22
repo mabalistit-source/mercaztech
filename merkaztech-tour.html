@@ -923,10 +923,91 @@ function pickEq(id,i,fromPin){
 $("#enter").onclick=()=>{stopTour();setMode("walk");teleport(current)};
 const step=d=>{let i=ORDER.indexOf(current);if(i<0)i=0;select(ORDER[(i+d+ORDER.length)%ORDER.length])};
 $("#next").onclick=()=>{stopTour();step(1)}; $("#prev").onclick=()=>{stopTour();step(-1)};
-let tourTimer=null;
-function stopTour(){if(tourTimer){clearInterval(tourTimer);tourTimer=null;$("#tourBtn").textContent="▶ סיור מודרך"}}
-$("#tourBtn").onclick=()=>{if(tourTimer){stopTour();return}select("ext");$("#tourBtn").textContent="■ עצירת הסיור";
-  tourTimer=setInterval(()=>{if(ORDER.indexOf(current)===ORDER.length-1){stopTour();select("ext");return}step(1)},5000)};
+/* ---------- illustrated guide for the guided tour ---------- */
+const GUIDE_SVG=`<svg viewBox="0 0 170 340" aria-hidden="true">
+<defs><linearGradient id="gHair" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2e211a"/><stop offset=".55" stop-color="#5a3f2c"/><stop offset="1" stop-color="#b08a5e"/></linearGradient>
+<pattern id="gLeo" width="10" height="8" patternUnits="userSpaceOnUse"><rect width="10" height="8" fill="#c98a3e"/><ellipse cx="3" cy="3" rx="1.8" ry="1.3" fill="#3a2414"/><ellipse cx="8" cy="6" rx="1.5" ry="1.1" fill="#3a2414"/></pattern></defs>
+<ellipse cx="85" cy="333" rx="44" ry="6" fill="#000" opacity=".15"/>
+<g class="g-body">
+ <path d="M48 70 Q44 30 85 26 Q126 30 122 70 L128 150 Q118 162 108 150 L106 92 L64 92 L62 150 Q52 162 42 150 Z" fill="url(#gHair)"/>
+ <g class="g-legL"><path d="M62 186 L85 186 L84 300 L63 300 Z" fill="#4f7fb2"/><path d="M73 196 L73 296" stroke="#7aa3cc" stroke-width="1"/>
+  <path d="M60 302 Q62 296 72 296 Q82 296 86 302 L86 308 L60 308 Z" fill="#d6a184"/><rect x="58" y="307" width="30" height="11" rx="4" fill="url(#gLeo)"/><rect x="62" y="300" width="20" height="4" rx="2" fill="#e8b99a"/></g>
+ <g class="g-legR"><path d="M85 186 L108 186 L107 300 L86 300 Z" fill="#4a79ab"/><path d="M97 196 L97 296" stroke="#7aa3cc" stroke-width="1"/>
+  <path d="M84 302 Q86 296 96 296 Q106 296 110 302 L110 308 L84 308 Z" fill="#d6a184"/><rect x="82" y="307" width="30" height="11" rx="4" fill="url(#gLeo)"/><rect x="86" y="300" width="20" height="4" rx="2" fill="#e8b99a"/></g>
+ <rect x="60" y="178" width="50" height="9" rx="2" fill="#4f7fb2"/>
+ <rect x="60" y="176" width="50" height="7" rx="2" fill="#232323"/><rect x="80" y="175" width="10" height="9" rx="1.5" fill="none" stroke="#c9ccce" stroke-width="2"/>
+ <path d="M54 104 Q85 94 116 104 L124 142 L110 148 L110 178 L60 178 L60 148 L46 142 Z" fill="#f7f2ea"/>
+ <path d="M66 132 q6 -8 14 0 l-2 14 q-5 6 -10 0 z" fill="none" stroke="#d8352a" stroke-width="2"/><path d="M63 129 h20 M67 129 q6 -9 12 0" stroke="#d8352a" stroke-width="2.5" fill="none"/>
+ <path d="M88 132 q6 -8 14 0 l-2 14 q-5 6 -10 0 z" fill="none" stroke="#d8352a" stroke-width="2"/><path d="M85 129 h20 M89 129 q6 -9 12 0" stroke="#d8352a" stroke-width="2.5" fill="none"/>
+ <path d="M68 146 l6 7 l6 -7 z M90 146 l6 7 l6 -7 z" fill="#f2c21b"/><path d="M70 120 q15 -6 30 0" stroke="#d8352a" stroke-width="1.6" fill="none"/>
+ <g class="g-armL"><path d="M54 106 Q44 110 44 128 L46 164 Q48 180 60 184 L66 178 Q58 168 58 156 L60 124 Z" fill="#d29b77"/><path d="M47 160 h12 M47 164 h12 M48 168 h11" stroke="#d9b45a" stroke-width="1.6"/></g>
+ <g class="g-armR"><path d="M116 106 Q126 110 126 128 L124 164 Q122 180 110 184 L104 178 Q112 168 112 156 L110 124 Z" fill="#d29b77"/><path d="M111 162 h12 M111 166 h12" stroke="#b87a3a" stroke-width="2" stroke-dasharray="2 2"/></g>
+ <rect x="77" y="86" width="16" height="16" rx="5" fill="#c98f6b"/>
+ <ellipse cx="85" cy="64" rx="25" ry="29" fill="#d29b77"/>
+ <circle cx="60" cy="70" r="2" fill="#e8e3d8"/><circle cx="110" cy="70" r="2" fill="#e8e3d8"/>
+ <path d="M58 60 Q56 30 85 28 Q116 30 113 60 Q104 40 86 40 Q70 42 58 60 Z" fill="#3a2a20"/>
+ <path d="M58 60 Q54 90 50 118 L58 116 Q60 86 62 62 Z M112 60 Q118 92 122 122 L114 118 Q110 86 108 62 Z" fill="#4a3426"/>
+ <g class="g-eyes"><ellipse cx="74" cy="62" rx="2.6" ry="3" fill="#2a1d16"/><ellipse cx="96" cy="62" rx="2.6" ry="3" fill="#2a1d16"/></g>
+ <rect x="62" y="53" width="21" height="17" rx="5" fill="#ffffff" fill-opacity=".18" stroke="#cdc6ba" stroke-width="3.2"/><rect x="87" y="53" width="21" height="17" rx="5" fill="#ffffff" fill-opacity=".18" stroke="#cdc6ba" stroke-width="3.2"/><path d="M83 59 h4" stroke="#cdc6ba" stroke-width="3"/>
+ <path d="M64 50 q9 -4 17 0 M89 50 q9 -4 17 0" stroke="#3a2a20" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+ <ellipse cx="68" cy="76" rx="5" ry="3" fill="#e46a6a" opacity=".3"/><ellipse cx="102" cy="76" rx="5" ry="3" fill="#e46a6a" opacity=".3"/>
+ <path d="M84 63 q-3 9 2 11" stroke="#b47c5c" stroke-width="1.5" fill="none"/>
+ <g class="g-mouth"><path d="M71 80 Q85 95 99 80 Q85 86 71 80 Z" fill="#fff" stroke="#9a4040" stroke-width="2" stroke-linejoin="round"/></g>
+</g></svg>`;
+const GUIDE_CSS=`.guide{position:absolute;left:max(12px,env(safe-area-inset-left,0px));bottom:38px;z-index:6;display:flex;align-items:flex-end;gap:6px;pointer-events:none;direction:ltr}
+.guide[hidden]{display:none!important}
+.guide svg{width:auto;height:min(46vh,280px);display:block;overflow:visible;animation:gIn .5s ease-out both}
+.guide .bubble{pointer-events:auto;direction:rtl;max-width:min(300px,52vw);background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:14px 14px 14px 4px;padding:10px 14px;margin-bottom:min(30vh,190px);font-size:.92rem;line-height:1.5;box-shadow:0 4px 14px rgba(0,0,0,.15);transition:opacity .25s}
+.guide .bubble b{display:block;font-size:.8rem;color:var(--accent);margin-bottom:2px}
+.guide .g-body{animation:gBob 2.6s ease-in-out infinite;transform-box:view-box;transform-origin:85px 330px}
+.guide .g-eyes{animation:gBlink 4.2s infinite;transform-box:fill-box;transform-origin:center}
+.guide .g-armR,.guide .g-armL{transform-box:view-box}
+.guide .g-armR{transform-origin:116px 106px}.guide .g-armL{transform-origin:54px 106px}
+.guide.wave .g-armR{animation:gWave 1.8s ease-in-out}
+.guide .g-legL{transform-box:view-box;transform-origin:73px 186px}.guide .g-legR{transform-box:view-box;transform-origin:97px 186px}
+.guide.walk .g-legL{animation:gStep .45s ease-in-out infinite alternate}.guide.walk .g-legR{animation:gStep .45s ease-in-out infinite alternate-reverse}
+.guide.walk .g-armL{animation:gSwing .45s ease-in-out infinite alternate-reverse}.guide.walk .g-armR{animation:gSwing .45s ease-in-out infinite alternate}
+.guide.walk .g-body{animation:gHop .45s ease-in-out infinite alternate}
+.guide.talk .g-mouth{animation:gTalk .3s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:center top}
+@keyframes gIn{from{transform:translateX(-40px);opacity:0}}
+@keyframes gBob{50%{transform:translateY(-3px) rotate(-.6deg)}}
+@keyframes gHop{to{transform:translateY(-5px)}}
+@keyframes gBlink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+@keyframes gWave{15%{transform:rotate(-150deg)}30%{transform:rotate(-125deg)}45%{transform:rotate(-150deg)}60%{transform:rotate(-125deg)}75%{transform:rotate(-150deg)}100%{transform:rotate(0)}}
+@keyframes gStep{from{transform:rotate(-9deg)}to{transform:rotate(9deg)}}
+@keyframes gSwing{from{transform:rotate(-12deg)}to{transform:rotate(12deg)}}
+@keyframes gTalk{to{transform:scaleY(.6)}}
+@media (max-width:640px){.guide{bottom:52px}.guide svg{height:min(30vh,190px)}.guide .bubble{font-size:.84rem;margin-bottom:150px;max-width:56vw}}
+@media (prefers-reduced-motion:reduce){.guide *{animation:none!important}}`;
+const gStyle=document.createElement("style"); gStyle.textContent=GUIDE_CSS; document.head.appendChild(gStyle);
+const guide=document.createElement("div"); guide.className="guide"; guide.hidden=true;
+guide.innerHTML=GUIDE_SVG+'<div class="bubble" id="gBubble"></div>'; stage.appendChild(guide);
+const gBubble=guide.querySelector("#gBubble"); let gTimers=[];
+function gClear(){gTimers.forEach(clearTimeout);gTimers=[];guide.classList.remove("walk","wave","talk")}
+function gLater(fn,ms){gTimers.push(setTimeout(fn,ms))}
+function guideSay(title,text,ms=2600){gBubble.innerHTML=(title?`<b>${title}</b>`:"")+text;gBubble.style.opacity=1;guide.classList.add("talk");gLater(()=>guide.classList.remove("talk"),ms)}
+function firstSentence(t){const m=t.match(/^[^.!?]*[.!?]/);return m?m[0]:t}
+function guideLine(id){
+  if(id==="ext") return ["המרכז מבחוץ","זה המרכז הטכנולוגי אשדוד: שלוש קומות של מעבדות, כיתות ומרחבי שהייה. בואו ניכנס!"];
+  const r=byId[id]; if(!r) return ["",""];
+  const f=FLOORS[r.f-1].name; return [`${r.name} · ${f}`, firstSentence(r.desc)];
+}
+function guideStart(){gClear();guide.hidden=false;guide.querySelector("svg").style.animation="none";void guide.offsetWidth;guide.querySelector("svg").style.animation="";
+  guide.classList.add("wave");guideSay("היי, אני שרי 👋","מנהלת המרכז הטכנולוגי אשדוד. בואו נסייר יחד בכל הקומות, המעבדות והכיתות!",3200);
+  gLater(()=>guide.classList.remove("wave"),1900)}
+function guideStep(id){gClear();gBubble.style.opacity=.0;guide.classList.add("walk");
+  gLater(()=>{guide.classList.remove("walk");const[t,x]=guideLine(id);guideSay(t,x,2800)},900)}
+function guideBye(){gClear();guide.classList.add("wave");guideSay("זהו, סיימנו!","תודה שסיירתם איתי במרכז הטכנולוגי. מוזמנים להמשיך לטייל לבד 😊",3000);gLater(()=>{guide.hidden=true;gClear()},4200)}
+function guideHide(){gClear();guide.hidden=true}
+
+let tourTimer=null, tourIdx=0;
+function stopTour(silent){if(tourTimer){clearInterval(tourTimer);tourTimer=null;$("#tourBtn").textContent="▶ סיור מודרך";if(silent!==true)guideHide()}}
+$("#tourBtn").onclick=()=>{if(tourTimer){stopTour();return}
+  tourIdx=0;select("ext");$("#tourBtn").textContent="■ עצירת הסיור";guideStart();
+  gLater(()=>{const[t,x]=guideLine("ext");guideSay(t,x,2600)},4200);
+  tourTimer=setInterval(()=>{tourIdx++;
+    if(tourIdx>=ORDER.length){stopTour(true);select("ext");guideBye();return}
+    const id=ORDER[tourIdx]; select(id); guideStep(id)},8000)};
 
 /* ---------- input ---------- */
 const keys={f:0,b:0,l:0,r:0,sl:0,sr:0,fast:0};
