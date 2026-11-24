@@ -470,14 +470,14 @@ addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { lay
 
 /* ===== מצב חי: ?room=CODE (חדר בשרת). בלי הפרמטר המשחק עובד כרגיל, בלי שרת ===== */
 const ROOM = (new URLSearchParams(location.search).get('room') || '').toUpperCase().replace(/[^A-Z0-9]/g,'');
-let LV = null, seen = new Set(), queue = [], firstSync = true, liveOff = false;
+let LV = null, seen = new Set(), dbSeen = new Set(), queue = [], firstSync = true, liveOff = false;   // seen = תאים שהמקרן כבר מכיר; dbSeen = תאים שנראו בפועל בשרת
 function adminSession(){ try{ const a = JSON.parse(sessionStorage.getItem('hive.admin') || 'null'); return a && a.code === ROOM ? a : null; }catch(e){ return null; } }
 function liveOpened(i){                       // המנחה פתח תא במקרן: מעדכנים גם את הטלפונים (אם יש קוד מנחה בדפדפן הזה)
   const id = cellId(i); seen.add(id);
   const a = adminSession(); if(a) LV.admin(ROOM, a.pin).open(id, null).catch(() => {});
 }
 function liveReset(){
-  seen = new Set(); queue = [];
+  seen = new Set(); dbSeen = new Set(); queue = [];
   const a = adminSession(); if(a) LV.admin(ROOM, a.pin).reset().catch(() => {});
 }
 function pump(){                              // שאלות שנפתחו מהטלפונים מוצגות אחת אחרי השנייה
@@ -491,11 +491,12 @@ async function syncLive(){
   if(!st || !st.exists){ $('liveOn').textContent = 'חדר לא נמצא'; return; }
   $('liveOn').textContent = 'מחוברים: ' + st.online;
   const opened = st.opened || [], ids = new Set(opened.map(o => o.cell_id));
-  if([...seen].some(id => !ids.has(id))){     // איפוס מהמנהל
-    seen = new Set(); queue = []; stopTimer(); $('qov').classList.remove('on'); newGame(); firstSync = true;
+  if([...dbSeen].some(id => !ids.has(id))){   // איפוס מהמנהל: תא שהיה בשרת נעלם. (תא שנפתח רק מקומית במקרן לא נחשב איפוס)
+    seen = new Set(); dbSeen = new Set(); queue = []; stopTimer(); $('qov').classList.remove('on'); newGame(); firstSync = true;
   }
   let changed = false;
   opened.forEach(o => {
+    dbSeen.add(o.cell_id);
     if(seen.has(o.cell_id)) return; seen.add(o.cell_id);
     const i = +o.cell_id.slice(1), c = cells[i]; if(!c || c.logo || c.answered) return;
     if(firstSync || i === active){ if(i !== active){ c.answered = true; changed = true; } } else queue.push({ i, team:o.team });
