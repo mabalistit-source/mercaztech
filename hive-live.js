@@ -16,6 +16,7 @@ const HEB = {
   no_player: 'החיבור נותק, נא להצטרף מחדש',
   no_team: 'המנחה עוד לא שייך אתכם לקבוצה',
   not_allowed: 'כרגע המנחה פותח את התאים',
+  bad_answer: 'התשובה לא תקינה',
   cell_not_open: 'התא עדיין לא נפתח'
 };
 export function hebError(e){
@@ -69,7 +70,7 @@ export const join         = (code, name) => rpc('hive_join', { p_code: code, p_n
 export const state        = player => rpc('hive_state', { p_player: player });
 export const publicState  = code => rpc('hive_public_state', { p_code: code });
 export const openCell     = (player, cell) => rpc('hive_open_cell', { p_player: player, p_cell: cell });
-export const submitAnswer = (player, cell, answer) => rpc('hive_submit_answer', { p_player: player, p_cell: cell, p_answer: answer });
+export const submitAnswer = (player, cell, answer, idx) => rpc('hive_submit_answer', { p_player: player, p_cell: cell, p_answer: answer, p_idx: (idx === undefined ? null : idx) });   // מחזיר {correct, idx, correct_idx}
 
 export const admin = (code, pin) => ({
   state:  () => rpc('hive_admin_state',      { p_code: code, p_pin: pin }),

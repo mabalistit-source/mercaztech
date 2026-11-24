@@ -58,6 +58,21 @@ create table if not exists public.hive_answers (
   created_at timestamptz not null default now()
 );
 
+-- תשובות: נשמר גם מספר האפשרות שנבחרה והאם נכונה. תשובה אחת לכל משתתף בכל תא (אי אפשר לנסות שוב).
+alter table public.hive_answers add column if not exists idx int;
+alter table public.hive_answers add column if not exists correct boolean;
+delete from public.hive_answers a using public.hive_answers b
+  where a.id > b.id and a.room_code = b.room_code and a.player_id = b.player_id and a.cell_id = b.cell_id;
+create unique index if not exists hive_answers_one_per_player on public.hive_answers(room_code, player_id, cell_id);
+
+-- מפתח התשובות הנכונות: נמצא רק בשרת, בלי שום הרשאה ללקוח. התוכן נטען בנפרד (קובץ פרטי, לא בריפו הציבורי).
+create table if not exists public.hive_keys (
+  cell_id     text primary key,
+  correct_idx int  not null check (correct_idx between 0 and 9)
+);
+alter table public.hive_keys enable row level security;
+revoke all on public.hive_keys from anon, authenticated;
+
 -- RLS: קריאה בלבד ללקוח; pin_hash לא נחשף (select רק על עמודות מותרות).
 alter table public.hive_rooms   enable row level security;
 alter table public.hive_players enable row level security;
@@ -190,7 +205,7 @@ begin
     'room', (select json_build_object('code',code,'groups_n',groups_n,'open_mode',open_mode,'closed',closed) from hive_rooms where code = upper(p_code)),
     'players', coalesce((select json_agg(json_build_object('id',id,'name',name,'team',team,'online', last_seen > now() - interval '40 seconds') order by joined_at) from hive_players where room_code = upper(p_code)),'[]'::json),
     'opened', coalesce((select json_agg(json_build_object('cell_id',cell_id,'team',team,'opened_at',opened_at) order by opened_at) from hive_opened where room_code = upper(p_code)),'[]'::json),
-    'answers', coalesce((select json_agg(json_build_object('cell_id',cell_id,'team',team,'answer',answer,'at',created_at) order by created_at) from hive_answers where room_code = upper(p_code)),'[]'::json)
+    'answers', coalesce((select json_agg(json_build_object('cell_id',a.cell_id,'team',a.team,'name',pl.name,'answer',a.answer,'correct',a.correct,'at',a.created_at) order by a.created_at) from hive_answers a left join hive_players pl on pl.id = a.player_id where a.room_code = upper(p_code)),'[]'::json)
   );
 end $$;
 
@@ -209,14 +224,23 @@ begin
   return found and exists (select 1 from hive_opened where room_code = pl.room_code and cell_id = p_cell and player_id = p_player);
 end $$;
 
-create or replace function public.hive_submit_answer(p_player uuid, p_cell text, p_answer text) returns void
+drop function if exists public.hive_submit_answer(uuid,text,text);
+create or replace function public.hive_submit_answer(p_player uuid, p_cell text, p_answer text, p_idx int default null) returns json
 language plpgsql security definer set search_path = public as $$
-declare pl hive_players;
+declare pl hive_players; a hive_answers; k int;
 begin
   select * into pl from hive_players where id = p_player;
   if not found then raise exception 'no_player'; end if;
   if not exists (select 1 from hive_opened where room_code = pl.room_code and cell_id = p_cell) then raise exception 'cell_not_open'; end if;
-  insert into hive_answers(room_code, cell_id, team, player_id, answer) values (pl.room_code, p_cell, pl.team, p_player, left(p_answer,200));
+  if p_idx is not null and (p_idx < 0 or p_idx > 9) then raise exception 'bad_answer'; end if;
+  select correct_idx into k from hive_keys where cell_id = p_cell;
+  insert into hive_answers(room_code, cell_id, team, player_id, answer, idx, correct)
+    values (pl.room_code, p_cell, pl.team, p_player, left(coalesce(p_answer,''),200), p_idx,
+            case when k is null or p_idx is null then null else p_idx = k end)
+    on conflict (room_code, player_id, cell_id) do nothing;
+  select * into a from hive_answers where room_code = pl.room_code and player_id = p_player and cell_id = p_cell;
+  -- התשובה הנכונה נחשפת רק אחרי שהמשתתף ענה (והתשובה נשמרה), ורק אם יש מפתח לתא
+  return json_build_object('correct', a.correct, 'idx', a.idx, 'correct_idx', case when a.correct is null then null else k end);
 end $$;
 
 -- ===== פעולות מנהל (דורשות PIN). מחזירות {"ok":true} או {"error":"bad_pin"|"locked"} =====
@@ -305,7 +329,7 @@ revoke all on function public._hive_pin_check(text,text), public._hive_name_ok(t
 grant execute on function
   public.hive_create_room(text), public.hive_join(text,text), public.hive_state(uuid),
   public.hive_public_state(text), public.hive_admin_state(text,text),
-  public.hive_open_cell(uuid,text), public.hive_submit_answer(uuid,text,text),
+  public.hive_open_cell(uuid,text), public.hive_submit_answer(uuid,text,text,int),
   public.hive_admin_set_groups(text,text,int,boolean), public.hive_admin_move(text,text,uuid,int),
   public.hive_admin_kick(text,text,uuid), public.hive_admin_mode(text,text,text,boolean),
   public.hive_admin_open(text,text,text,int), public.hive_admin_reset(text,text),

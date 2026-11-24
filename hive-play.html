@@ -14,6 +14,7 @@
     font-size:16px;
   }
   *{box-sizing:border-box;}
+  [hidden]{display:none !important;}
   html,body{margin:0;min-height:100%;}
   body{background:var(--bg);color:var(--ink);font-family:'Assistant','Segoe UI',Arial,sans-serif;line-height:1.45;
        padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);}
@@ -65,6 +66,17 @@
   .opt{display:flex;gap:10px;align-items:center;width:100%;text-align:start;margin-top:8px;padding:12px;border-radius:12px;border:2px solid #c9c2b0;background:#fff;color:var(--ink);font-weight:600;min-height:52px;}
   .opt .l{flex:none;width:30px;height:30px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-weight:800;}
   .opt.sel{border-color:var(--b-blue);background:#e8f3fb;}
+  .opt.right{border-color:#2f6b0f;background:#e5f3d6;box-shadow:0 0 0 3px #2f6b0f33;}
+  .opt.right .l{background:#2f6b0f;}
+  .opt.wrong{border-color:var(--danger);background:#fde8e6;box-shadow:0 0 0 3px #b3261e33;}
+  .opt.wrong .l{background:var(--danger);}
+  .opt:disabled:not(.right):not(.wrong){opacity:.55;}
+  .opt .mk{margin-inline-start:auto;font-weight:800;white-space:nowrap;}
+  .verdict{margin-top:12px;padding:10px 12px;border-radius:12px;font-weight:800;display:none;}
+  .verdict.on{display:block;} .verdict.ok{background:#e5f3d6;border:2px solid #2f6b0f;color:#1f4a08;} .verdict.no{background:#fde8e6;border:2px solid var(--danger);color:#8a1d10;}
+  .star{font-size:1.1rem;} .cellbtn .star{line-height:1;}
+  .toast{position:fixed;top:12px;inset-inline:12px;margin:auto;max-width:420px;z-index:40;background:#2f6b0f;color:#fff;padding:12px 16px;border-radius:14px;font-weight:800;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);display:none;}
+  .toast.on{display:block;}
   .hint{display:none;margin-top:12px;padding:10px 12px;border-radius:12px;background:#eef6e3;border:1px solid #c5dca0;font-weight:600;}
   .hint.on{display:block;}
   .sent{margin-top:12px;font-weight:700;color:var(--c-bi);}
@@ -106,6 +118,7 @@
     <div class="bar">
       <span class="pill team" id="teamPill" hidden></span>
       <span class="pill" id="onlinePill"></span>
+      <span class="pill" id="starPill" hidden></span>
       <button class="btn" id="leaveBtn" style="margin-inline-start:auto;min-height:40px;padding:4px 12px">יציאה</button>
     </div>
     <div class="note" id="status" role="status" aria-live="polite"></div>
@@ -123,6 +136,7 @@
     <div id="answerBox"></div>
     <div class="hint" id="hint"></div>
     <div class="timesup" id="timesup" role="status">⏰ הזמן נגמר!</div>
+    <div class="verdict" id="verdict" role="status" aria-live="assertive"></div>
     <div class="sent" id="sent" role="status"></div>
     <div class="foot">
       <button class="btn" id="hintBtn" type="button">💡 רמז</button>
@@ -130,6 +144,7 @@
     </div>
   </div>
 </div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 <div class="conn" id="conn" role="status">אין חיבור לשרת… מנסים שוב</div>
 
 <script src="hive-data.js"></script>
@@ -220,6 +235,8 @@ function render(){
   const tp = $('teamPill');
   if(room.groups_n > 0 && S.team){ tp.hidden = false; tp.textContent = 'קבוצה ' + S.team; } else tp.hidden = true;
   $('onlinePill').textContent = 'מחוברים: ' + S.online;
+  const res = results(), stars = (S.opened || []).filter(o => res[keyOf(o)] && res[keyOf(o)].correct && res[keyOf(o)].closed).length;
+  const sp = $('starPill'); sp.hidden = stars === 0; sp.textContent = '⭐ ' + stars + (stars === 1 ? ' נקודה' : ' נקודות');
   let msg = '';
   if(room.closed) msg = 'המשחק הסתיים. תודה שהשתתפתם!';
   else if(room.groups_n > 0 && !S.team) msg = 'ממתינים שהמנחה ישייך אתכם לקבוצה…';
@@ -236,8 +253,9 @@ function render(){
     const label = TRACKS[c.track].short + ' — ' + TYPES[c.type].name;
     if(o){
       b.className = 'cellbtn'; b.disabled = true;
-      b.innerHTML = '<span>✓</span><span class="s">' + TRACKS[c.track].short + '</span>' + (room.groups_n > 0 && o.team ? '<span class="by">קבוצה ' + o.team + '</span>' : '');
-      b.setAttribute('aria-label', label + ' (נפתח' + (o.team ? ' על ידי קבוצה ' + o.team : '') + ')');
+      const r = res[keyOf(o)], won = !!(r && r.correct && r.closed);
+      b.innerHTML = (won ? '<span class="star">⭐</span>' : '<span>✓</span>') + '<span class="s">' + TRACKS[c.track].short + '</span>' + (room.groups_n > 0 && o.team ? '<span class="by">קבוצה ' + o.team + '</span>' : '');
+      b.setAttribute('aria-label', label + ' (נפתח' + (o.team ? ' על ידי קבוצה ' + o.team : '') + (won ? ', ענית נכון, הניקוד לטובתך' : '') + ')');
     } else {
       b.className = 'cellbtn t-' + c.track; b.disabled = !canOpen;
       b.innerHTML = svg(c.type) + '<span>' + TRACKS[c.track].short + '</span><span class="s">' + TYPES[c.type].name + '</span>';
@@ -260,6 +278,12 @@ async function pick(i, btn){
 
 /* ---------- שאלה: מוצגת לקבוצה שפתחה את התא ---------- */
 function dismissed(){ try{ return JSON.parse(sget('hive.dis.' + me.code) || '[]'); }catch(e){ return []; } }
+/* תוצאות תשובות שלי: מפתח cell@opened_at -> {idx, correct, cidx}. נשמרות בטאב כדי לשרוד רענון, ומתאפסות אחרי איפוס הכוורת (opened_at חדש). */
+function results(){ try{ return JSON.parse(sget('hive.res.' + me.code) || '{}'); }catch(e){ return {}; } }
+function saveResult(key, r){ const m = results(); m[key] = r; sset('hive.res.' + me.code, JSON.stringify(m)); }
+function keyOf(o){ return o.cell_id + '@' + o.opened_at; }
+function toast(msg){ const t = $('toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove('on'), 4000); }
+
 function syncQuestion(opened){
   if(q.cell) return;                              // שאלה פעילה כבר מוצגת
   const dis = dismissed();
@@ -282,14 +306,14 @@ function showQuestion(id, key){
   $('reward').hidden = !c.reward;
   $('hint').classList.remove('on'); $('hint').textContent = c.hint ? '💡 רמז: ' + c.hint : '';
   $('hintBtn').style.display = c.hint ? '' : 'none';
-  $('timesup').classList.remove('on'); $('sent').textContent = '';
+  $('timesup').classList.remove('on'); $('sent').textContent = ''; $('verdict').className = 'verdict'; $('verdict').textContent = '';
   const box = $('answerBox'); box.textContent = '';
   if(c.options){
     c.options.forEach((t, k) => {
       const b = document.createElement('button'); b.type = 'button'; b.className = 'opt';
       b.innerHTML = '<span class="l"></span><span></span>';
       b.firstChild.textContent = 'אבגד'[k]; b.lastChild.textContent = t;
-      b.addEventListener('click', () => send(b, t));
+      b.addEventListener('click', () => send(b, t, k));
       box.appendChild(b);
     });
   } else if(c.type !== 'task'){
@@ -301,6 +325,7 @@ function showQuestion(id, key){
     box.append(lab, inp, go);
   }
   $('qov').classList.add('on'); $('sheet').focus({preventScroll:true});
+  const prev = results()[key]; if(prev){ q.sent = true; reveal(prev); }
   tickQ(); q.handle = setInterval(tickQ, 250);
 }
 
@@ -309,25 +334,44 @@ function tickQ(){
   $('num').textContent = Math.ceil(ms/1000);
   $('fill').style.transform = 'scaleX(' + (ms / (q.total*1000)).toFixed(3) + ')';
   $('tmr').classList.toggle('low', ms > 0 && ms <= 5000);
-  if(ms <= 0 && !q.done){ q.done = true; $('timesup').classList.add('on'); try{ navigator.vibrate && navigator.vibrate(200); }catch(e){} }
+  if(ms <= 0 && !q.done){ q.done = true; if(!q.sent) [...$('answerBox').querySelectorAll('button,input')].forEach(x => x.disabled = true); $('timesup').classList.add('on'); try{ navigator.vibrate && navigator.vibrate(200); }catch(e){} }
 }
 function stopQ(){ if(q.handle){ clearInterval(q.handle); q.handle = null; } q.cell = null; }
 
-async function send(btn, text){
-  if(q.sent) return; q.sent = true;
+async function send(btn, text, idx){
+  if(q.sent || q.done) return; q.sent = true;
   [...$('answerBox').querySelectorAll('button,input')].forEach(x => x.disabled = true);
   btn.classList.add('sel');
   try{
-    await L.submitAnswer(me.id, q.cell, text);
-    $('sent').textContent = '✓ התשובה נשלחה. עכשיו עונים גם בעל פה למנחה.';
+    const r = await L.submitAnswer(me.id, q.cell, text, idx);
+    const rec = { idx: r && r.idx != null ? r.idx : idx, correct: r ? r.correct : null, cidx: r ? r.correct_idx : null, closed: false };
+    saveResult(q.key, rec); reveal(rec);
   }catch(e){
-    q.sent = false; [...$('answerBox').querySelectorAll('button,input')].forEach(x => x.disabled = false);
+    q.sent = false; [...$('answerBox').querySelectorAll('button,input')].forEach(x => x.disabled = false); btn.classList.remove('sel');
     $('sent').textContent = L.hebError(e);
   }
+}
+
+/* חשיפת התוצאה: מסגרת ירוקה לנכון, אדומה לשגוי, והתשובה הנכונה תמיד מסומנת בירוק */
+function reveal(r){
+  const opts = [...$('answerBox').querySelectorAll('.opt')];
+  opts.forEach(o => { o.disabled = true; o.classList.remove('sel'); });
+  const v = $('verdict');
+  if(r.correct === null || r.correct === undefined || r.cidx == null){
+    if(r.idx != null && opts[r.idx]) opts[r.idx].classList.add('sel');
+    $('sent').textContent = '✓ התשובה נשלחה. עכשיו עונים גם בעל פה למנחה.'; return;
+  }
+  if(opts[r.cidx]){ opts[r.cidx].classList.add('right'); const m = document.createElement('span'); m.className = 'mk'; m.textContent = '✓ התשובה הנכונה'; opts[r.cidx].appendChild(m); }
+  if(!r.correct && r.idx != null && opts[r.idx]){ opts[r.idx].classList.add('wrong'); const m = document.createElement('span'); m.className = 'mk'; m.textContent = '✗ לא נכון'; opts[r.idx].appendChild(m); }
+  v.className = 'verdict on ' + (r.correct ? 'ok' : 'no');
+  v.textContent = r.correct ? '✓ נכון! כשתסגרו את השאלה הניקוד יירשם לטובתכם.' : '✗ לא נכון. התשובה הנכונה מסומנת בירוק.';
+  $('sent').textContent = '';
 }
 $('hintBtn').addEventListener('click', () => $('hint').classList.toggle('on'));
 $('closeQ').addEventListener('click', () => {
   const dis = dismissed(); if(q.key && !dis.includes(q.key)) dis.push(q.key); sset('hive.dis.' + me.code, JSON.stringify(dis));
+  const rr = results()[q.key];
+  if(rr && rr.correct){ rr.closed = true; saveResult(q.key, rr); toast('⭐ ענית נכון! הניקוד לטובתך בשאלה הזו'); }
   stopQ(); $('qov').classList.remove('on'); render();
 });
 

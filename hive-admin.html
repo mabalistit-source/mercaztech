@@ -42,6 +42,8 @@
   .cell{border:2px solid var(--line);border-radius:12px;padding:8px;font-size:.9rem;}
   .cell.open{background:#efece2;} .cell b{display:block;}
   .tg{font-weight:700;} .t-electricity{color:#8a5000;} .t-machines{color:#16599a;} .t-biotech{color:#386a12;}
+  .score{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;} .score .sc{padding:6px 12px;border-radius:999px;background:#f4efe2;border:1px solid var(--line);font-weight:800;}
+  .ans.ok{border-color:#2f6b0f;background:#e5f3d6;} .ans.no{border-color:var(--danger);background:#fde8e6;}
   .ans{margin-top:4px;padding:4px 6px;background:#fff;border-radius:6px;border:1px solid var(--line);font-size:.85rem;}
   [hidden]{display:none!important;}
 </style>
@@ -114,6 +116,7 @@
 
     <section class="panel" style="margin-top:16px">
       <h2>תאי הכוורת</h2>
+      <div class="score" id="score" aria-live="polite"></div>
       <div class="row" style="margin-bottom:8px"><label for="openTeam" style="margin:0">לפתיחה על ידי המנחה, עבור קבוצה:</label><select id="openTeam" style="max-width:130px"></select></div>
       <div class="cells" id="cells"></div>
     </section>
@@ -219,6 +222,11 @@ function render(){
 
   const opened = {}; (S.opened || []).forEach(o => { opened[o.cell_id] = o; });
   const ans = {}; (S.answers || []).forEach(a => { (ans[a.cell_id] = ans[a.cell_id] || []).push(a); });
+  // ניקוד: לכל קבוצה (או "כולם") נספרים תאים שלפחות משתתף אחד בה ענה בהם נכון
+  const tally = {}; (S.answers || []).forEach(a => { if(a.correct === true){ const k = a.team == null ? 0 : a.team; (tally[k] = tally[k] || new Set()).add(a.cell_id); } });
+  const sc = $('score'); sc.textContent = '';
+  const keys = room.groups_n > 0 ? Array.from({length: room.groups_n}, (_, k) => k + 1) : [0];
+  keys.forEach(k => { const e = document.createElement('span'); e.className = 'sc'; e.textContent = (k === 0 ? 'כולם' : 'קבוצה ' + k) + ': ⭐ ' + (tally[k] ? tally[k].size : 0); sc.appendChild(e); });
   const box = $('cells'); box.textContent = '';
   CELLS.forEach((c, i) => {
     if(c.logo) return;
@@ -228,7 +236,7 @@ function render(){
     d.firstChild.textContent = TRACKS[c.track].short; d.lastChild.textContent = TYPES[c.type].name;
     if(o){
       const s = document.createElement('div'); s.className = 'muted'; s.textContent = 'נפתח' + (o.team ? ' · קבוצה ' + o.team : ''); d.appendChild(s);
-      (ans[id] || []).forEach(a => { const x = document.createElement('div'); x.className = 'ans'; x.textContent = (a.team ? 'קבוצה ' + a.team + ': ' : '') + a.answer; d.appendChild(x); });
+      (ans[id] || []).forEach(a => { const x = document.createElement('div'); x.className = 'ans' + (a.correct === true ? ' ok' : a.correct === false ? ' no' : ''); x.textContent = (a.correct === true ? '✓ ' : a.correct === false ? '✗ ' : '') + (a.name ? a.name + (a.team ? ' (קבוצה ' + a.team + ')' : '') + ': ' : (a.team ? 'קבוצה ' + a.team + ': ' : '')) + a.answer; d.appendChild(x); });
     } else {
       const b = document.createElement('button'); b.className = 'btn sm'; b.style.marginTop = '6px'; b.textContent = 'פתיחה';
       b.setAttribute('aria-label', 'פתיחת ' + TRACKS[c.track].short + ' ' + TYPES[c.type].name);
