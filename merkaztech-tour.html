@@ -679,14 +679,14 @@ const MODELS={
  microwave:(f,g,b,x,z)=>{box(.4,.3,.5,L(0x1d2120),x+.15,1.07,z,g);box(.02,.2,.3,L(0x3b4a52),x+.36,1.07,z-.05,g);return 1.5},
  imager:(f,g,b,x,z)=>{box(.45,.65,.45,L(0xf4f5f3),x,1.25,z,g);box(.46,.06,.46,MAT.dark,x,1.6,z,g);box(.2,.35,.2,L(0xf4f5f3),x,1.8,z,g);box(.4,.03,.3,MAT.dark,x,.93,z-.55,g);return 2.15},
  shaker:(f,g,b,x,z)=>{box(.4,.1,.35,L(0x2b3a7a),x,.97,z,g);box(.45,.03,.4,L(0x26292b),x,1.06,z,g);return 1.4},
- vise:(f,g,b,x,z)=>{const V=new THREE.Group();V.position.set(x,.85,z);g.add(V);const bl=L(0x2f3f9a),st=L(0xb9c0c4);
+ vise:(f,g,b,x,z)=>{const V=new THREE.Group();V.position.set(x,.85,z);V.scale.setScalar(1.7);g.add(V);const bl=L(0x22308a),st=L(0xb9c0c4);
    const bx=(w,h,d,m,px,py,pz)=>{const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(px,py,pz);V.add(o);return o};
    const base=new THREE.Mesh(new THREE.CylinderGeometry(.13,.15,.04,18),bl);base.position.y=.02;V.add(base);
    bx(.34,.07,.12,bl,0,.08,0); bx(.09,.14,.16,bl,-.13,.17,0); bx(.09,.13,.15,bl,.08,.165,0);
    bx(.02,.09,.17,st,-.08,.2,0); bx(.02,.09,.16,st,.03,.2,0);
    const sc=new THREE.Mesh(new THREE.CylinderGeometry(.015,.015,.22,8),st);sc.rotation.z=Math.PI/2;sc.position.set(.21,.12,0);V.add(sc);
    const hd=new THREE.Mesh(new THREE.CylinderGeometry(.01,.01,.22,8),st);hd.position.set(.31,.14,0);hd.rotation.x=.4;V.add(hd);
-   return 1.25},
+   return 1.55},
  cnc:(f,g,b,x,z)=>{solid(f,1.4,1.1,1.1,MAT.blue,x,.55,z,g);box(1.2,.55,.9,MAT.white,x,1.38,z,g);cyl(.25,.25,1.3,MAT.white,x+1.1,.65,z,g);addSolid(f,x+.8,x+1.4,z-.3,z+.3);return 2},
  cabinet:(f,g,b,x,z)=>{const p=wallItem(f,g,b,x,z,1.3,2.2,.45,MAT.blue,1.1);for(let s=0;s<6;s++)box(p.along?1.2:.47,.04,p.along?.47:1.2,L(0xd9c27a),p.x,.3+s*.33,p.z,g);addSolid(f,p.x-.7,p.x+.7,p.z-.4,p.z+.4);return 2.4},
  laser:(f,g,b,x,z)=>{solid(f,1.4,.8,.8,MAT.dark,x,.4,z,g);box(1.2,.38,.7,L(0x1d2120),x,1,z,g);return 1.4},
